@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>masterview.qml</file>
+        <file>LibraryView.qml</file>
+        <file>seriesview.qml</file>
+        <file>booksview.qml</file>
+        <file>qtquickcontrols2.conf</file>
+    </qresource>
+</RCC>
