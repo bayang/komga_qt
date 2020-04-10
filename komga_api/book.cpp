@@ -106,12 +106,12 @@ void Book::setPagesCount(int pagesCount)
     m_pagesCount = pagesCount;
 }
 
-BookMetadata Book::bookMetadata() const
+BookMetadata* Book::bookMetadata() const
 {
     return m_bookMetadata;
 }
 
-void Book::setBookMetadata(const BookMetadata &bookMetadata)
+void Book::setBookMetadata(BookMetadata* &bookMetadata)
 {
     m_bookMetadata = bookMetadata;
 }

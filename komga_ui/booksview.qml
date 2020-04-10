@@ -6,48 +6,50 @@ Item {
     Component.onCompleted: {
         bookModel.loadBooks(currentSeries.ui_seriesId)
     }
-    anchors.fill: parent
+
+    property real thumbnailRequestedHeight: 230
+    property real thumbnailRequestedWidth: 175
 
     Column {
         anchors.fill: parent
-        Text {
+        Label {
             id: seriesText
             text: qsTr("In Series " + currentSeries.ui_seriesName)
         }
+        Label {
+            id: seriesStatus
+            text: qsTr("Status " + currentSeries.ui_seriesMetadataStatus)
+        }
         ScrollView {
             width: parent.width
+            height: parent.height
             GridView {
                 id: booksList
                 model: bookModel
                 clip: true
-                cellWidth : 300
-                cellHeight: 375
+                cellWidth : thumbnailRequestedWidth + 5
+                cellHeight: thumbnailRequestedHeight + 85
+                onMovementEnded: {
+                    if (atYEnd) {
+                        console.log("Y end")
+                    }
+                }
+
                 delegate:
-                    Item {
-                        id: booksDelegate
-                        width: booksList.cellWidth - 10
-                        height: booksList.cellHeight - 10
-                        Column {
-                            Text { text: "Book: " + bookName + ", book number: " + bookNumber.toString()  + " , id: " + bookId}
-                            Image {
-                                id: bookImage
-                                source: "image://books/" + bookId
-                                fillMode: Image.PreserveAspectFit
-                            }
-                            Button {
-                                text: "read book " + bookName
-                                onClicked: {
-                                    booksList.currentIndex = index
-                                    currentBook = bookModel.get(booksList.currentIndex)
-//                                    controller.goSeriesView(currentLibrary)
-                                }
-                            }
-                        }
+                    CardItem {
+                    cardWidth: thumbnailRequestedWidth
+                    cardHeight: booksList.cellHeight
+                    thumbnailHeight: thumbnailRequestedHeight
+                    imagePath: "image://books/" + bookId
+                    cardLabel: bookName
+                    topCornerLabel: "CBR"
+                    onCardClicked: {
+                        booksList.currentIndex = index
+                        currentBook = bookModel.get(booksList.currentIndex)
+                        controller.goBookDetailView()
+                    }
                 }
             }
         }
-
     }
-
-
 }

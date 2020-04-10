@@ -13,7 +13,7 @@ public:
 public:
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize) override;
 private:
-    BookModel* bookModel;
+    BookModel* bookModel = nullptr;
 };
 
 #endif // BOOKTHUMBNAILPROVIDER_H

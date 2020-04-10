@@ -50,6 +50,15 @@
 class KOMGA_API_EXPORT Book: public QObject
 {
     Q_OBJECT
+    Q_PROPERTY( int ui_bookId READ id CONSTANT )
+    Q_PROPERTY( QString ui_bookName READ name CONSTANT )
+    Q_PROPERTY( QString ui_bookUrl READ url CONSTANT )
+    Q_PROPERTY( int ui_bookNumber READ number CONSTANT )
+    Q_PROPERTY( QString ui_bookSize READ size CONSTANT )
+    Q_PROPERTY( QString ui_bookMediaStatus READ mediaStatus CONSTANT )
+    Q_PROPERTY( QString ui_bookMediaType READ mediaType CONSTANT )
+    Q_PROPERTY( int ui_bookPagesCount READ pagesCount CONSTANT )
+    Q_PROPERTY( BookMetadata* ui_bookMetadata READ bookMetadata CONSTANT )
 public:
     Book(QObject *parent = nullptr);
 
@@ -83,21 +92,21 @@ public:
     int pagesCount() const;
     void setPagesCount(int pagesCount);
 
-    BookMetadata bookMetadata() const;
-    void setBookMetadata(const BookMetadata &bookMetadata);
+    BookMetadata* bookMetadata() const;
+    void setBookMetadata(BookMetadata* &bookMetadata);
 
 private:
-    int m_id;
-    int m_seriesId;
-    QString m_name;
-    QString m_url;
-    int m_number;
-    qlonglong m_sizeBytes;
-    QString m_size;
-    QString m_mediaStatus;
-    QString m_mediaType;
-    int m_pagesCount;
-    BookMetadata m_bookMetadata;
+    int m_id {};
+    int m_seriesId {};
+    QString m_name{};
+    QString m_url{};
+    int m_number {};
+    qlonglong m_sizeBytes{};
+    QString m_size{};
+    QString m_mediaStatus{};
+    QString m_mediaType{};
+    int m_pagesCount {};
+    BookMetadata* m_bookMetadata = nullptr;
 };
 
 #endif // BOOK_H

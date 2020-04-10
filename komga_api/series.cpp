@@ -21,10 +21,10 @@ QString Series::url() const {
 int Series::booksCount() const {
     return m_booksCount;
 }
-void Series::setName(QString name) {
+void Series::setName(QString &name) {
     m_name = name;
 }
-void Series::setUrl(QString url) {
+void Series::setUrl(QString &url) {
     m_url = url;
 }
 void Series::setId(int id) {

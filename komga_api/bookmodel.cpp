@@ -1,7 +1,7 @@
 #include "bookmodel.h"
 
 BookModel::BookModel(QObject *parent, Komga_api* api) :
-    QAbstractListModel{parent}, m_api{api}
+    QAbstractListModel{parent}, m_api{api}, m_books{}
 {
     connect(m_api, &Komga_api::booksDataReady,
             this, &BookModel::apiDataReceived);
@@ -22,7 +22,7 @@ QVariant BookModel::data(const QModelIndex &index, int role) const {
     else if (role == SeriesIdRole)
         return book->seriesId();
     else if (role == NumberRole)
-        return book->bookMetadata().number();
+        return book->bookMetadata()->number();
     else if (role == UrlRole)
         return book->url();
     else if (role == SizeBytesRole)
@@ -36,15 +36,15 @@ QVariant BookModel::data(const QModelIndex &index, int role) const {
     else if (role == PageCountRole)
         return book->pagesCount();
     else if (role == SummaryRole)
-        return book->bookMetadata().summary();
+        return book->bookMetadata()->summary();
     else if (role == PublisherRole)
-        return book->bookMetadata().publisher();
+        return book->bookMetadata()->publisher();
     else if (role == ReleaseDateRole)
-        return book->bookMetadata().releaseDate();
+        return book->bookMetadata()->releaseDate();
     else if (role == AuthorsRole)
-        return book->bookMetadata().authors().join(",");
+        return book->bookMetadata()->authors().join(",");
     else if (role == AgeRatingRole)
-        return book->bookMetadata().ageRating();
+        return book->bookMetadata()->ageRating();
     return QVariant();
 }
 QHash<int, QByteArray> BookModel::roleNames() const {
@@ -71,7 +71,7 @@ void BookModel::loadBooks(int seriesId) {
 }
 void BookModel::apiDataReceived(QList<Book*> books) {
     beginResetModel();
-    m_books = books;
+    m_books = std::move(books);
     endResetModel();
 }
 Book* BookModel::get(int index) {

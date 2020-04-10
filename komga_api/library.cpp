@@ -16,11 +16,11 @@ int Library::id() const {
     return m_id;
 }
 
-void Library::setName(QString name) {
+void Library::setName(const QString &name) {
     m_name = name;
 }
 
-void Library::setRoot(QString root) {
+void Library::setRoot(const QString &root) {
     m_root = root;
 }
 

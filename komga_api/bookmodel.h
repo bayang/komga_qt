@@ -40,8 +40,8 @@ public:
     QByteArray getThumbnail(int id);
 
 private:
-    Komga_api* m_api;
-    QList<Book*> m_books;
+    Komga_api* m_api = nullptr;
+    QList<Book*> m_books{};
 };
 
 #endif // BOOKMODEL_H

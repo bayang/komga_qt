@@ -40,9 +40,9 @@ void SeriesModel::loadSeries(int libraryId) {
     m_api->getSeries(libraryId);
 }
 void SeriesModel::apiDataReceived(QList<Series*> series) {
-    beginResetModel();
-    m_series = series;
-    endResetModel();
+    emit beginResetModel();
+    m_series = std::move(series);
+    emit endResetModel();
 }
 Series* SeriesModel::get(int index) {
     return m_series.at(index);

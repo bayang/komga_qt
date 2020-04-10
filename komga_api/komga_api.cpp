@@ -33,7 +33,7 @@ void Komga_api::getLibraries() {
     QUrl url;
     url.setUrl(BASE_URL + URL_LIBRARIES);
     r.setUrl(url);
-    apiReply = manager->get(r);
+    manager->get(r);
 }
 
 void Komga_api::getSeries(int libraryId) {
@@ -42,13 +42,14 @@ void Komga_api::getSeries(int libraryId) {
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesReason));
     QUrl url;
     url.setUrl(BASE_URL + URL_SERIES);
+    QUrlQuery query;
+    query.addQueryItem("size", "30");
     if (libraryId != -1) {
-        QUrlQuery query;
         query.addQueryItem("library_id", QString::number(libraryId));
-        url.setQuery(query);
     }
+    url.setQuery(query);
     r.setUrl(url);
-    apiReply = manager->get(r);
+    manager->get(r);
 }
 
 void Komga_api::getBooks(int seriesId) {
@@ -58,7 +59,7 @@ void Komga_api::getBooks(int seriesId) {
     QUrl url;
     url.setUrl(BASE_URL + URL_SERIES + "/" + QString::number(seriesId, 10) + URL_BOOKS);
     r.setUrl(url);
-    apiReply = manager->get(r);
+    manager->get(r);
 }
 
 void Komga_api::apiReplyFinished(QNetworkReply *reply) {
@@ -81,7 +82,6 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
 
                 libraries.append(std::move(l));
             }
-            reply->deleteLater();
             emit libraryDataReady(libraries);
         }
         else if (reason == RequestReason::SeriesReason) {
@@ -94,16 +94,18 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
                 qDebug() << jsob["id"].toInt();
                 qDebug() << jsob["name"].toString();
                 s->setId(jsob["id"].toInt());
-                s->setName(jsob["name"].toString());
+                QString n = jsob["name"].toString();
+//                s->setName(QString(jsob["name"].toString()));
+                s->setName(n);
                 s->setBooksCount(jsob["booksCount"].toInt());
                 s->setLibraryId(jsob["libraryId"].toInt());
-                s->setUrl(jsob["url"].toString());
+                QString u = jsob["url"].toString();
+                s->setUrl(u);
                 QJsonObject metadata = jsob["metadata"].toObject();
                 s->setMetadataTitle(metadata["title"].toString());
                 s->setMetadataStatus(metadata["status"].toString());
                 series.append(std::move(s));
             }
-            reply->deleteLater();
             emit seriesDataReady(series);
         }
         else if (reason == RequestReason::Books) {
@@ -123,25 +125,24 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
                 QJsonObject media = jsob["media"].toObject();
                 b->setMediaStatus(media["status"].toString());
                 b->setMediaType(media["mediaType"].toString());
-                BookMetadata meta;
+                BookMetadata* meta = new BookMetadata();
                 QJsonObject metadata = jsob["metadata"].toObject();
-                meta.setTitle(metadata["title"].toString());
-                meta.setSummary(metadata["summary"].toString());
-                meta.setNumber(metadata["number"].toString());
-                meta.setNumberSort(metadata["numberSort"].toInt());
-                meta.setPublisher(metadata["publisher"].toString());
-                meta.setAgeRating(metadata["ageRating"].toString());
-                meta.setReleaseDate(metadata["releaseDate"].toString());
+                meta->setTitle(metadata["title"].toString());
+                meta->setSummary(metadata["summary"].toString());
+                meta->setNumber(metadata["number"].toString());
+                meta->setNumberSort(metadata["numberSort"].toInt());
+                meta->setPublisher(metadata["publisher"].toString());
+                meta->setAgeRating(metadata["ageRating"].toString());
+                meta->setReleaseDate(metadata["releaseDate"].toString());
                 QJsonArray authors = metadata["authors"].toArray();
                 QList<QString> aut{""};
                 foreach (const QJsonValue &value, authors) {
                     aut.append(value.   toString());
                 }
-                meta.setAuthors(aut);
+                meta->setAuthors(aut);
                 b->setBookMetadata(meta);
                 books.append(std::move(b));
             }
-            reply->deleteLater();
             emit booksDataReady(books);
         }
     }
@@ -149,6 +150,7 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
     else {
         qDebug() << "ERROR";
     }
+    reply->deleteLater();
 }
 
 void Komga_api::authenticate(QNetworkReply *reply, QAuthenticator *authenticator) {
@@ -158,7 +160,7 @@ void Komga_api::authenticate(QNetworkReply *reply, QAuthenticator *authenticator
     authenticator->setPassword("EiwKPj1yR2MO");
 }
 QByteArray Komga_api::getThumbnail(int id, Komga_api::ThumbnailType type) {
-    qDebug() << "fetch thumbnail";
+    qDebug() << "fetch thumbnail for id " << id;
     QNetworkRequest r;
     QUrl url;
     if (type == ThumbnailType::BookThumbnail) {

@@ -14,7 +14,7 @@ public:
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize) override;
 
 private:
-    SeriesModel* seriesModel;
+    SeriesModel* seriesModel = nullptr;
 };
 
 #endif // SERIESTHUMBNAILPROVIDER_H

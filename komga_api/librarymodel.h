@@ -20,8 +20,8 @@ private slots:
     void apiDataReceived(QList<Library*> libraries);
 
 private:
-    Komga_api* m_api;
-    QList<Library*> m_libraries;
+    Komga_api* m_api = nullptr;
+    QList<Library*> m_libraries{};
 
     // QAbstractItemModel interface
 public:

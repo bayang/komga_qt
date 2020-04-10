@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QIcon>
 
 #include "librarymodel.h"
 #include "seriesmodel.h"
@@ -8,6 +9,7 @@
 #include "mastercontroller.h"
 #include "library.h"
 #include "book.h"
+#include "bookmetadata.h"
 #include "seriesthumbnailprovider.h"
 #include "bookthumbnailprovider.h"
 #include <QQuickStyle>
@@ -18,13 +20,13 @@ int main(int argc, char *argv[])
 
 
     QGuiApplication app(argc, argv);
-    qDebug() << QQuickStyle::availableStyles();
+    QGuiApplication::setWindowIcon(QIcon(":/favicon.ico"));
     QQuickStyle::setStyle("Material");
 
-    Komga_api *api = new Komga_api();
-    LibraryModel libraryModel(&app, api);
-    SeriesModel seriesmodel(&app, api);
-    BookModel bookModel(&app, api);
+    Komga_api *api = new Komga_api(&app);
+    LibraryModel *lm = new LibraryModel(&app, api);
+    SeriesModel *seriesmodel = new SeriesModel(&app, api);
+    BookModel *bookModel = new BookModel(&app, api);
     MasterController controller;
 
     qmlRegisterType<Library>("komga_api", 1, 0,
@@ -33,19 +35,21 @@ int main(int argc, char *argv[])
     "Series");
     qmlRegisterType<Book>("komga_api", 1, 0,
     "Book");
+    qmlRegisterType<BookMetadata>("komga_api", 1, 0,
+    "BookMetadata");
 
     QQmlApplicationEngine engine;
 
     engine.rootContext()->setContextProperty("libraryModel",
-    &libraryModel);
+    lm);
     engine.rootContext()->setContextProperty("seriesModel",
-    &seriesmodel);
+    seriesmodel);
     engine.rootContext()->setContextProperty("bookModel",
-    &bookModel);
+    bookModel);
     engine.rootContext()->setContextProperty("controller",
     &controller);
-    engine.addImageProvider("series", new SeriesThumbnailProvider(&seriesmodel));
-    engine.addImageProvider("books", new BookThumbnailProvider(&bookModel));
+    engine.addImageProvider("series", new SeriesThumbnailProvider(seriesmodel));
+    engine.addImageProvider("books", new BookThumbnailProvider(bookModel));
 
     const QUrl url(QStringLiteral("qrc:/masterview.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

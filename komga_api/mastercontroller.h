@@ -16,6 +16,7 @@ public:
 signals:
     void goSeriesView();
     void goBooksView();
+    void goBookDetailView();
 
 public slots:
     void setSelectedLibrary(Library* selectedLibrary);

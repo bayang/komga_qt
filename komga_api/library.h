@@ -16,14 +16,14 @@ public:
     QString name() const;
     int id() const;
     QString root() const;
-    void setName(QString name);
-    void setRoot(QString root);
+    void setName(const QString &name);
+    void setRoot(const QString &root);
     void setId(int id);
 
 private:
-    int m_id;
-    QString m_name;
-    QString m_root;
+    int m_id{};
+    QString m_name{};
+    QString m_root{};
 };
 
 #endif // LIBRARY_H

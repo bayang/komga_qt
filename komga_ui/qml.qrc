@@ -5,5 +5,8 @@
         <file>seriesview.qml</file>
         <file>booksview.qml</file>
         <file>qtquickcontrols2.conf</file>
+        <file>CardItem.qml</file>
+        <file>TextLink.qml</file>
+        <file>bookdetailview.qml</file>
     </qresource>
 </RCC>

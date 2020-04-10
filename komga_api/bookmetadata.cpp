@@ -1,6 +1,7 @@
 #include "bookmetadata.h"
 
-BookMetadata::BookMetadata()
+BookMetadata::BookMetadata(QObject *parent):
+    QObject{parent}
 {
 
 }

@@ -37,9 +37,9 @@ public:
 
 
 private:
-    QNetworkAccessManager* manager;
-    QNetworkAccessManager* thumbnailsManager;
-    QNetworkReply* apiReply;
+    QNetworkAccessManager* manager = nullptr;
+    QNetworkAccessManager* thumbnailsManager = nullptr;
+//    QNetworkReply* apiReply;
     void authenticate(QNetworkReply *reply, QAuthenticator *authenticator);
     void apiReplyFinished(QNetworkReply *reply);
 

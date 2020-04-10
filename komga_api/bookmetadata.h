@@ -2,6 +2,7 @@
 #define BOOKMETADATA_H
 
 #include <QString>
+#include <QObject>
 #include <QList>
 #include "komga_api_global.h"
 
@@ -31,10 +32,19 @@
  */
 
 
-class KOMGA_API_EXPORT BookMetadata
+class KOMGA_API_EXPORT BookMetadata: public QObject
 {
+    Q_OBJECT
+    Q_PROPERTY( QString ui_metadataTitle READ title CONSTANT )
+    Q_PROPERTY( QString ui_metadataSummary READ summary CONSTANT )
+    Q_PROPERTY( QString ui_metadataNumber READ number CONSTANT )
+    Q_PROPERTY( QString ui_metadataPublisher READ publisher CONSTANT )
+    Q_PROPERTY( QString ui_metadataAgeRating READ ageRating CONSTANT )
+    Q_PROPERTY( QList<QString> ui_metadataAuthors READ authors CONSTANT )
+    Q_PROPERTY( QString ui_metadataReleaseDate READ releaseDate CONSTANT )
+
 public:
-    BookMetadata();
+    BookMetadata(QObject *parent = nullptr);
     QString title() const;
     void setTitle(const QString &title);
     bool titleLock() const;
@@ -91,24 +101,24 @@ public:
     void setAuthorsLock(bool authorsLock);
 
 private:
-    QString m_title;
-    bool m_titleLock;
-    QString m_summary;
-    bool m_summaryLock;
-    QString m_number;
-    bool m_numberLock;
-    int m_numberSort;
-    bool m_numberSortLock;
-    QString m_readingDirection;
-    bool m_readingDirectionLock;
-    QString m_publisher;
-    bool m_publisherLock;
-    QString m_ageRating;
-    bool m_ageRatingLock;
-    QString m_releaseDate;
-    bool m_releaseDateLock;
-    QList<QString> m_authors;
-    bool m_authorsLock;
+    QString m_title{};
+    bool m_titleLock{};
+    QString m_summary{};
+    bool m_summaryLock{};
+    QString m_number{};
+    bool m_numberLock{};
+    int m_numberSort{};
+    bool m_numberSortLock{};
+    QString m_readingDirection{};
+    bool m_readingDirectionLock{};
+    QString m_publisher{};
+    bool m_publisherLock{};
+    QString m_ageRating{};
+    bool m_ageRatingLock{};
+    QString m_releaseDate{};
+    bool m_releaseDateLock{};
+    QList<QString> m_authors{};
+    bool m_authorsLock{};
 
 };
 

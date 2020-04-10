@@ -29,10 +29,16 @@ ApplicationWindow {
         onGoBooksView: contentFrame.replace("qrc:/booksview.qml")
     }
 
+    Connections {
+        target: controller
+        onGoBookDetailView: contentFrame.replace("qrc:/bookdetailview.qml")
+    }
+
     LibraryView {
-
         id: navColumn
-
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
     }
 
 

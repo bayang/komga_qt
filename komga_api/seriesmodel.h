@@ -30,8 +30,8 @@ public:
     Q_INVOKABLE Series* get(int index);
     QByteArray getThumbnail(int id);
 private:
-    Komga_api* m_api;
-    QList<Series*> m_series;
+    Komga_api* m_api = nullptr;
+    QList<Series*> m_series{};
 };
 
 

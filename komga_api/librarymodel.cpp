@@ -1,16 +1,15 @@
 #include "librarymodel.h"
 
 LibraryModel::LibraryModel(QObject *parent, Komga_api* api) :
-    QAbstractListModel{parent}, m_api{api}
+    QAbstractListModel{parent}, m_api{api}, m_libraries{}
 {
-//    m_api = api;
     connect(m_api, &Komga_api::libraryDataReady,
             this, &LibraryModel::apiDataReceived);
 }
 void LibraryModel::apiDataReceived(QList<Library*> libraries) {
-    beginResetModel();
-    m_libraries = libraries;
-    endResetModel();
+    emit beginResetModel();
+    m_libraries = std::move(libraries);
+    emit endResetModel();
 }
 int LibraryModel::rowCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);
