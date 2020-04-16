@@ -26,6 +26,7 @@ SOURCES += \
     librarymodel.cpp \
     mastercontroller.cpp \
     series.cpp \
+    seriesfiltersortproxymodel.cpp \
     seriesmodel.cpp
 
 HEADERS += \
@@ -38,6 +39,7 @@ HEADERS += \
     librarymodel.h \
     mastercontroller.h \
     series.h \
+    seriesfiltersortproxymodel.h \
     seriesmodel.h
 
 !isEmpty(target.path): INSTALLS += target

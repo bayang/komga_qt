@@ -7,13 +7,6 @@ import komga_api 1.0
 
 Item {
 
-    Component.onCompleted: {
-        if (currentLibrary == null) {
-            currentLibrary = defaultLib
-        }
-
-        seriesModel.loadSeries(currentLibrary.ui_libraryId)
-    }
     property real thumbnailRequestedHeight: 230
     property real thumbnailRequestedWidth: 175
 
@@ -21,21 +14,22 @@ Item {
         anchors.fill: parent
         Label {
             id: libraryText
-            text: qsTr("In Library " + currentLibrary.ui_libraryName)
+            text: qsTr("In Library " + controller.ui_currentLibrary.ui_libraryName)
         }
         ScrollView {
             width: parent.width
-            clip: false
+            clip: true
             height: parent.height
             GridView {
                 id: seriesList
-                model: seriesModel
+                model: controller.ui_seriesModel
                 clip: true
                 cellWidth : thumbnailRequestedWidth + 5
-                cellHeight: thumbnailRequestedHeight + 50
+                cellHeight: thumbnailRequestedHeight + 80
                 onMovementEnded: {
                     if (atYEnd) {
                         console.log("Y end")
+                        controller.nextSeriesPage()
                     }
                 }
                 delegate:
@@ -45,10 +39,11 @@ Item {
                         thumbnailHeight: thumbnailRequestedHeight
                         imagePath: "image://series/" + seriesId
                         cardLabel: seriesName
+                        subLabel: seriesBookCount + " books"
                         topCornerLabel: seriesBookCount
                         onCardClicked: {
                             seriesList.currentIndex = index
-                            currentSeries = seriesModel.get(seriesList.currentIndex)
+                            controller.setSelectedSeries(seriesList.currentIndex)
                             controller.goBooksView()
                         }
                 }

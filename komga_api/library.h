@@ -8,7 +8,7 @@
 class KOMGA_API_EXPORT Library: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( QString ui_libraryName READ name WRITE setName )
+    Q_PROPERTY( QString ui_libraryName READ name WRITE setName  NOTIFY nameChanged)
     Q_PROPERTY( int ui_libraryId READ id WRITE setId)
 
 public:
@@ -24,6 +24,9 @@ private:
     int m_id{};
     QString m_name{};
     QString m_root{};
+
+signals:
+    void nameChanged();
 };
 
 #endif // LIBRARY_H

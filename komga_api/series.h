@@ -8,11 +8,11 @@
 class KOMGA_API_EXPORT Series: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( int ui_seriesId READ id CONSTANT )
-    Q_PROPERTY( QString ui_seriesName READ name CONSTANT )
-    Q_PROPERTY( int ui_seriesBooksCount READ booksCount CONSTANT )
-    Q_PROPERTY( QString ui_seriesMetadataStatus READ metadataStatus CONSTANT )
-    Q_PROPERTY( QString ui_seriesMetadataTitle READ metadataTitle CONSTANT )
+    Q_PROPERTY( int ui_seriesId READ id NOTIFY idChanged )
+    Q_PROPERTY( QString ui_seriesName READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY( int ui_seriesBooksCount READ booksCount )
+    Q_PROPERTY( QString ui_seriesMetadataStatus READ metadataStatus WRITE setMetadataStatus NOTIFY metadataStatusChanged )
+    Q_PROPERTY( QString ui_seriesMetadataTitle READ metadataTitle )
 
 public:
     Series(QObject *parent = nullptr);
@@ -32,6 +32,11 @@ public:
 
     QString metadataTitle() const;
     void setMetadataTitle(const QString &metadataTitle);
+
+signals:
+    void metadataStatusChanged();
+    void nameChanged();
+    void idChanged();
 
 private:
     int m_id{};

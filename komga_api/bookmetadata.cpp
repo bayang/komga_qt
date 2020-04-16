@@ -179,3 +179,6 @@ void BookMetadata::setAuthorsLock(bool authorsLock)
 {
     m_authorsLock = authorsLock;
 }
+QString BookMetadata::authorsAsString() const {
+    return m_authors.join(",");
+}

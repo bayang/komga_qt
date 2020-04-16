@@ -10,14 +10,6 @@ ApplicationWindow {
     width: 1280
     height: 760
     title: qsTr("Komga")
-    property Library currentLibrary
-    property Series currentSeries
-    property Book currentBook
-    Library {id: defaultLib; ui_libraryId:-1; ui_libraryName: "All libraries"}
-
-    Component.onCompleted: {
-        currentLibrary = defaultLib
-    }
 
     Connections {
         target: controller
@@ -26,12 +18,17 @@ ApplicationWindow {
 
     Connections {
         target: controller
-        onGoBooksView: contentFrame.replace("qrc:/booksview.qml")
+        onGoBooksView: contentFrame.push("qrc:/booksview.qml")
     }
 
     Connections {
         target: controller
-        onGoBookDetailView: contentFrame.replace("qrc:/bookdetailview.qml")
+        onGoBookDetailView: contentFrame.push("qrc:/bookdetailview.qml")
+    }
+
+    Connections {
+        target: controller
+        onGoBookReadView: contentFrame.push("qrc:/bookreadview.qml")
     }
 
     LibraryView {

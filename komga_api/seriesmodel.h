@@ -5,6 +5,7 @@
 #include "komga_api.h"
 #include <QObject>
 #include <QAbstractListModel>
+#include <QJsonObject>
 
 class KOMGA_API_EXPORT SeriesModel : public QAbstractListModel
 {
@@ -19,19 +20,23 @@ public:
         UrlRole = Qt::UserRole + 5
     };
 private slots:
-    void apiDataReceived(QList<Series*> series);
+    void apiDataReceived(QJsonObject series);
 
     // QAbstractItemModel interface
 public:
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
-    Q_INVOKABLE void loadSeries(int libraryId = -1);
+    Q_INVOKABLE void loadSeries(Library* library);
     Q_INVOKABLE Series* get(int index);
+    void nextSeriesPage(Library* library);
     QByteArray getThumbnail(int id);
+    Series* find(int libraryId);
 private:
     Komga_api* m_api = nullptr;
     QList<Series*> m_series{};
+    int m_currentPageNumber{};
+    int m_totalPageNumber{};
 };
 
 

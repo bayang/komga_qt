@@ -1,4 +1,5 @@
 #include "librarymodel.h"
+#include <QJsonArray>
 
 LibraryModel::LibraryModel(QObject *parent, Komga_api* api) :
     QAbstractListModel{parent}, m_api{api}, m_libraries{}
@@ -6,13 +7,30 @@ LibraryModel::LibraryModel(QObject *parent, Komga_api* api) :
     connect(m_api, &Komga_api::libraryDataReady,
             this, &LibraryModel::apiDataReceived);
 }
-void LibraryModel::apiDataReceived(QList<Library*> libraries) {
-    emit beginResetModel();
-    m_libraries = std::move(libraries);
-    emit endResetModel();
+
+void LibraryModel::apiDataReceived(QJsonDocument libraries) {
+//    emit beginResetModel();
+    emit layoutAboutToBeChanged();
+    qDeleteAll(m_libraries);
+    m_libraries.clear();
+    QJsonArray array = libraries.array();
+    foreach (const QJsonValue &value, array) {
+        Library* l = new Library(this);
+        QJsonObject jsob = value.toObject();
+        qDebug() << jsob["id"].toInt();
+        qDebug() << jsob["name"].toString();
+        l->setId(jsob["id"].toInt());
+        l->setName(jsob["name"].toString());
+        l->setRoot(jsob["root"].toString());
+        m_libraries.append(std::move(l));
+    }
+//    emit endResetModel();
+    emit layoutChanged();
 }
 int LibraryModel::rowCount(const QModelIndex &parent) const {
-    Q_UNUSED(parent);
+    if (parent.isValid()) {
+        return 0;
+    }
     return m_libraries.size();
 }
 QHash<int, QByteArray> LibraryModel::roleNames() const {
@@ -23,21 +41,30 @@ QHash<int, QByteArray> LibraryModel::roleNames() const {
         return roles;
 }
 QVariant LibraryModel::data(const QModelIndex &index, int role) const {
+    if (! index.isValid()) {
+        qDebug() << "invalid indx " << index.row();
+        return QVariant();
+    }
     if (index.row() < 0 || index.row() >= m_libraries.count())
         return QVariant();
 
     const Library* library = m_libraries[index.row()];
-    if (role == NameRole)
-        return library->name();
-    else if (role == IdRole)
-        return library->id();
-    else if (role == RootRole)
-        return library->root();
+    if (library) {
+        if (role == NameRole)
+            return library->name();
+        else if (role == IdRole)
+            return library->id();
+        else if (role == RootRole)
+            return library->root();
+    }
     return QVariant();
 }
 void LibraryModel::fetchData() {
     m_api -> getLibraries();
 }
 Library* LibraryModel::get(int index) {
+    if (index < 0 || index > m_libraries.count()) {
+
+    }
     return m_libraries.at(index);
 }

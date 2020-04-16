@@ -12,6 +12,7 @@
 #include "bookmetadata.h"
 #include "seriesthumbnailprovider.h"
 #include "bookthumbnailprovider.h"
+#include "bookpageprovider.h"
 #include <QQuickStyle>
 
 int main(int argc, char *argv[])
@@ -27,7 +28,11 @@ int main(int argc, char *argv[])
     LibraryModel *lm = new LibraryModel(&app, api);
     SeriesModel *seriesmodel = new SeriesModel(&app, api);
     BookModel *bookModel = new BookModel(&app, api);
-    MasterController controller;
+    SeriesFilterSortProxyModel * proxyModel = new SeriesFilterSortProxyModel(&app);
+    proxyModel->setSourceModel(seriesmodel);
+    proxyModel->setParentModel(seriesmodel);
+    MasterController* controller = new MasterController{seriesmodel, bookModel, proxyModel, &app};
+    controller->setLibraryModel(lm);
 
     qmlRegisterType<Library>("komga_api", 1, 0,
     "Library");
@@ -40,16 +45,11 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    engine.rootContext()->setContextProperty("libraryModel",
-    lm);
-    engine.rootContext()->setContextProperty("seriesModel",
-    seriesmodel);
-    engine.rootContext()->setContextProperty("bookModel",
-    bookModel);
     engine.rootContext()->setContextProperty("controller",
-    &controller);
+    controller);
     engine.addImageProvider("series", new SeriesThumbnailProvider(seriesmodel));
     engine.addImageProvider("books", new BookThumbnailProvider(bookModel));
+    engine.addImageProvider("page", new BookPageProvider(bookModel));
 
     const QUrl url(QStringLiteral("qrc:/masterview.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

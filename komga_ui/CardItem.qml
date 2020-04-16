@@ -12,6 +12,7 @@ Item {
 
     property alias imagePath: seriesImage.source
     property alias cardLabel: labelText.text
+    property alias subLabel: subText.text
     property alias topCornerLabel: nbBooksLabel.text
     property color hoverBorderColor: "lightsteelblue"
 
@@ -19,7 +20,7 @@ Item {
 
     width: cardWidth
     height: cardHeight - 10
-    property bool currentlyHovered: false
+    property bool cardCurrentlyHovered: false
 
     Rectangle {
         id: seriesDelegateBackgound
@@ -65,6 +66,15 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
 
             }
+            Label {
+                id : subText
+                anchors.horizontalCenter: parent.horizontalCenter
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
+
+            }
+
         }
     }
     MouseArea {
@@ -77,10 +87,10 @@ Item {
         }
         onEntered: {
             cursorShape = Qt.PointingHandCursor
-            currentlyHovered = true
+            cardCurrentlyHovered = true
         }
         onExited: {
-            currentlyHovered = false
+            cardCurrentlyHovered = false
         }
     }
     Rectangle {
@@ -88,7 +98,7 @@ Item {
         border.color: hoverBorderColor
         width: cardWidth
         height: parent.height
-        border.width: currentlyHovered ? 3 : 0
+        border.width: cardCurrentlyHovered ? 3 : 0
         radius: 8
         color: "transparent"
         anchors.horizontalCenter: seriesDelegateBackgound.horizontalCenter

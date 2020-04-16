@@ -90,6 +90,19 @@ QString Book::mediaType() const
 {
     return m_mediaType;
 }
+QString Book::mediaTypeShort() const
+{
+    if (m_mediaType.contains("zip", Qt::CaseInsensitive)) {
+        return QString("CBZ");
+    }
+    else if (m_mediaType.contains("rar", Qt::CaseInsensitive)) {
+        return QString("CBR");
+    }
+    else if (m_mediaType.contains("pdf", Qt::CaseInsensitive)) {
+        return QString("PDF");
+    }
+    return QString("X");
+}
 
 void Book::setMediaType(const QString &mediaType)
 {

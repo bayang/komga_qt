@@ -57,6 +57,7 @@ class KOMGA_API_EXPORT Book: public QObject
     Q_PROPERTY( QString ui_bookSize READ size CONSTANT )
     Q_PROPERTY( QString ui_bookMediaStatus READ mediaStatus CONSTANT )
     Q_PROPERTY( QString ui_bookMediaType READ mediaType CONSTANT )
+    Q_PROPERTY( QString ui_bookShortMediaType READ mediaTypeShort CONSTANT )
     Q_PROPERTY( int ui_bookPagesCount READ pagesCount CONSTANT )
     Q_PROPERTY( BookMetadata* ui_bookMetadata READ bookMetadata CONSTANT )
 public:
@@ -88,6 +89,8 @@ public:
 
     QString mediaType() const;
     void setMediaType(const QString &mediaType);
+
+    QString mediaTypeShort() const;
 
     int pagesCount() const;
     void setPagesCount(int pagesCount);

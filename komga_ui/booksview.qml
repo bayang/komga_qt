@@ -3,35 +3,56 @@ import QtQuick.Controls 2.14
 import komga_api 1.0
 
 Item {
-    Component.onCompleted: {
-        bookModel.loadBooks(currentSeries.ui_seriesId)
-    }
-
     property real thumbnailRequestedHeight: 230
     property real thumbnailRequestedWidth: 175
 
     Column {
         anchors.fill: parent
-        Label {
-            id: seriesText
-            text: qsTr("In Series " + currentSeries.ui_seriesName)
+        Button {
+            onClicked: {
+                if (contentFrame.depth > 0) {
+                    contentFrame.pop()
+                }
+            }
+            text: "Back"
         }
-        Label {
-            id: seriesStatus
-            text: qsTr("Status " + currentSeries.ui_seriesMetadataStatus)
+
+        Row {
+            id : firstRow
+            height: 350
+            Image {
+                id: seriesDetailImage
+                source: "image://series/" + controller.ui_currentSeries.ui_seriesId
+                sourceSize.height: 300
+                sourceSize.width: -1
+                fillMode: Image.PreserveAspectCrop
+            }
+            Column {
+                Label {
+                    id: seriesText
+                    text: qsTr(controller.ui_currentSeries.ui_seriesName)
+                }
+                Label {
+                    id: seriesStatus
+                    text: qsTr("STATUS : " + controller.ui_currentSeries.ui_seriesMetadataStatus)
+                }
+            }
         }
+
         ScrollView {
             width: parent.width
-            height: parent.height
+            height: parent.height - firstRow.height
+            clip: true
             GridView {
                 id: booksList
-                model: bookModel
+                model: controller.ui_bookModel
                 clip: true
                 cellWidth : thumbnailRequestedWidth + 5
                 cellHeight: thumbnailRequestedHeight + 85
                 onMovementEnded: {
                     if (atYEnd) {
                         console.log("Y end")
+                        controller.nextBooksPage()
                     }
                 }
 
@@ -42,10 +63,11 @@ Item {
                     thumbnailHeight: thumbnailRequestedHeight
                     imagePath: "image://books/" + bookId
                     cardLabel: bookName
-                    topCornerLabel: "CBR"
+                    subLabel: bookPageCount + " pages"
+                    topCornerLabel: bookMediaType
                     onCardClicked: {
                         booksList.currentIndex = index
-                        currentBook = bookModel.get(booksList.currentIndex)
+                        controller.setSelectedBook(booksList.currentIndex)
                         controller.goBookDetailView()
                     }
                 }

@@ -5,13 +5,10 @@ import komga_api 1.0
 
 Pane {
     width: 300
-//    anchors.top: parent.top
-//    anchors.left: parent.left
-//    anchors.bottom: parent.bottom
 
     Component.onCompleted: {
-        libraryModel.fetchData()
-        seriesModel.loadSeries(defaultLib.ui_libraryId)
+        controller.setSelectedLibrary(controller.ui_defaultLibraryId)
+        controller.refreshData()
     }
 
     Column   {
@@ -20,8 +17,10 @@ Pane {
 
         TextLink {
             onTextLinkClicked: {
-                currentLibrary = defaultLib
-                controller.goSeriesView()
+                controller.setSelectedLibrary(controller.ui_defaultLibraryId)
+                if (contentFrame.depth > 1) {
+                    controller.goSeriesView()
+                }
             }
             textLinkLabel: "All libraries"
             textLinkLabelBold: true
@@ -32,17 +31,19 @@ Pane {
             width: parent.width
             ListView {
                 id: librariesList
-                model: libraryModel
+                model: controller.ui_libraryModel
                 clip: true
                 width: parent.width
                 delegate:
                     TextLink {
                         onTextLinkClicked: {
                             librariesList.currentIndex = index
-                            currentLibrary = libraryModel.get(librariesList.currentIndex)
-                            controller.goSeriesView()
+                            controller.setSelectedLibrary(librariesList.currentIndex)
+                            if (contentFrame.depth > 1) {
+                                controller.goSeriesView()
+                            }
                         }
-                        textLinkLabel: "Library: " + libraryName + ", root: " + libraryRoot  + " , id: " + libraryId
+                        textLinkLabel: libraryName
                 }
             }
         }

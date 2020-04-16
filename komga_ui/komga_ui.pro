@@ -15,6 +15,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    bookpageprovider.cpp \
     bookthumbnailprovider.cpp \
     main.cpp \
     seriesthumbnailprovider.cpp
@@ -41,6 +42,7 @@ INCLUDEPATH += $$PWD/../komga_api
 DEPENDPATH += $$PWD/../komga_api
 
 HEADERS += \
+    bookpageprovider.h \
     bookthumbnailprovider.h \
     seriesthumbnailprovider.h
 

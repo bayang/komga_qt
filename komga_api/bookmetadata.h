@@ -40,7 +40,7 @@ class KOMGA_API_EXPORT BookMetadata: public QObject
     Q_PROPERTY( QString ui_metadataNumber READ number CONSTANT )
     Q_PROPERTY( QString ui_metadataPublisher READ publisher CONSTANT )
     Q_PROPERTY( QString ui_metadataAgeRating READ ageRating CONSTANT )
-    Q_PROPERTY( QList<QString> ui_metadataAuthors READ authors CONSTANT )
+    Q_PROPERTY( QString ui_metadataAuthors READ authorsAsString CONSTANT )
     Q_PROPERTY( QString ui_metadataReleaseDate READ releaseDate CONSTANT )
 
 public:
@@ -99,6 +99,8 @@ public:
 
     bool authorsLock() const;
     void setAuthorsLock(bool authorsLock);
+
+    QString authorsAsString() const;
 
 private:
     QString m_title{};

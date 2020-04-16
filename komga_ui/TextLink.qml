@@ -15,26 +15,27 @@ Item {
     height: textLinkHeight
     width: parent.width
     property bool currentlyHovered: false
+
     Label {
         id: innerLabel
         wrapMode: Text.Wrap
         width: parent.width
         color: currentlyHovered ? Material.accent : Material.foreground
-    }
-    MouseArea {
-        id : libraryDelegateMouseArea
-        width: parent.width
-        height: parent.height
-        hoverEnabled: true
-        onClicked: {
-            root.textLinkClicked()
-        }
-        onEntered: {
-            cursorShape = Qt.PointingHandCursor
-            currentlyHovered = true
-        }
-        onExited: {
-            currentlyHovered = false
+        MouseArea {
+            id : libraryDelegateMouseArea
+            width: parent.width
+            height: parent.height
+            hoverEnabled: true
+            onClicked: {
+                root.textLinkClicked()
+            }
+            onEntered: {
+                cursorShape = Qt.PointingHandCursor
+                currentlyHovered = true
+            }
+            onExited: {
+                currentlyHovered = false
+            }
         }
     }
 }

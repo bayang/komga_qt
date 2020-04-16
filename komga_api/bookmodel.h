@@ -2,12 +2,14 @@
 #define BOOKMODEL_H
 
 #include <QAbstractListModel>
+#include <QJsonObject>
 #include "komga_api_global.h"
 #include "komga_api.h"
 
 class KOMGA_API_EXPORT BookModel : public QAbstractListModel
 {
     Q_OBJECT
+
 public:
     BookModel(QObject *parent = nullptr, Komga_api *api = nullptr);
     enum BooksRoles {
@@ -27,21 +29,25 @@ public:
         AuthorsRole = Qt::UserRole + 14,
         AgeRatingRole = Qt::UserRole + 15,
     };
-private slots:
-    void apiDataReceived(QList<Book*> books);
+public slots:
+    void apiDataReceived(QJsonObject books);
 
     // QAbstractItemModel interface
 public:
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
-    Q_INVOKABLE void loadBooks(int seriesId);
+    Q_INVOKABLE void loadBooks(Series* series);
     Q_INVOKABLE Book* get(int index);
     QByteArray getThumbnail(int id);
+    QByteArray getPage(int id, int pageNum);
+    void nextBooksPage(Series *series);
 
 private:
     Komga_api* m_api = nullptr;
     QList<Book*> m_books{};
+    int m_currentPageNumber{};
+    int m_totalPageNumber{};
 };
 
 #endif // BOOKMODEL_H

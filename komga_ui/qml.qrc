@@ -8,5 +8,6 @@
         <file>CardItem.qml</file>
         <file>TextLink.qml</file>
         <file>bookdetailview.qml</file>
+        <file>bookreadview.qml</file>
     </qresource>
 </RCC>
