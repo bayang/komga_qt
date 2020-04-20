@@ -14,7 +14,8 @@ public:
     enum LibraryRoles {
         IdRole = Qt::UserRole + 1,
         NameRole = Qt::UserRole + 2,
-        RootRole = Qt::UserRole + 3
+        RootRole = Qt::UserRole + 3,
+        ObjectRole = Qt::UserRole + 4
     };
 
 private slots:
@@ -30,7 +31,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
     Q_INVOKABLE void fetchData();
-    Q_INVOKABLE Library* get(int index);
+//    Q_INVOKABLE Library* get(int index) const;
 };
 
 #endif // LIBRARYMODEL_H

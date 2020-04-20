@@ -22,6 +22,7 @@ Item {
     height: cardHeight - 10
     property bool cardCurrentlyHovered: false
 
+
     Rectangle {
         id: seriesDelegateBackgound
         anchors.horizontalCenter: root.horizontalCenter
@@ -32,7 +33,7 @@ Item {
 
         Column {
             id: seriesDelegateColumn
-            spacing: 5
+            spacing: 0
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
 
@@ -62,9 +63,10 @@ Item {
                 id : labelText
                 anchors.horizontalCenter: parent.horizontalCenter
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                elide: Text.ElideRight
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
-
+                height: seriesDelegateBackgound.height - seriesImage.height - subText.height
             }
             Label {
                 id : subText
@@ -82,6 +84,10 @@ Item {
         width: parent.width
         height: parent.height
         hoverEnabled: true
+            ToolTip.delay: 1500
+            ToolTip.timeout: 3000
+            ToolTip.visible: cardCurrentlyHovered
+            ToolTip.text: qsTr(cardLabel)
         onClicked: {
             root.cardClicked()
         }

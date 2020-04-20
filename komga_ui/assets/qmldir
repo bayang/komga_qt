@@ -1,0 +1,2 @@
+module assets
+singleton Style 1.0 style.qml

@@ -6,8 +6,7 @@ BookPageProvider::BookPageProvider(BookModel* model) :
 
 }
 QImage BookPageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize) {
-    int defaultHeight = 230;
-    int defaultWidth = 175;
+    Q_UNUSED(requestedSize);
     qDebug() << "id" << id;
     QStringList parts = id.split("/");
 
@@ -22,11 +21,5 @@ QImage BookPageProvider::requestImage(const QString &id, QSize *size, const QSiz
     QImage pic;
     pic.loadFromData(a);
     *size = QSize(pic.width(), pic.height());
-//    if (requestedSize.height() != -1) {
-//        if (requestedSize.width() != -1) {
-//            return pic.scaled(requestedSize.width(), requestedSize.height(), Qt::AspectRatioMode::IgnoreAspectRatio);
-//        }
-//        return pic.scaledToHeight(requestedSize.height());
-//    }
     return pic;
 }

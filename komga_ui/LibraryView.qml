@@ -2,9 +2,10 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 import komga_api 1.0
+import assets 1.0
 
 Pane {
-    width: 300
+    width: Style.libraryPaneWidth
 
     Component.onCompleted: {
         controller.setSelectedLibrary(controller.ui_defaultLibraryId)

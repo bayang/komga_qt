@@ -3,7 +3,7 @@
 Book::Book(QObject *parent):
     QObject{parent}
 {
-
+    m_bookMetadata = new BookMetadata(this);
 }
 
 int Book::id() const

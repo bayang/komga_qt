@@ -17,7 +17,8 @@ public:
         LibraryIdRole = Qt::UserRole + 2,
         NameRole = Qt::UserRole + 3,
         BookCountRole = Qt::UserRole + 4,
-        UrlRole = Qt::UserRole + 5
+        UrlRole = Qt::UserRole + 5,
+        MetadataStatusRole = Qt::UserRole + 6
     };
 private slots:
     void apiDataReceived(QJsonObject series);
@@ -27,9 +28,9 @@ public:
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
-    Q_INVOKABLE void loadSeries(Library* library);
-    Q_INVOKABLE Series* get(int index);
-    void nextSeriesPage(Library* library);
+    Q_INVOKABLE void loadSeries(int library);
+//    Q_INVOKABLE Series* get(int index);
+    void nextSeriesPage(int libraryId);
     QByteArray getThumbnail(int id);
     Series* find(int libraryId);
 private:

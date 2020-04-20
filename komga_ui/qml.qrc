@@ -9,5 +9,6 @@
         <file>TextLink.qml</file>
         <file>bookdetailview.qml</file>
         <file>bookreadview.qml</file>
+        <file>SettingsView.qml</file>
     </qresource>
 </RCC>

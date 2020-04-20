@@ -8,11 +8,12 @@ SeriesFilterSortProxyModel::SeriesFilterSortProxyModel(QObject *parent) :
 
 }
 bool SeriesFilterSortProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const {
-    qDebug() << "filter row " << source_parent.parent().row() << " so " << source_row;
+    qDebug() << "filter row " << source_parent.parent().row() << " so " << source_row << " valid " << source_parent.isValid();
     if (libraryId() == MasterController::DEFAULT_LIBRARY_ID) {
         return true;
     }
-    int dat = parentModel()->get(source_row)->libraryId();
+//    int dat = parentModel()->get(source_row)->libraryId();
+    int dat = parentModel()->data(parentModel()->index(source_row, 0), SeriesModel::SeriesRoles::IdRole).toInt();
 
 //    qDebug() << "dat " << dat << " lib " << libraryId();
     return dat == libraryId();
@@ -35,7 +36,7 @@ int SeriesFilterSortProxyModel::libraryId() const
 
 void SeriesFilterSortProxyModel::setLibraryId(int libraryId)
 {
-    qDebug() << "lib id " << libraryId << " row " << rowCount(index(0, 0));
+    qDebug() << "lib id " << libraryId << " row " << rowCount(QModelIndex());
     m_libraryId = libraryId;
     emit invalidateFilter();
 }

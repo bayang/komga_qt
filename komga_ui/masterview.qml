@@ -2,14 +2,38 @@ import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
+import Qt.labs.settings 1.0
 import komga_api 1.0
 
 ApplicationWindow {
-
+    id: window
     visible: true
     width: 1280
     height: 760
     title: qsTr("Komga")
+
+    Settings {
+        category: "layout"
+        property alias x: window.x
+        property alias y: window.y
+        property alias width: window.width
+        property alias height: window.height
+    }
+
+    menuBar: MenuBar {
+            Menu {
+                title: qsTr("&File")
+                Action {
+                    text: qsTr("&Settings...")
+                    onTriggered: contentFrame.push("qrc:/SettingsView.qml")
+                }
+                MenuSeparator { }
+                Action {
+                    text: qsTr("&Quit")
+                    onTriggered: Qt.quit()
+                }
+            }
+        }
 
     Connections {
         target: controller

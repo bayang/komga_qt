@@ -28,6 +28,8 @@ public:
         ReleaseDateRole = Qt::UserRole + 13,
         AuthorsRole = Qt::UserRole + 14,
         AgeRatingRole = Qt::UserRole + 15,
+        TitleRole = Qt::UserRole + 16,
+        MediaTypeFullRole = Qt::UserRole + 17
     };
 public slots:
     void apiDataReceived(QJsonObject books);
@@ -38,7 +40,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
     Q_INVOKABLE void loadBooks(Series* series);
-    Q_INVOKABLE Book* get(int index);
+//    Q_INVOKABLE Book* get(int index);
     QByteArray getThumbnail(int id);
     QByteArray getPage(int id, int pageNum);
     void nextBooksPage(Series *series);

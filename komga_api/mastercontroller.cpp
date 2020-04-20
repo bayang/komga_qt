@@ -1,34 +1,28 @@
 #include "mastercontroller.h"
 
 MasterController::MasterController(SeriesModel* seriesModel, BookModel* bookModel, SeriesFilterSortProxyModel *proxyModel, QObject *parent) :
-    m_seriesModel{seriesModel}, m_bookModel{bookModel}, m_proxyModel{proxyModel}, QObject{parent}, defaultLibrary{new Library()}
+    m_seriesModel{seriesModel}, m_bookModel{bookModel}, m_proxyModel{proxyModel}, QObject{parent},
+    defaultLibrary{new Library(this)}, currentSeries{new Series(this)}, currentBook{new Book(this)}
 {
     defaultLibrary->setId(MasterController::DEFAULT_LIBRARY_ID);
     defaultLibrary->setName("All libraries");
     connect(this, &MasterController::currentSeriesChanged, m_bookModel, &BookModel::loadBooks);
+    connect(this, &MasterController::currentLibraryChanged, m_seriesModel, &SeriesModel::loadSeries);
 }
 void MasterController::setSelectedLibrary(int selectedLibrary) {
     qDebug() << "selected library in mastercontroller : " << selectedLibrary;
-    if (selectedLibrary == MasterController::DEFAULT_LIBRARY_ID) {
-        setCurrentLibrary(getDefaultLibrary());
-    }
-    else {
-        setCurrentLibrary(getLibraryModel()->get(selectedLibrary));
-    }
+    setSelectedLibraryIdx(selectedLibrary);
 }
 void MasterController::setSelectedSeries(int selectedSeries) {
     qDebug() << "selected series in mastercontroller : " << selectedSeries;
     if (selectedSeries >= 0) {
-        QModelIndex proxIdx = m_proxyModel->index(selectedSeries, 0);
-        QModelIndex srcIdx = m_proxyModel->mapToSource(proxIdx);
-        qDebug() << "proxIdx : " << proxIdx.row() << " srcIdx " << srcIdx.row();
-        setCurrentSeries(m_seriesModel->get(srcIdx.row()));
+        setSelectedSeriesIdx(selectedSeries);
     }
 }
 void MasterController::setSelectedBook(int selectedBook) {
     qDebug() << "selected book in mastercontroller : " << selectedBook;
     if (selectedBook >= 0 && selectedBook < getBookModel()->rowCount(QModelIndex())) {
-        setCurrentBook(getBookModel()->get(selectedBook));
+        setSelectedBookIdx(selectedBook);
     }
 }
 
@@ -91,53 +85,94 @@ Series *MasterController::getCurrentSeries() const
     return currentSeries;
 }
 
-void MasterController::setCurrentSeries(Series *value)
-{
-    qDebug() << "setCurrentSeries " << value->name();
-    if (value && value != currentSeries) {
-        currentSeries = value;
-        emit currentSeriesChanged(value);
-    }
-}
-
-Library *MasterController::getCurrentLibrary() const
-{
-    return currentLibrary;
-}
-
-void MasterController::setCurrentLibrary(Library *value)
-{
-    qDebug() << "setCurrentLibrary " << value->name();
-    if (value != currentLibrary) {
-        currentLibrary = value;
-        m_proxyModel->setLibraryId(currentLibrary->id());
-        emit currentLibraryChanged(value);
-    }
-}
-
 Book *MasterController::getCurrentBook() const
 {
     return currentBook;
 }
 
-void MasterController::setCurrentBook(Book *value)
-{
-    if (value != currentBook) {
-        currentBook = value;
-        setCurrentImageNumber(0);
-        emit currentBookChanged(value);
-    }
-}
-
 void MasterController::nextSeriesPage() {
-    m_seriesModel->nextSeriesPage(getCurrentLibrary());
+    if (getSelectedLibraryIdx() == MasterController::DEFAULT_LIBRARY_ID) {
+        m_seriesModel->nextSeriesPage(MasterController::DEFAULT_LIBRARY_ID);
+    }
+    else {
+        m_seriesModel->nextSeriesPage(getCurrentSeries()->id());
+    }
 }
 void MasterController::nextBooksPage() {
     m_bookModel->nextBooksPage(getCurrentSeries());
 }
 void MasterController::refreshData() {
     m_libraryModel->fetchData();
-    m_seriesModel->loadSeries(getDefaultLibrary());
+    m_seriesModel->loadSeries(MasterController::DEFAULT_LIBRARY_ID);
+}
+
+int MasterController::getSelectedBookIdx() const
+{
+    return selectedBookIdx;
+}
+
+void MasterController::setSelectedBookIdx(int value)
+{
+    qDebug() << "setSelectedBook " << value;
+    if (value != selectedBookIdx) {
+        selectedBookIdx = value;
+        setCurrentImageNumber(0);
+        currentBook->setId(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::IdRole).toInt());
+        currentBook->setUrl(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::UrlRole).toString());
+        currentBook->setName(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::NameRole).toString());
+        currentBook->setSize(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::SizeRole).toString());
+        currentBook->setNumber(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::NumberRole).toInt());
+        currentBook->setPagesCount(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::PageCountRole).toInt());
+        currentBook->setMediaType(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::MediaTypeFullRole).toString());
+        currentBook->setMediaStatus(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::MediaStatusRole).toString());
+        currentBook->bookMetadata()->setTitle(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::TitleRole).toString());
+        currentBook->bookMetadata()->setSummary(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::SummaryRole).toString());
+        currentBook->bookMetadata()->setPublisher(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::PublisherRole).toString());
+        currentBook->bookMetadata()->setReleaseDate(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::ReleaseDateRole).toString());
+        currentBook->bookMetadata()->setAuthors(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::AuthorsRole).toStringList());
+        currentBook->bookMetadata()->setAgeRating(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::AgeRatingRole).toString());
+        emit currentBookChanged(getCurrentBook());
+    }
+
+}
+
+int MasterController::getSelectedLibraryIdx() const
+{
+    return selectedLibraryIdx;
+}
+
+void MasterController::setSelectedLibraryIdx(int value)
+{
+    qDebug() << "setCurrentLibraryIdx " << value;
+    if (value != selectedLibraryIdx) {
+        selectedLibraryIdx = value;
+        if (value == MasterController::DEFAULT_LIBRARY_ID) {
+            emit currentLibraryChanged(MasterController::DEFAULT_LIBRARY_ID);
+            emit currentLibraryNameChanged(getDefaultLibrary()->name());
+        }
+        else {
+            emit currentLibraryChanged(getLibraryModel()->data(getLibraryModel()->index(value, 0), LibraryModel::LibraryRoles::IdRole).toInt());
+            emit currentLibraryNameChanged(getLibraryModel()->data(getLibraryModel()->index(value, 0), LibraryModel::LibraryRoles::NameRole).toString());
+        }
+    }
+}
+
+int MasterController::getSelectedSeriesIdx() const
+{
+    return selectedSeriesIdx;
+}
+
+void MasterController::setSelectedSeriesIdx(int value)
+{
+    qDebug() << "setCurrentSeries " << value;
+    if (value != selectedSeriesIdx) {
+        selectedSeriesIdx = value;
+        currentSeries->setId(getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::IdRole).toInt());
+        QString qs = getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::NameRole).toString();
+        currentSeries->setName(qs);
+        currentSeries->setMetadataStatus(getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::MetadataStatusRole).toString());
+        emit currentSeriesChanged(getCurrentSeries());
+    }
 }
 
 int MasterController::getCurrentImageNumber() const
@@ -154,4 +189,10 @@ void MasterController::setCurrentImageNumber(int currentImageNumber)
             emit currentImageNumberChanged(currentImageNumber);
         }
     }
+}
+QString MasterController::getCurrentLibraryName() const {
+    if (getSelectedLibraryIdx() == MasterController::DEFAULT_LIBRARY_ID) {
+        return getDefaultLibrary()->name();
+    }
+    return getLibraryModel()->data(getLibraryModel()->index(getSelectedLibraryIdx(), 0), LibraryModel::LibraryRoles::NameRole).toString();
 }

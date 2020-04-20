@@ -1,25 +1,30 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import komga_api 1.0
+import assets 1.0
 
 Item {
-    property real thumbnailRequestedHeight: 230
-    property real thumbnailRequestedWidth: 175
-
     Column {
         anchors.fill: parent
+
         Button {
+            id : booksViewBackButton
             onClicked: {
                 if (contentFrame.depth > 0) {
                     contentFrame.pop()
                 }
             }
-            text: "Back"
+            font {
+                family: Style.fontAwesome
+                pixelSize: Style.backArrowIconSize
+            }
+            text: "\uf060"
         }
 
         Row {
             id : firstRow
             height: 350
+            bottomPadding: 0
             Image {
                 id: seriesDetailImage
                 source: "image://series/" + controller.ui_currentSeries.ui_seriesId
@@ -28,6 +33,7 @@ Item {
                 fillMode: Image.PreserveAspectCrop
             }
             Column {
+                leftPadding: 20
                 Label {
                     id: seriesText
                     text: qsTr(controller.ui_currentSeries.ui_seriesName)
@@ -41,26 +47,27 @@ Item {
 
         ScrollView {
             width: parent.width
-            height: parent.height - firstRow.height
+            height: parent.height - firstRow.height - booksViewBackButton.height
             clip: true
+            bottomPadding: 5
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             GridView {
                 id: booksList
+                height: parent.height
                 model: controller.ui_bookModel
                 clip: true
-                cellWidth : thumbnailRequestedWidth + 5
-                cellHeight: thumbnailRequestedHeight + 85
+                cellWidth : Style.thumbnailRequestedWidth + 5
+                cellHeight: Style.thumbnailRequestedHeight + 85
                 onMovementEnded: {
                     if (atYEnd) {
-                        console.log("Y end")
                         controller.nextBooksPage()
                     }
                 }
-
                 delegate:
                     CardItem {
-                    cardWidth: thumbnailRequestedWidth
+                    cardWidth: Style.thumbnailRequestedWidth
                     cardHeight: booksList.cellHeight
-                    thumbnailHeight: thumbnailRequestedHeight
+                    thumbnailHeight: Style.thumbnailRequestedHeight
                     imagePath: "image://books/" + bookId
                     cardLabel: bookName
                     subLabel: bookPageCount + " pages"

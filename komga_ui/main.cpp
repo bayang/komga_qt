@@ -23,6 +23,9 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QGuiApplication::setWindowIcon(QIcon(":/favicon.ico"));
     QQuickStyle::setStyle("Material");
+    app.setOrganizationName("bayang");
+    app.setOrganizationDomain("bayang.github.com");
+    app.setApplicationName("Komga-ui");
 
     Komga_api *api = new Komga_api(&app);
     LibraryModel *lm = new LibraryModel(&app, api);
@@ -45,6 +48,7 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
+    engine.addImportPath("qrc:/");
     engine.rootContext()->setContextProperty("controller",
     controller);
     engine.addImageProvider("series", new SeriesThumbnailProvider(seriesmodel));

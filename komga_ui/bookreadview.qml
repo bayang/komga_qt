@@ -8,6 +8,9 @@ Item {
     width: parent.width
     height: parent.height
     property real imgScale: 0
+    property real lastSpacePressedTime: 0
+    property bool infoVisibility: true
+
     Flickable {
         id: flickArea
         anchors.fill: parent
@@ -16,9 +19,9 @@ Item {
         contentHeight: Math.max(bookReadPage.paintedHeight  * imgScale, readContainer.height)
         anchors.centerIn: parent
         boundsBehavior: Flickable.StopAtBounds
+        boundsMovement: Flickable.StopAtBounds
         contentX: contentWidth === readContainer.width ? 0 : bookReadPage.paintedWidth * imgScale / 2 - flickArea.width / 2
         contentY: contentHeight === readContainer.height ? 0 : bookReadPage.paintedHeight * imgScale / 2 - flickArea.height / 2
-
         Image {
             id: bookReadPage
             source: "image://page/" + controller.ui_currentBook.ui_bookId + "/" + controller.ui_currPageNumber
@@ -31,6 +34,13 @@ Item {
 
             onProgressChanged: {
                 console.log("progress " + bookReadPage.progress + " " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
+                if (progress === 1) {
+                    console.log("prog 1")
+                    lastSpacePressedTime = 0
+                    if (! flickArea.atYBeginning) {
+                        flickArea.contentY = 0
+                    }
+                }
             }
             onStatusChanged: {
                 console.log("status " + bookReadPage.status + " " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
@@ -38,6 +48,7 @@ Item {
 
             onSourceChanged: {
                 console.log("source changed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
+                lastSpacePressedTime = 0
             }
             Component.onCompleted: {
                 console.log("completed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
@@ -46,8 +57,12 @@ Item {
             onSourceSizeChanged: {
                 console.log("source size changed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
                 console.log("readCon w readConL w" + readContainer.width)
+                lastSpacePressedTime = 0
                 if (imgScale === 0) {
                     imgScale = readContainer.height / bookReadPage.paintedHeight
+                }
+                if (! flickArea.atYBeginning) {
+                    flickArea.contentY = 0
                 }
                 console.log("imgScale " + imgScale)
             }
@@ -73,11 +88,22 @@ Item {
         }
     }
 
+    BusyIndicator {
+        running: bookReadPage.status === Image.Loading
+        anchors.centerIn: parent
+    }
+
     Keys.onSpacePressed: {
         flickArea.contentY += bookReadPage.paintedHeight / 4
         flickArea.returnToBounds()
         if (flickArea.atYEnd) {
-            console.log("atYEnd")
+            var curTime = new Date().getTime();
+            console.log("atYEnd " + curTime + " " + lastSpacePressedTime)
+            if (curTime - lastSpacePressedTime < 2000) {
+                controller.ui_currPageNumber += 1
+                console.log("next page")
+            }
+            lastSpacePressedTime = curTime
         }
     }
     Keys.onRightPressed: {
@@ -126,7 +152,52 @@ Item {
         }
     }
 
-    Label {
-        text: "read page  : " + controller.ui_currPageNumber.toString()
+
+    Item {
+        id: pageNumberWrapper
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: 20
+        visible: infoVisibility
+
+        YAnimator {
+            id: pageNumberWrapperAnimator
+               target: pageNumberWrapper;
+               from: readContainer.height - 50;
+               to: readContainer.height + pageNumberWrapper.height + 100;
+               duration: 1000
+               easing.type: Easing.Linear
+           }
+        Rectangle {
+            opacity: 0.6
+            width: pageNumberLabel.width + 5
+            color: "gray"
+            height: pageNumberLabel.height + 5
+            anchors.centerIn: parent
+        }
+
+        Label {
+            id: pageNumberLabel
+            anchors.centerIn: parent
+            text: (controller.ui_currPageNumber + 1).toString() + "/" + controller.ui_currentBook.ui_bookPagesCount
+        }
+    }
+
+    Timer {
+        id : visibilityTimer
+        interval: 750
+        repeat: false
+        onTriggered: {
+            pageNumberWrapperAnimator.start()
+        }
+    }
+
+    MouseArea {
+        id: bookPageMouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        onPositionChanged: {
+            pageNumberWrapper.y  = readContainer.height - 50
+            visibilityTimer.restart()
+        }
     }
 }

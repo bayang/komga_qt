@@ -9,11 +9,12 @@ LibraryModel::LibraryModel(QObject *parent, Komga_api* api) :
 }
 
 void LibraryModel::apiDataReceived(QJsonDocument libraries) {
-//    emit beginResetModel();
-    emit layoutAboutToBeChanged();
+    emit beginResetModel();
     qDeleteAll(m_libraries);
     m_libraries.clear();
+    emit endResetModel();
     QJsonArray array = libraries.array();
+    emit layoutAboutToBeChanged();
     foreach (const QJsonValue &value, array) {
         Library* l = new Library(this);
         QJsonObject jsob = value.toObject();
@@ -24,7 +25,6 @@ void LibraryModel::apiDataReceived(QJsonDocument libraries) {
         l->setRoot(jsob["root"].toString());
         m_libraries.append(std::move(l));
     }
-//    emit endResetModel();
     emit layoutChanged();
 }
 int LibraryModel::rowCount(const QModelIndex &parent) const {
@@ -38,6 +38,7 @@ QHash<int, QByteArray> LibraryModel::roleNames() const {
         roles[IdRole] = "libraryId";
         roles[NameRole] = "libraryName";
         roles[RootRole] = "libraryRoot";
+        roles[ObjectRole] = "libraryObject";
         return roles;
 }
 QVariant LibraryModel::data(const QModelIndex &index, int role) const {
@@ -56,15 +57,18 @@ QVariant LibraryModel::data(const QModelIndex &index, int role) const {
             return library->id();
         else if (role == RootRole)
             return library->root();
+        else if (role == ObjectRole)
+            qDebug() << library->name();
+        return library;
     }
     return QVariant();
 }
 void LibraryModel::fetchData() {
     m_api -> getLibraries();
 }
-Library* LibraryModel::get(int index) {
-    if (index < 0 || index > m_libraries.count()) {
+//Library* LibraryModel::get(int index) const {
+//    if (index < 0 || index > m_libraries.count()) {
 
-    }
-    return m_libraries.at(index);
-}
+//    }
+//    return m_libraries.at(index);
+//}

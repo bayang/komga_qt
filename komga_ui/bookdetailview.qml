@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.11
 import komga_api 1.0
+import assets 1.0
 
 Item {
     width: parent.width
@@ -14,12 +15,17 @@ Item {
                     contentFrame.pop()
                 }
             }
-            text: "Back"
+            font {
+                family: Style.fontAwesome
+                pixelSize: Style.backArrowIconSize
+            }
+            text: "\uf060"
         }
         Row {
             width: parent.width
-            height: 400
+            height: 330
             spacing: 10
+            bottomPadding: 0
             Image {
                 id: bookDetailImage
                 source: "image://books/" + controller.ui_currentBook.ui_bookId
@@ -47,10 +53,7 @@ Item {
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     width: parent.width
                 }
-
-
             }
-
         }
         RowLayout {
             Layout.alignment: Qt.AlignHCenter

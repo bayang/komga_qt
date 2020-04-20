@@ -8,12 +8,14 @@ BookModel::BookModel(QObject *parent, Komga_api* api) :
             this, &BookModel::apiDataReceived);
 }
 int BookModel::rowCount(const QModelIndex &parent) const {
+    Q_ASSERT(checkIndex(parent));
     if (parent.isValid()) {
         return 0;
     }
     return m_books.count();
 }
 QVariant BookModel::data(const QModelIndex &index, int role) const {
+    Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid));
     if (! index.isValid()) {
         qDebug() << "invalid indx " << index.row();
         return QVariant();
@@ -40,6 +42,8 @@ QVariant BookModel::data(const QModelIndex &index, int role) const {
         return book->mediaStatus();
     else if (role == MediaTypeRole)
         return book->mediaTypeShort();
+    else if (role == MediaTypeFullRole)
+        return book->mediaType();
     else if (role == PageCountRole)
         return book->pagesCount();
     else if (role == SummaryRole)
@@ -52,6 +56,8 @@ QVariant BookModel::data(const QModelIndex &index, int role) const {
         return book->bookMetadata()->authors().join(",");
     else if (role == AgeRatingRole)
         return book->bookMetadata()->ageRating();
+    else if (role == TitleRole)
+        return book->bookMetadata()->title();
     return QVariant();
 }
 QHash<int, QByteArray> BookModel::roleNames() const {
@@ -71,6 +77,8 @@ QHash<int, QByteArray> BookModel::roleNames() const {
         roles[ReleaseDateRole] = "bookReleaseDate";
         roles[AuthorsRole] = "bookAuthors";
         roles[AgeRatingRole] = "bookAgeRating";
+        roles[TitleRole] = "bookTitle";
+        roles[MediaTypeFullRole] = "bookMediaTypeFull";
         return roles;
 }
 void BookModel::loadBooks(Series* series) {
@@ -82,7 +90,6 @@ void BookModel::apiDataReceived(QJsonObject books) {
     int nbElems = books["numberOfElements"].toInt();
     qDebug() << "page : " << pageNum;
     qDebug() << "page number : " << totPages;
-//    beginResetModel();
     if (nbElems > 0) {
         if (pageNum > 0) {
             emit beginInsertRows(QModelIndex(), m_books.size(), m_books.size() + nbElems - 1);
@@ -121,11 +128,8 @@ void BookModel::apiDataReceived(QJsonObject books) {
             emit endInsertRows();
         }
         else {
-            emit layoutAboutToBeChanged();
-            qDeleteAll(m_books);
-            m_books.clear();
-            m_books = QList<Book*>{};
-//            QList<Book*> booksList{};
+//            m_books = QList<Book*>{};
+            QList<Book*> booksList{};
             QJsonArray content = books["content"].toArray();
             foreach (const QJsonValue &value, content) {
                 Book* b = new Book(this);
@@ -156,10 +160,15 @@ void BookModel::apiDataReceived(QJsonObject books) {
                 }
                 meta->setAuthors(aut);
                 b->setBookMetadata(meta);
-                m_books.append(std::move(b));
+                booksList.append(std::move(b));
             }
-//            m_books = booksList;
-        //    endResetModel();
+            emit beginResetModel();
+            qDeleteAll(m_books);
+            m_books.clear();
+            emit endResetModel();
+
+            emit layoutAboutToBeChanged();
+            m_books = booksList;
             changePersistentIndex(index(0), QModelIndex());
             emit layoutChanged();
         }
@@ -167,9 +176,9 @@ void BookModel::apiDataReceived(QJsonObject books) {
         m_totalPageNumber = totPages;
     }
 }
-Book* BookModel::get(int index) {
-    return m_books.at(index);
-}
+//Book* BookModel::get(int index) {
+//    return m_books.at(index);
+//}
 QByteArray BookModel::getThumbnail(int id) {
     QByteArray a = m_api->getThumbnail(id, Komga_api::ThumbnailType::BookThumbnail);
     return a;

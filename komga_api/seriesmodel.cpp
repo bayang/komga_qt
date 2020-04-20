@@ -8,12 +8,14 @@ SeriesModel::SeriesModel(QObject *parent, Komga_api* api) :
             this, &SeriesModel::apiDataReceived);
 }
 int SeriesModel::rowCount(const QModelIndex &parent) const {
+    Q_ASSERT(checkIndex(parent));
     if (parent.isValid()) {
         return 0;
     }
     return m_series.count();
 }
 QVariant SeriesModel::data(const QModelIndex &index, int role) const {
+    Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid));
     if (! index.isValid()) {
         qDebug() << "invalid indx " << index.row();
         return QVariant();
@@ -33,6 +35,8 @@ QVariant SeriesModel::data(const QModelIndex &index, int role) const {
             return series->booksCount();
         else if (role == UrlRole)
             return series->url();
+        else if (role == MetadataStatusRole)
+            return series->metadataStatus();
     }
     return QVariant();
 }
@@ -43,10 +47,11 @@ QHash<int, QByteArray> SeriesModel::roleNames() const {
         roles[LibraryIdRole] = "seriesLibraryId";
         roles[BookCountRole] = "seriesBookCount";
         roles[UrlRole] = "seriesUrl";
+        roles[MetadataStatusRole] = "seriesMetadataStatus";
         return roles;
 }
-void SeriesModel::loadSeries(Library* library) {
-    m_api->getSeries(library->id());
+void SeriesModel::loadSeries(int library) {
+        m_api->getSeries(library);
 }
 
 void SeriesModel::apiDataReceived(QJsonObject page) {
@@ -79,11 +84,7 @@ void SeriesModel::apiDataReceived(QJsonObject page) {
             emit endInsertRows();
         }
         else {
-    //        emit beginResetModel();
-            emit layoutAboutToBeChanged();
-            qDeleteAll(m_series);
-            m_series.clear();
-    //        QList<Series*> series{};
+            QList<Series*> series{};
             QJsonArray content = page["content"].toArray();
             foreach (const QJsonValue &value, content) {
                 Series* s = new Series(this);
@@ -100,10 +101,15 @@ void SeriesModel::apiDataReceived(QJsonObject page) {
                 QJsonObject metadata = jsob["metadata"].toObject();
                 s->setMetadataTitle(metadata["title"].toString());
                 s->setMetadataStatus(metadata["status"].toString());
-                m_series.append(std::move(s));
+                series.append(std::move(s));
             }
-    //        m_series = series;
-    //        emit endResetModel();
+
+            emit beginResetModel();
+            qDeleteAll(m_series);
+            m_series.clear();
+            emit endResetModel();
+            emit layoutAboutToBeChanged();
+            m_series = series;
             changePersistentIndex(index(0), QModelIndex());
             emit layoutChanged();
         }
@@ -111,17 +117,17 @@ void SeriesModel::apiDataReceived(QJsonObject page) {
         m_totalPageNumber = totPages;
     }
 }
-Series* SeriesModel::get(int index) {
-    return m_series.at(index);
-}
+//Series* SeriesModel::get(int index) {
+//    return m_series.at(index);
+//}
 QByteArray SeriesModel::getThumbnail(int id) {
     QByteArray a = m_api->getThumbnail(id, Komga_api::ThumbnailType::SeriesThumbnail);
     return a;
 }
-void SeriesModel::nextSeriesPage(Library *library) {
+void SeriesModel::nextSeriesPage(int libraryId) {
     qDebug() << "curr p :" << m_currentPageNumber << " total p : " << m_totalPageNumber;
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
-        m_api->getSeries(library->id(), m_currentPageNumber + 1);
+        m_api->getSeries(libraryId, m_currentPageNumber + 1);
     }
 }
 Series* SeriesModel::find(int libraryId) {
