@@ -13,16 +13,19 @@
 #include "seriesthumbnailprovider.h"
 #include "bookthumbnailprovider.h"
 #include "bookpageprovider.h"
+#include "networkinformer.h"
 #include <QQuickStyle>
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
 
     QGuiApplication app(argc, argv);
     QGuiApplication::setWindowIcon(QIcon(":/favicon.ico"));
-    QQuickStyle::setStyle("Material");
+    QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
+//    QQuickStyle::setStyle(QStringLiteral("Material"));
+    QQuickStyle::setFallbackStyle(QStringLiteral("Material"));
     app.setOrganizationName("bayang");
     app.setOrganizationDomain("bayang.github.com");
     app.setApplicationName("Komga-ui");
@@ -31,10 +34,8 @@ int main(int argc, char *argv[])
     LibraryModel *lm = new LibraryModel(&app, api);
     SeriesModel *seriesmodel = new SeriesModel(&app, api);
     BookModel *bookModel = new BookModel(&app, api);
-    SeriesFilterSortProxyModel * proxyModel = new SeriesFilterSortProxyModel(&app);
-    proxyModel->setSourceModel(seriesmodel);
-    proxyModel->setParentModel(seriesmodel);
-    MasterController* controller = new MasterController{seriesmodel, bookModel, proxyModel, &app};
+    NetworkInformer *informer = new NetworkInformer(&app, api);
+    MasterController* controller = new MasterController{seriesmodel, bookModel, informer, &app};
     controller->setLibraryModel(lm);
 
     qmlRegisterType<Library>("komga_api", 1, 0,

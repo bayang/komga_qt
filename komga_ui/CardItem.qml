@@ -15,6 +15,7 @@ Item {
     property alias subLabel: subText.text
     property alias topCornerLabel: nbBooksLabel.text
     property color hoverBorderColor: "lightsteelblue"
+    property alias topCornerLabelFontSize: nbBooksLabel.font.pointSize
 
     signal cardClicked
 
@@ -120,7 +121,7 @@ Item {
         Label {
             id: nbBooksLabel
             anchors.centerIn: parent
-            font.pixelSize: 16
+//            font.pointSize: 16
             font.bold: true
         }
     }

@@ -1,7 +1,7 @@
 #include "mastercontroller.h"
 
-MasterController::MasterController(SeriesModel* seriesModel, BookModel* bookModel, SeriesFilterSortProxyModel *proxyModel, QObject *parent) :
-    m_seriesModel{seriesModel}, m_bookModel{bookModel}, m_proxyModel{proxyModel}, QObject{parent},
+MasterController::MasterController(SeriesModel* seriesModel, BookModel* bookModel, NetworkInformer *informer, QObject *parent) :
+    m_seriesModel{seriesModel}, m_bookModel{bookModel}, m_networkInformer{informer}, QObject{parent},
     defaultLibrary{new Library(this)}, currentSeries{new Series(this)}, currentBook{new Book(this)}
 {
     defaultLibrary->setId(MasterController::DEFAULT_LIBRARY_ID);
@@ -24,16 +24,6 @@ void MasterController::setSelectedBook(int selectedBook) {
     if (selectedBook >= 0 && selectedBook < getBookModel()->rowCount(QModelIndex())) {
         setSelectedBookIdx(selectedBook);
     }
-}
-
-SeriesFilterSortProxyModel *MasterController::getProxyModel() const
-{
-    return m_proxyModel;
-}
-
-void MasterController::setProxyModel(SeriesFilterSortProxyModel *proxyModel)
-{
-    m_proxyModel = proxyModel;
 }
 
 BookModel *MasterController::getBookModel() const
@@ -95,7 +85,7 @@ void MasterController::nextSeriesPage() {
         m_seriesModel->nextSeriesPage(MasterController::DEFAULT_LIBRARY_ID);
     }
     else {
-        m_seriesModel->nextSeriesPage(getCurrentSeries()->id());
+        m_seriesModel->nextSeriesPage(getLibraryModel()->data(getLibraryModel()->index(getSelectedLibraryIdx(), 0), LibraryModel::LibraryRoles::IdRole).toInt());
     }
 }
 void MasterController::nextBooksPage() {
@@ -114,6 +104,10 @@ int MasterController::getSelectedBookIdx() const
 void MasterController::setSelectedBookIdx(int value)
 {
     qDebug() << "setSelectedBook " << value;
+    if (value < 0) {
+        selectedBookIdx = value;
+        return;
+    }
     if (value != selectedBookIdx) {
         selectedBookIdx = value;
         setCurrentImageNumber(0);
@@ -146,6 +140,8 @@ void MasterController::setSelectedLibraryIdx(int value)
     qDebug() << "setCurrentLibraryIdx " << value;
     if (value != selectedLibraryIdx) {
         selectedLibraryIdx = value;
+        setSelectedSeriesIdx(-1);
+        setSelectedBookIdx(-1);
         if (value == MasterController::DEFAULT_LIBRARY_ID) {
             emit currentLibraryChanged(MasterController::DEFAULT_LIBRARY_ID);
             emit currentLibraryNameChanged(getDefaultLibrary()->name());
@@ -165,6 +161,10 @@ int MasterController::getSelectedSeriesIdx() const
 void MasterController::setSelectedSeriesIdx(int value)
 {
     qDebug() << "setCurrentSeries " << value;
+    if (value < 0) {
+        selectedSeriesIdx = value;
+        return;
+    }
     if (value != selectedSeriesIdx) {
         selectedSeriesIdx = value;
         currentSeries->setId(getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::IdRole).toInt());
@@ -183,7 +183,15 @@ int MasterController::getCurrentImageNumber() const
 void MasterController::setCurrentImageNumber(int currentImageNumber)
 {
     if (currentImageNumber != m_currentImageNumber) {
-        if (currentImageNumber >= 0 && currentImageNumber < getCurrentBook()->pagesCount()) {
+        if (currentImageNumber < 0) {
+            emit firstBookPageReached();
+            return;
+        }
+        else if (currentImageNumber >= getCurrentBook()->pagesCount()) {
+            emit lastBookPageReached();
+            return;
+        }
+        else {
             qDebug() << "current image nb changed in controller " << currentImageNumber ;
             m_currentImageNumber = currentImageNumber;
             emit currentImageNumberChanged(currentImageNumber);
@@ -195,4 +203,14 @@ QString MasterController::getCurrentLibraryName() const {
         return getDefaultLibrary()->name();
     }
     return getLibraryModel()->data(getLibraryModel()->index(getSelectedLibraryIdx(), 0), LibraryModel::LibraryRoles::NameRole).toString();
+}
+
+NetworkInformer *MasterController::getNetworkInformer() const
+{
+    return m_networkInformer;
+}
+
+void MasterController::setNetworkInformer(NetworkInformer *networkInformer)
+{
+    m_networkInformer = networkInformer;
 }

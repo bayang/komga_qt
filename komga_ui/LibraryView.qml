@@ -30,6 +30,7 @@ Pane {
 
         ScrollView {
             width: parent.width
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             ListView {
                 id: librariesList
                 model: controller.ui_libraryModel

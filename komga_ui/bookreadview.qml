@@ -5,11 +5,23 @@ import komga_api 1.0
 Item {
 
     id: readContainer
-    width: parent.width
-    height: parent.height
     property real imgScale: 0
     property real lastSpacePressedTime: 0
-    property bool infoVisibility: true
+//    property bool infoVisibility: true
+
+    Connections {
+        target: controller
+        onFirstBookPageReached: {
+            firstPageLabel.text = "First page"
+            firstPageLabel.visible = true
+            firstPageTimer.restart()
+        }
+        onLastBookPageReached: {
+            firstPageLabel.text = "Last page"
+            firstPageLabel.visible = true
+            firstPageTimer.restart()
+        }
+    }
 
     Flickable {
         id: flickArea
@@ -93,6 +105,122 @@ Item {
         anchors.centerIn: parent
     }
 
+    function scaleUp() {
+        if (imgScale < 4) {
+            imgScale += 0.1
+        }
+    }
+    function scaleDown() {
+        if (imgScale >= 0.2) {
+            imgScale -= 0.1
+        }
+    }
+
+
+    Item {
+        id: pageNumberWrapper
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: 20
+//        visible: infoVisibility
+
+        YAnimator {
+            id: pageNumberWrapperAnimator
+               target: pageNumberWrapper;
+               from: readContainer.height - 50;
+               to: readContainer.height + pageNumberWrapper.height + 100;
+               duration: 1000
+               easing.type: Easing.Linear
+           }
+        Rectangle {
+            opacity: 0.6
+            width: pageNumberLabel.width + 5
+            color: "gray"
+            height: pageNumberLabel.height + 5
+            anchors.centerIn: parent
+        }
+
+        Label {
+            id: pageNumberLabel
+            anchors.centerIn: parent
+            text: (controller.ui_currPageNumber + 1).toString() + "/" + controller.ui_currentBook.ui_bookPagesCount
+        }
+    }
+
+
+    Timer {
+        id : visibilityTimer
+        interval: 750
+        repeat: false
+        onTriggered: {
+            pageNumberWrapperAnimator.start()
+            backButtonWrapperAnimator.start()
+        }
+    }
+
+    Timer {
+        id : firstPageTimer
+        interval: 750
+        repeat: false
+        onTriggered: {
+            firstPageLabel.visible = false
+        }
+    }
+
+    Label {
+        id: firstPageLabel
+        anchors.centerIn: parent
+        color: "white"
+        font {
+            pointSize: 30
+        }
+        visible: false
+    }
+    MouseArea {
+        id: bookPageMouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        onPositionChanged: {
+            pageNumberWrapper.y  = readContainer.height - 50
+            backButtonWrapper.x = 20
+            visibilityTimer.restart()
+        }
+    }
+
+    Item {
+        id: backButtonWrapper
+        width: backButtonBackground.width
+        height: backButtonBackground.height
+        anchors.left: width
+        anchors.top: parent.top
+
+        XAnimator {
+            id: backButtonWrapperAnimator
+               target: backButtonWrapper;
+               from: backButtonWrapper.width;
+               to: - 100;
+               duration: 1000
+               easing.type: Easing.Linear
+           }
+        Rectangle {
+            id: backButtonBackground
+            opacity: 0.6
+            width: backButton.width + 5
+            color: "gray"
+            height: backButton.height + 5
+            anchors.centerIn: parent
+        }
+
+        Button {
+            id: backButton
+            anchors.centerIn: parent
+            text: "BACK"
+            onClicked: {
+                if (contentFrame.depth > 0) {
+                    contentFrame.pop()
+                }
+            }
+        }
+    }
     Keys.onSpacePressed: {
         flickArea.contentY += bookReadPage.paintedHeight / 4
         flickArea.returnToBounds()
@@ -136,68 +264,19 @@ Item {
             event.accepted = true
         }
         else if (event.key === Qt.Key_PageDown) {
+            console.log("down")
             controller.ui_currPageNumber += 1
             event.accepted = true
         }
-    }
-
-    function scaleUp() {
-        if (imgScale < 4) {
-            imgScale += 0.1
+        else if (event.key === Qt.Key_End) {
+            console.log("end")
+            controller.ui_currPageNumber = controller.ui_currentBook.ui_bookPagesCount - 1
+            event.accepted = true
         }
-    }
-    function scaleDown() {
-        if (imgScale >= 0.2) {
-            imgScale -= 0.1
-        }
-    }
-
-
-    Item {
-        id: pageNumberWrapper
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: 20
-        visible: infoVisibility
-
-        YAnimator {
-            id: pageNumberWrapperAnimator
-               target: pageNumberWrapper;
-               from: readContainer.height - 50;
-               to: readContainer.height + pageNumberWrapper.height + 100;
-               duration: 1000
-               easing.type: Easing.Linear
-           }
-        Rectangle {
-            opacity: 0.6
-            width: pageNumberLabel.width + 5
-            color: "gray"
-            height: pageNumberLabel.height + 5
-            anchors.centerIn: parent
-        }
-
-        Label {
-            id: pageNumberLabel
-            anchors.centerIn: parent
-            text: (controller.ui_currPageNumber + 1).toString() + "/" + controller.ui_currentBook.ui_bookPagesCount
-        }
-    }
-
-    Timer {
-        id : visibilityTimer
-        interval: 750
-        repeat: false
-        onTriggered: {
-            pageNumberWrapperAnimator.start()
-        }
-    }
-
-    MouseArea {
-        id: bookPageMouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        onPositionChanged: {
-            pageNumberWrapper.y  = readContainer.height - 50
-            visibilityTimer.restart()
+        else if (event.key === Qt.Key_Home) {
+            console.log("begin")
+            controller.ui_currPageNumber = 0
+            event.accepted = true
         }
     }
 }

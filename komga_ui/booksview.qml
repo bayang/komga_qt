@@ -4,6 +4,8 @@ import komga_api 1.0
 import assets 1.0
 
 Item {
+    property real lastNextPageCalledTime: 0
+
     Column {
         anchors.fill: parent
 
@@ -16,7 +18,7 @@ Item {
             }
             font {
                 family: Style.fontAwesome
-                pixelSize: Style.backArrowIconSize
+                pointSize: Style.backArrowIconSize
             }
             text: "\uf060"
         }
@@ -45,38 +47,39 @@ Item {
             }
         }
 
-        ScrollView {
-            width: parent.width
+        GridView {
+            id: booksList
             height: parent.height - firstRow.height - booksViewBackButton.height
+            model: controller.ui_bookModel
             clip: true
-            bottomPadding: 5
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            GridView {
-                id: booksList
-                height: parent.height
-                model: controller.ui_bookModel
-                clip: true
-                cellWidth : Style.thumbnailRequestedWidth + 5
-                cellHeight: Style.thumbnailRequestedHeight + 85
-                onMovementEnded: {
-                    if (atYEnd) {
+            cellWidth : Style.thumbnailRequestedWidth + 5
+            cellHeight: Style.thumbnailRequestedHeight + 85
+            width: parent.width
+            cacheBuffer: 0
+            bottomMargin: 20
+            onMovementEnded: {
+                if (atYEnd) {
+                    var curTime = new Date().getTime();
+                    if (curTime - lastNextPageCalledTime > 500) {
                         controller.nextBooksPage()
                     }
+                    lastNextPageCalledTime = curTime
                 }
-                delegate:
-                    CardItem {
-                    cardWidth: Style.thumbnailRequestedWidth
-                    cardHeight: booksList.cellHeight
-                    thumbnailHeight: Style.thumbnailRequestedHeight
-                    imagePath: "image://books/" + bookId
-                    cardLabel: bookName
-                    subLabel: bookPageCount + " pages"
-                    topCornerLabel: bookMediaType
-                    onCardClicked: {
-                        booksList.currentIndex = index
-                        controller.setSelectedBook(booksList.currentIndex)
-                        controller.goBookDetailView()
-                    }
+            }
+            delegate:
+                CardItem {
+                cardWidth: Style.thumbnailRequestedWidth
+                cardHeight: booksList.cellHeight
+                thumbnailHeight: Style.thumbnailRequestedHeight
+                imagePath: "image://books/" + bookId
+                cardLabel: bookName
+                subLabel: bookPageCount + " pages\nsize: " + bookSize
+                topCornerLabel: bookMediaType
+                topCornerLabelFontSize: 11
+                onCardClicked: {
+                    booksList.currentIndex = index
+                    controller.setSelectedBook(booksList.currentIndex)
+                    controller.goBookDetailView()
                 }
             }
         }

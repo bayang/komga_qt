@@ -5,7 +5,7 @@ import komga_api 1.0
 import assets 1.0
 
 Item {
-    width: parent.width
+    property bool imageCurrentlyHovered: false
 
     Column {
         width: parent.width
@@ -17,7 +17,7 @@ Item {
             }
             font {
                 family: Style.fontAwesome
-                pixelSize: Style.backArrowIconSize
+                pointSize: Style.backArrowIconSize
             }
             text: "\uf060"
         }
@@ -26,13 +26,42 @@ Item {
             height: 330
             spacing: 10
             bottomPadding: 0
-            Image {
-                id: bookDetailImage
-                source: "image://books/" + controller.ui_currentBook.ui_bookId
-                sourceSize.height: 300
-                sourceSize.width: -1
-                fillMode: Image.PreserveAspectCrop
+            Item {
+                Image {
+                    id: bookDetailImage
+                    source: "image://books/" + controller.ui_currentBook.ui_bookId
+                    sourceSize.height: 300
+                    sourceSize.width: -1
+                    fillMode: Image.PreserveAspectCrop
+                }
+                Label {
+                    font {
+                        family: Style.fontAwesomeSolid
+                        pointSize: 50
+                    }
+                    anchors.centerIn: bookDetailImage
+                    text: "\uf518"
+                    visible: imageCurrentlyHovered
+                }
+
+                MouseArea {
+                    id : bookDetailImageMouseArea
+                    width: bookDetailImage.width
+                    height: bookDetailImage.height
+                    hoverEnabled: true
+                    onClicked: {
+                        controller.goBookReadView()
+                    }
+                    onEntered: {
+                        cursorShape = Qt.PointingHandCursor
+                        imageCurrentlyHovered = true
+                    }
+                    onExited: {
+                        imageCurrentlyHovered = false
+                    }
+                }
             }
+
             Column {
                 width: parent.width - bookDetailImage.width
                 Label {
@@ -43,10 +72,10 @@ Item {
                     text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataAuthors)
                 }
                 Label {
-                    text: "# " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber)
+                    text: controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber ? "# " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber) : ""
                 }
                 Label {
-                    text: "PUBLISHER : " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher)
+                    text: controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher ? "PUBLISHER : " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher) : ""
                 }
                 Label {
                     text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataSummary)
@@ -73,6 +102,9 @@ Item {
         }
         Label {
             text: "FORMAT : " + qsTr(controller.ui_currentBook.ui_bookShortMediaType)
+        }
+        Label {
+            text: "FILE : " + qsTr(controller.ui_currentBook.ui_bookUrl)
         }
 
     }

@@ -21,12 +21,17 @@ public:
     void getLibraries();
     void getSeries(int libraryId, int page = 0);
     void getBooks(int seriesId, int page = 0);
-    static const QString BASE_URL;
+//    static const QString BASE_URL;
     static const QString URL_LIBRARIES;
     static const QString URL_SERIES;
     static const QString URL_BOOKS;
     static const QString URL_THUMBNAILS;
     static const QString URL_PAGE;
+    static const QString SETTINGS_SECTION_SERVER;
+    static const QString SETTINGS_KEY_SERVER_URL;
+    static const QString SETTINGS_KEY_SERVER_USER;
+    static const QString SETTINGS_KEY_SERVER_PASSWORD;
+
     enum RequestReason {
         Libraries = QNetworkRequest::Attribute::User + 1,
         SeriesReason = QNetworkRequest::Attribute::User + 2,
@@ -38,6 +43,7 @@ public:
     };
     QByteArray getThumbnail(int id, ThumbnailType type);
     QByteArray getPage(int id, int pageNum);
+    QString getServerUrl();
 
 
 private:
@@ -51,6 +57,8 @@ signals:
     void libraryDataReady(QJsonDocument libraries);
     void seriesDataReady(QJsonObject series);
     void booksDataReady(QJsonObject books);
+    void netWorkAccessibleChanged(bool accessible);
+    void networkErrorHappened(QString message);
 };
 
 #endif // KOMGA_API_H

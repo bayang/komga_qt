@@ -10,7 +10,7 @@ Item {
     property real textLinkHeight: 40
     property alias textLinkLabel: innerLabel.text
     property alias textLinkLabelBold: innerLabel.font.bold
-    property alias textLinkLabelSize: innerLabel.font.pixelSize
+    property alias textLinkLabelSize: innerLabel.font.pointSize
 
     height: textLinkHeight
     width: parent.width

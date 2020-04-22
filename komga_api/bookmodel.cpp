@@ -83,6 +83,7 @@ QHash<int, QByteArray> BookModel::roleNames() const {
 }
 void BookModel::loadBooks(Series* series) {
     m_api->getBooks(series->id());
+    resetBooks();
 }
 void BookModel::apiDataReceived(QJsonObject books) {
     int pageNum = books["number"].toInt();
@@ -162,23 +163,24 @@ void BookModel::apiDataReceived(QJsonObject books) {
                 b->setBookMetadata(meta);
                 booksList.append(std::move(b));
             }
-            emit beginResetModel();
-            qDeleteAll(m_books);
-            m_books.clear();
-            emit endResetModel();
+//            emit beginResetModel();
+//            qDeleteAll(m_books);
+//            m_books.clear();
 
             emit layoutAboutToBeChanged();
+//            emit beginInsertRows(QModelIndex(), 0, booksList.size() - 1);
             m_books = booksList;
             changePersistentIndex(index(0), QModelIndex());
             emit layoutChanged();
+//            emit endInsertRows();
+//            emit endResetModel();
+//            emit refresh();
+
         }
         m_currentPageNumber = pageNum;
         m_totalPageNumber = totPages;
     }
 }
-//Book* BookModel::get(int index) {
-//    return m_books.at(index);
-//}
 QByteArray BookModel::getThumbnail(int id) {
     QByteArray a = m_api->getThumbnail(id, Komga_api::ThumbnailType::BookThumbnail);
     return a;
@@ -192,4 +194,11 @@ void BookModel::nextBooksPage(Series *series) {
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
         m_api->getBooks(series->id(), m_currentPageNumber + 1);
     }
+}
+void BookModel::resetBooks() {
+    qDebug() << "reset books";
+    emit beginResetModel();
+    qDeleteAll(m_books);
+    m_books.clear();
+    emit endResetModel();
 }

@@ -29,7 +29,7 @@ Item {
             }
             font {
                 family: Style.fontAwesome
-                pixelSize: Style.backArrowIconSize
+                pointSize: Style.backArrowIconSize
             }
 
             text: "\uf060"

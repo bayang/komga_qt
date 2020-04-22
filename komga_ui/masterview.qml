@@ -55,6 +55,15 @@ ApplicationWindow {
         onGoBookReadView: contentFrame.push("qrc:/bookreadview.qml")
     }
 
+    Connections {
+        target: controller.ui_networkInformer
+        onErrorMessageChanged: {
+            console.log("error" + errorMessage)
+            errorMessageLabel.visible = true
+            errorVisibilityTimer.restart()
+        }
+    }
+
     LibraryView {
         id: navColumn
         anchors.top: parent.top
@@ -71,5 +80,29 @@ ApplicationWindow {
        anchors.bottom: parent.bottom
        clip: true
        initialItem: "qrc:/seriesview.qml"
+       focus: true
+   }
+
+   Label {
+       text: "ERROR network is down"
+       visible: ! controller.ui_networkInformer.ui_networkAccessible
+   }
+
+   Label {
+       id: errorMessageLabel
+       text: controller.ui_networkInformer.ui_networkError
+       visible: false
+       x: window.width / 2
+       y: window.height - 100
+   }
+
+
+   Timer {
+       id : errorVisibilityTimer
+       interval: 2000
+       repeat: false
+       onTriggered: {
+           errorMessageLabel.visible = false
+       }
    }
 }

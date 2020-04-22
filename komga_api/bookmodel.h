@@ -44,6 +44,10 @@ public:
     QByteArray getThumbnail(int id);
     QByteArray getPage(int id, int pageNum);
     void nextBooksPage(Series *series);
+    void resetBooks();
+
+signals:
+    void refresh();
 
 private:
     Komga_api* m_api = nullptr;

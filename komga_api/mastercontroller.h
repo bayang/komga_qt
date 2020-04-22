@@ -12,6 +12,7 @@
 #include "bookmodel.h"
 #include "librarymodel.h"
 #include "seriesmodel.h"
+#include "networkinformer.h"
 
 class KOMGA_API_EXPORT MasterController : public QObject
 {
@@ -20,15 +21,15 @@ class KOMGA_API_EXPORT MasterController : public QObject
     Q_PROPERTY( Library* ui_defautLibrary READ getDefaultLibrary WRITE setDefaultLibrary NOTIFY defaultLibraryChanged )
     Q_PROPERTY( Series* ui_currentSeries READ getCurrentSeries NOTIFY currentSeriesChanged )
     Q_PROPERTY( SeriesModel* ui_seriesModel READ getSeriesModel CONSTANT )
-    Q_PROPERTY( QSortFilterProxyModel* ui_seriesProxyModel READ getProxyModel CONSTANT )
     Q_PROPERTY( BookModel* ui_bookModel READ getBookModel CONSTANT )
     Q_PROPERTY( LibraryModel* ui_libraryModel READ getLibraryModel CONSTANT )
     Q_PROPERTY( int ui_defaultLibraryId MEMBER DEFAULT_LIBRARY_ID CONSTANT )
     Q_PROPERTY( int ui_currPageNumber READ getCurrentImageNumber WRITE setCurrentImageNumber NOTIFY currentImageNumberChanged )
     Q_PROPERTY( QString ui_currentLibraryName READ getCurrentLibraryName NOTIFY currentLibraryNameChanged )
+    Q_PROPERTY( NetworkInformer* ui_networkInformer READ getNetworkInformer CONSTANT )
 
 public:
-    explicit MasterController(SeriesModel *seriesModel, BookModel *bookModel, SeriesFilterSortProxyModel *proxyModel, QObject *parent = nullptr);
+    explicit MasterController(SeriesModel *seriesModel, BookModel *bookModel, NetworkInformer *informer, QObject *parent = nullptr);
 
     static const int DEFAULT_LIBRARY_ID{-100};
 
@@ -64,6 +65,9 @@ public:
     int getSelectedBookIdx() const;
     void setSelectedBookIdx(int value);
 
+    NetworkInformer *getNetworkInformer() const;
+    void setNetworkInformer(NetworkInformer *networkInformer);
+
 signals:
     void goSeriesView();
     void goBooksView();
@@ -72,10 +76,11 @@ signals:
     void currentBookChanged(Book* book);
     void currentLibraryChanged(int id);
     void currentLibraryNameChanged(QString name);
-//    void currentSeriesNameChanged(QString name);
     void defaultLibraryChanged();
     void currentSeriesChanged(Series *series);
     void currentImageNumberChanged(int newValue);
+    void firstBookPageReached();
+    void lastBookPageReached();
 
 public slots:
     void nextSeriesPage();
@@ -85,7 +90,6 @@ public slots:
     void setSelectedBook(int selectedBook);
     void refreshData();
     QString getCurrentLibraryName() const;
-//    QString getCurrentSeriesName() const;
 
 private:
     Library* defaultLibrary{nullptr};
@@ -93,12 +97,12 @@ private:
     Book* currentBook{nullptr};
     LibraryModel* m_libraryModel{nullptr};
     SeriesModel* m_seriesModel{nullptr};
-    SeriesFilterSortProxyModel* m_proxyModel{nullptr};
     BookModel* m_bookModel{nullptr};
     int m_currentImageNumber{0};
-    int selectedSeriesIdx{0};
+    int selectedSeriesIdx{-1};
     int selectedLibraryIdx{MasterController::DEFAULT_LIBRARY_ID};
-    int selectedBookIdx{0};
+    int selectedBookIdx{-1};
+    NetworkInformer* m_networkInformer{nullptr};
 
 };
 

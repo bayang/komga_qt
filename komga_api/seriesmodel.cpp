@@ -52,6 +52,14 @@ QHash<int, QByteArray> SeriesModel::roleNames() const {
 }
 void SeriesModel::loadSeries(int library) {
         m_api->getSeries(library);
+        resetSeries();
+}
+void SeriesModel::resetSeries() {
+    qDebug() << "reset series ";
+    emit beginResetModel();
+    qDeleteAll(m_series);
+    m_series.clear();
+    emit endResetModel();
 }
 
 void SeriesModel::apiDataReceived(QJsonObject page) {
@@ -104,22 +112,23 @@ void SeriesModel::apiDataReceived(QJsonObject page) {
                 series.append(std::move(s));
             }
 
-            emit beginResetModel();
-            qDeleteAll(m_series);
-            m_series.clear();
-            emit endResetModel();
             emit layoutAboutToBeChanged();
+//            emit beginResetModel();
+//            qDeleteAll(m_series);
+//            m_series.clear();
+//            emit beginInsertRows(QModelIndex(), 0, series.size() - 1);
             m_series = series;
+//            m_series.append(series);
             changePersistentIndex(index(0), QModelIndex());
             emit layoutChanged();
+//            emit refresh();
+//            emit endInsertRows();
+//            emit endResetModel();
         }
         m_currentPageNumber = pageNum;
         m_totalPageNumber = totPages;
     }
 }
-//Series* SeriesModel::get(int index) {
-//    return m_series.at(index);
-//}
 QByteArray SeriesModel::getThumbnail(int id) {
     QByteArray a = m_api->getThumbnail(id, Komga_api::ThumbnailType::SeriesThumbnail);
     return a;

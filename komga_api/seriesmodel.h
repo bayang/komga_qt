@@ -33,6 +33,11 @@ public:
     void nextSeriesPage(int libraryId);
     QByteArray getThumbnail(int id);
     Series* find(int libraryId);
+    void resetSeries();
+
+signals:
+    void refresh();
+
 private:
     Komga_api* m_api = nullptr;
     QList<Series*> m_series{};

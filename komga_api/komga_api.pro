@@ -25,6 +25,7 @@ SOURCES += \
     library.cpp \
     librarymodel.cpp \
     mastercontroller.cpp \
+    networkinformer.cpp \
     series.cpp \
     seriesfiltersortproxymodel.cpp \
     seriesmodel.cpp
@@ -38,6 +39,7 @@ HEADERS += \
     library.h \
     librarymodel.h \
     mastercontroller.h \
+    networkinformer.h \
     series.h \
     seriesfiltersortproxymodel.h \
     seriesmodel.h
