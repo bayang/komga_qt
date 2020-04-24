@@ -34,7 +34,10 @@ void Series::setLibraryId(int id) {
     m_libraryId = id;
 }
 void Series::setBooksCount(int count) {
-    m_booksCount = count;
+    if (count != m_booksCount) {
+        m_booksCount = count;
+        emit booksCountChanged();
+    }
 }
 
 QString Series::metadataStatus() const

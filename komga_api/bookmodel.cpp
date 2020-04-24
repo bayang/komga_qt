@@ -6,6 +6,8 @@ BookModel::BookModel(QObject *parent, Komga_api* api) :
 {
     connect(m_api, &Komga_api::booksDataReady,
             this, &BookModel::apiDataReceived);
+    connect(m_api, &Komga_api::preloadImageDataReady,
+            this, &BookModel::preloadImageDataReceived);
 }
 int BookModel::rowCount(const QModelIndex &parent) const {
     Q_ASSERT(checkIndex(parent));
@@ -197,8 +199,21 @@ void BookModel::nextBooksPage(Series *series) {
 }
 void BookModel::resetBooks() {
     qDebug() << "reset books";
-    emit beginResetModel();
+//    emit beginResetModel();
+    emit beginRemoveRows(QModelIndex(), 0, m_books.size() - 1);
     qDeleteAll(m_books);
     m_books.clear();
-    emit endResetModel();
+//    emit endResetModel();
+    emit endRemoveRows();
+}
+void BookModel::preloadPage(int id, int pageNum) {
+    m_api->getPageAsync(id, pageNum);
+}
+void BookModel::preloadImageDataReceived(QPair<QString, QByteArray> res) {
+    if (! res.second.isNull() && ! res.second.isEmpty()) {
+        m_picturesCache.insert(res.first, new QByteArray(res.second));
+    }
+}
+QByteArray* BookModel::getImageFromCache(const QString &key) {
+    return m_picturesCache[key];
 }

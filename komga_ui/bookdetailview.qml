@@ -7,7 +7,7 @@ import assets 1.0
 Item {
     property bool imageCurrentlyHovered: false
 
-    Column {
+    ColumnLayout {
         width: parent.width
         Button {
             onClicked: {
@@ -21,15 +21,18 @@ Item {
             }
             text: "\uf060"
         }
-        Row {
-            width: parent.width
-            height: 330
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.minimumHeight: 330
+            Layout.alignment: Qt.AlignTop
             spacing: 10
-            bottomPadding: 0
             Item {
+                id: imageBookWrapper
+                Layout.minimumWidth: bookDetailImage.width
+                Layout.alignment: Qt.AlignTop
                 Image {
                     id: bookDetailImage
-                    source: "image://books/" + controller.ui_currentBook.ui_bookId
+                    source: "image://async/book/" + controller.ui_currentBook.ui_bookId
                     sourceSize.height: 300
                     sourceSize.width: -1
                     fillMode: Image.PreserveAspectCrop
@@ -62,49 +65,60 @@ Item {
                 }
             }
 
-            Column {
-                width: parent.width - bookDetailImage.width
+            ColumnLayout {
+//                Layout.preferredWidth: parent.width - imageBookWrapper.width
+                Layout.alignment: Qt.AlignTop
                 Label {
                     id: curBookStatus
                     text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataTitle)
+                    font.pointSize: Style.mediumTextSize
                 }
                 Label {
                     text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataAuthors)
+                    font.pointSize: Style.smallMediumTextSize
                 }
                 Label {
                     text: controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber ? "# " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber) : ""
+                    font.pointSize: Style.smallMediumTextSize
                 }
                 Label {
                     text: controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher ? "PUBLISHER : " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher) : ""
+                    font.pointSize: Style.smallMediumTextSize
                 }
                 Label {
                     text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataSummary)
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    width: parent.width
+                    Layout.fillWidth: true
+                    font.pointSize: Style.smallMediumTextSize
                 }
             }
         }
         RowLayout {
-            Layout.alignment: Qt.AlignHCenter
+            Layout.alignment: Qt.AlignLeft
             Button {
-                text: "Read"
+                text: qsTr("Read")
                 onClicked: controller.goBookReadView()
+                font.pointSize: Style.smallTextSize
             }
 
             Label {
                 id : bookPagesCountLabel
                 text: qsTr(controller.ui_currentBook.ui_bookPagesCount.toString()) + " pages"
+                font.pointSize: Style.smallTextSize
             }
         }
 
         Label {
             text: "SIZE : " + qsTr(controller.ui_currentBook.ui_bookSize)
+            font.pointSize: Style.smallTextSize
         }
         Label {
             text: "FORMAT : " + qsTr(controller.ui_currentBook.ui_bookShortMediaType)
+            font.pointSize: Style.smallTextSize
         }
         Label {
             text: "FILE : " + qsTr(controller.ui_currentBook.ui_bookUrl)
+            font.pointSize: Style.smallTextSize
         }
 
     }

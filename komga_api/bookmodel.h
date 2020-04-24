@@ -3,6 +3,7 @@
 
 #include <QAbstractListModel>
 #include <QJsonObject>
+#include <QCache>
 #include "komga_api_global.h"
 #include "komga_api.h"
 
@@ -33,6 +34,7 @@ public:
     };
 public slots:
     void apiDataReceived(QJsonObject books);
+    void preloadImageDataReceived(QPair<QString, QByteArray> res);
 
     // QAbstractItemModel interface
 public:
@@ -45,6 +47,8 @@ public:
     QByteArray getPage(int id, int pageNum);
     void nextBooksPage(Series *series);
     void resetBooks();
+    void preloadPage(int id, int pageNum);
+    QByteArray* getImageFromCache(const QString &key);
 
 signals:
     void refresh();
@@ -54,6 +58,7 @@ private:
     QList<Book*> m_books{};
     int m_currentPageNumber{};
     int m_totalPageNumber{};
+    QCache<QString, QByteArray> m_picturesCache{50};
 };
 
 #endif // BOOKMODEL_H

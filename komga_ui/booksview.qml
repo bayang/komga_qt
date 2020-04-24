@@ -1,5 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.11
 import komga_api 1.0
 import assets 1.0
 
@@ -29,20 +30,36 @@ Item {
             bottomPadding: 0
             Image {
                 id: seriesDetailImage
-                source: "image://series/" + controller.ui_currentSeries.ui_seriesId
+                source: "image://async/series/" + controller.ui_currentSeries.ui_seriesId
                 sourceSize.height: 300
                 sourceSize.width: -1
                 fillMode: Image.PreserveAspectCrop
             }
             Column {
                 leftPadding: 20
-                Label {
-                    id: seriesText
-                    text: qsTr(controller.ui_currentSeries.ui_seriesName)
+
+                RowLayout {
+                    Label {
+                        id: seriesText
+                        text: qsTr(controller.ui_currentSeries.ui_seriesName)
+                        font.pointSize: Style.mediumTextSize
+                    }
+                    Label {
+                        id: countBadge
+                        text: controller.ui_currentSeries.ui_seriesBooksCount
+                        font.pointSize: Style.smallMediumTextSize
+                        padding: 4
+                        font.bold: true
+                        background: Rectangle {
+                            color: Style.hoverBorderColor
+                            radius: 4
+                        }
+                    }
                 }
                 Label {
                     id: seriesStatus
                     text: qsTr("STATUS : " + controller.ui_currentSeries.ui_seriesMetadataStatus)
+                    font.pointSize: Style.smallMediumTextSize
                 }
             }
         }
@@ -52,10 +69,11 @@ Item {
             height: parent.height - firstRow.height - booksViewBackButton.height
             model: controller.ui_bookModel
             clip: true
-            cellWidth : Style.thumbnailRequestedWidth + 5
+            cellWidth : Style.thumbnailRequestedWidth + 10
             cellHeight: Style.thumbnailRequestedHeight + 85
             width: parent.width
-            cacheBuffer: 0
+            cacheBuffer: cellHeight
+            ScrollBar.vertical: ScrollBar { }
             bottomMargin: 20
             onMovementEnded: {
                 if (atYEnd) {
@@ -71,7 +89,7 @@ Item {
                 cardWidth: Style.thumbnailRequestedWidth
                 cardHeight: booksList.cellHeight
                 thumbnailHeight: Style.thumbnailRequestedHeight
-                imagePath: "image://books/" + bookId
+                imagePath: "image://async/book/" + bookId
                 cardLabel: bookName
                 subLabel: bookPageCount + " pages\nsize: " + bookSize
                 topCornerLabel: bookMediaType

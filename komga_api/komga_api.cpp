@@ -9,6 +9,7 @@
 #include <QSettings>
 #include <QNetworkConfigurationManager>
 #include "mastercontroller.h"
+#include <QSignalMapper>
 
 const QString Komga_api::URL_LIBRARIES{"/libraries"};
 const QString Komga_api::URL_SERIES{"/series"};
@@ -26,13 +27,27 @@ Komga_api::Komga_api(QObject *parent):
     manager = new QNetworkAccessManager(this);
     QNetworkConfigurationManager confManager;
     manager->setConfiguration(confManager.defaultConfiguration());
+    m_mapper = new QSignalMapper(this);
     thumbnailsManager = new QNetworkAccessManager(this);
     connect(manager, &QNetworkAccessManager::finished,
             this, &Komga_api::apiReplyFinished);
     connect(manager, &QNetworkAccessManager::authenticationRequired,
             this, &Komga_api::authenticate);
-    connect(thumbnailsManager, &QNetworkAccessManager::authenticationRequired,
-            this, &Komga_api::authenticate);
+//    connect(thumbnailsManager, &QNetworkAccessManager::authenticationRequired,
+//            this, &Komga_api::authenticate);
+    connect(thumbnailsManager, &QNetworkAccessManager::authenticationRequired, [=](QNetworkReply *reply, QAuthenticator *authenticator){
+        Q_UNUSED(reply);
+        qDebug() << "authenticate thumb";
+        QSettings settings;
+        settings.beginGroup(Komga_api::SETTINGS_SECTION_SERVER);
+        QString user = settings.value(Komga_api::SETTINGS_KEY_SERVER_USER).toString();
+        QString pw = settings.value(Komga_api::SETTINGS_KEY_SERVER_PASSWORD).toString();
+        settings.endGroup();
+        authenticator->setUser(user);
+        authenticator->setPassword(pw);
+    });
+    connect(m_mapper, QOverload<const QString &>::of(&QSignalMapper::mapped), this,
+        &Komga_api::preloadImageReady);
     connect(manager, &QNetworkAccessManager::networkAccessibleChanged, [this](QNetworkAccessManager::NetworkAccessibility accessible){
         qDebug() << "network available " << accessible;
         if (accessible == QNetworkAccessManager::NetworkAccessibility::NotAccessible) {
@@ -42,8 +57,20 @@ Komga_api::Komga_api(QObject *parent):
             emit netWorkAccessibleChanged(true);
         }
     });
+
 }
 
+void Komga_api::preloadImageReady(const QString &id) {
+    qDebug() << "preloadImageReady " << id;
+    QNetworkReply *reply = m_replies.take(id);
+    if (reply->error() == QNetworkReply::NoError) {
+        QPair<QString, QByteArray> res;
+        res.first = id;
+        res.second = reply->readAll();
+        emit preloadImageDataReady(res);
+    }
+    reply->deleteLater();
+}
 void Komga_api::getLibraries() {
     qDebug() << "fetch libraries";
     QNetworkRequest r;
@@ -125,7 +152,6 @@ void Komga_api::authenticate(QNetworkReply *reply, QAuthenticator *authenticator
     QString user = settings.value(Komga_api::SETTINGS_KEY_SERVER_USER).toString();
     QString pw = settings.value(Komga_api::SETTINGS_KEY_SERVER_PASSWORD).toString();
     settings.endGroup();
-
     authenticator->setUser(user);
     authenticator->setPassword(pw);
 }
@@ -154,6 +180,23 @@ QByteArray Komga_api::getThumbnail(int id, Komga_api::ThumbnailType type) {
         return QByteArray();
     }
 }
+QNetworkRequest Komga_api::getThumbnailAsync(QString id) {
+    qDebug() << "fetch thumbnail async for id " << id;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Thumbnail));
+    QUrl url;
+    QStringList parts = id.split("/");
+    QString thumbId = parts.at(1);
+    QString type = parts.at(0);
+    if (type == "book") {
+        url.setUrl(getServerUrl() + URL_BOOKS + "/" + thumbId + URL_THUMBNAILS);
+    }
+    else if (type == "series") {
+        url.setUrl(getServerUrl() + URL_SERIES + "/" + thumbId + URL_THUMBNAILS);
+    }
+    r.setUrl(url);
+    return r;
+}
 QByteArray Komga_api::getPage(int id, int pageNum) {
     qDebug() << "fetch page num for id " << pageNum << "  " <<  id;
     QNetworkRequest r;
@@ -176,6 +219,25 @@ QByteArray Komga_api::getPage(int id, int pageNum) {
         qDebug() << "error fetching page " << reply->errorString();
         return QByteArray();
     }
+}
+void Komga_api::getPageAsync(int id, int pageNum) {
+    qDebug() << "fetch page async num for id " << pageNum << "  " <<  id;
+    QNetworkRequest r;
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_BOOKS + "/" + QString::number(id, 10) + URL_PAGE + "/" + QString::number(pageNum, 10));
+    QUrlQuery query;
+    query.addQueryItem("zero_based", "true");
+    url.setQuery(query);
+    r.setUrl(url);
+    QEventLoop eventLoop;
+
+    QNetworkReply* reply = thumbnailsManager->get(r);
+    connect(reply, &QNetworkReply::finished, [=](){
+        m_mapper->map(reply);
+    });
+    QString key = QString::number(id) + "/" + QString::number(pageNum);
+    m_replies.insert(key, reply);
+    m_mapper->setMapping(reply, key);
 }
 QString Komga_api::getServerUrl() {
     QSettings settings;

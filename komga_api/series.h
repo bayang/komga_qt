@@ -10,7 +10,7 @@ class KOMGA_API_EXPORT Series: public QObject
     Q_OBJECT
     Q_PROPERTY( int ui_seriesId READ id NOTIFY idChanged )
     Q_PROPERTY( QString ui_seriesName READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY( int ui_seriesBooksCount READ booksCount )
+    Q_PROPERTY( int ui_seriesBooksCount READ booksCount NOTIFY booksCountChanged)
     Q_PROPERTY( QString ui_seriesMetadataStatus READ metadataStatus WRITE setMetadataStatus NOTIFY metadataStatusChanged )
     Q_PROPERTY( QString ui_seriesMetadataTitle READ metadataTitle )
 
@@ -37,6 +37,7 @@ signals:
     void metadataStatusChanged();
     void nameChanged();
     void idChanged();
+    void booksCountChanged();
 
 private:
     int m_id{};

@@ -22,19 +22,21 @@ Item {
         anchors.fill: parent
         Label {
             id: libraryText
-            text: qsTr("In Library " + controller.ui_currentLibraryName)
-
+            text: controller.ui_currentLibraryName
+            font.pointSize: Style.mediumTextSize
+            anchors.horizontalCenter: parent.horizontalCenter
         }
         GridView {
             id: seriesList
             model: controller.ui_seriesModel
             clip: true
-            cellWidth : Style.thumbnailRequestedWidth + 5
+            cellWidth : Style.thumbnailRequestedWidth + 12
             cellHeight: Style.thumbnailRequestedHeight + 80
             width: parent.width
             height: parent.height
-            cacheBuffer: 0
+            cacheBuffer: cellHeight
             bottomMargin: 20
+            ScrollBar.vertical: ScrollBar { }
             onMovementEnded: {
                 if (atYEnd) {
                     var curTime = new Date().getTime();
@@ -49,7 +51,7 @@ Item {
                     cardWidth: Style.thumbnailRequestedWidth
                     cardHeight: seriesList.cellHeight
                     thumbnailHeight: Style.thumbnailRequestedHeight
-                    imagePath: "image://series/" + seriesId
+                    imagePath: "image://async/series/" + seriesId
                     cardLabel: seriesName
                     subLabel: seriesBookCount + " books"
                     topCornerLabel: seriesBookCount

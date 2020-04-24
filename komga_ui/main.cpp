@@ -10,10 +10,9 @@
 #include "library.h"
 #include "book.h"
 #include "bookmetadata.h"
-#include "seriesthumbnailprovider.h"
-#include "bookthumbnailprovider.h"
 #include "bookpageprovider.h"
 #include "networkinformer.h"
+#include "asyncimageprovider.h"
 #include <QQuickStyle>
 
 int main(int argc, char *argv[])
@@ -52,9 +51,8 @@ int main(int argc, char *argv[])
     engine.addImportPath("qrc:/");
     engine.rootContext()->setContextProperty("controller",
     controller);
-    engine.addImageProvider("series", new SeriesThumbnailProvider(seriesmodel));
-    engine.addImageProvider("books", new BookThumbnailProvider(bookModel));
     engine.addImageProvider("page", new BookPageProvider(bookModel));
+    engine.addImageProvider("async", new AsyncImageProvider(api));
 
     const QUrl url(QStringLiteral("qrc:/masterview.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

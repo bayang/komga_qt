@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtGraphicalEffects 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
+import assets 1.0
 
 Item {
     id: root
@@ -14,7 +15,6 @@ Item {
     property alias cardLabel: labelText.text
     property alias subLabel: subText.text
     property alias topCornerLabel: nbBooksLabel.text
-    property color hoverBorderColor: "lightsteelblue"
     property alias topCornerLabelFontSize: nbBooksLabel.font.pointSize
 
     signal cardClicked
@@ -22,7 +22,6 @@ Item {
     width: cardWidth
     height: cardHeight - 10
     property bool cardCurrentlyHovered: false
-
 
     Rectangle {
         id: seriesDelegateBackgound
@@ -41,11 +40,12 @@ Item {
             Image {
                 id: seriesImage
                 property bool rounded: true
-                source: "image://series/"
                 sourceSize.height: thumbnailHeight
                 sourceSize.width: cardWidth
                 fillMode: Image.PreserveAspectCrop
                 anchors.horizontalCenter: seriesDelegateColumn.horizontalCenter
+                cache: true
+                asynchronous: true
                 layer.enabled: rounded
                     layer.effect: OpacityMask {
                         maskSource: Item {
@@ -102,7 +102,7 @@ Item {
     }
     Rectangle {
         id: seriesDelegateRect
-        border.color: hoverBorderColor
+        border.color: Style.hoverBorderColor
         width: cardWidth
         height: parent.height
         border.width: cardCurrentlyHovered ? 3 : 0
@@ -116,12 +116,11 @@ Item {
         anchors.right: seriesDelegateRect.right
         height: 30
         width: 30
-        color: hoverBorderColor
+        color: Style.hoverBorderColor
         radius: 8
         Label {
             id: nbBooksLabel
             anchors.centerIn: parent
-//            font.pointSize: 16
             font.bold: true
         }
     }

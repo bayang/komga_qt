@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import komga_api 1.0
+import assets 1.0
 
 Item {
 
@@ -40,6 +41,7 @@ Item {
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
             asynchronous: true
+            cache: true
             clip: true
             transformOrigin: Item.Center
             scale: imgScale
@@ -68,7 +70,7 @@ Item {
 
             onSourceSizeChanged: {
                 console.log("source size changed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
-                console.log("readCon w readConL w" + readContainer.width)
+                console.log("readConH  readCon w" +readContainer.height + " " + readContainer.width)
                 lastSpacePressedTime = 0
                 if (imgScale === 0) {
                     imgScale = readContainer.height / bookReadPage.paintedHeight
@@ -190,7 +192,7 @@ Item {
         id: backButtonWrapper
         width: backButtonBackground.width
         height: backButtonBackground.height
-        anchors.left: width
+//        anchors.left: width
         anchors.top: parent.top
 
         XAnimator {
@@ -213,7 +215,11 @@ Item {
         Button {
             id: backButton
             anchors.centerIn: parent
-            text: "BACK"
+            font {
+                family: Style.fontAwesome
+                pointSize: Style.backArrowIconSize
+            }
+            text: "\uf060"
             onClicked: {
                 if (contentFrame.depth > 0) {
                     contentFrame.pop()

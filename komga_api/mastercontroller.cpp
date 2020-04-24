@@ -167,10 +167,12 @@ void MasterController::setSelectedSeriesIdx(int value)
     }
     if (value != selectedSeriesIdx) {
         selectedSeriesIdx = value;
+        setSelectedBookIdx(-1);
         currentSeries->setId(getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::IdRole).toInt());
         QString qs = getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::NameRole).toString();
         currentSeries->setName(qs);
         currentSeries->setMetadataStatus(getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::MetadataStatusRole).toString());
+        currentSeries->setBooksCount(getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::BookCountRole).toInt());
         emit currentSeriesChanged(getCurrentSeries());
     }
 }

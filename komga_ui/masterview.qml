@@ -27,6 +27,13 @@ ApplicationWindow {
                     text: qsTr("&Settings...")
                     onTriggered: contentFrame.push("qrc:/SettingsView.qml")
                 }
+                Action {
+                    text: qsTr("&Refresh...")
+                    onTriggered: {
+                        controller.setSelectedLibrary(controller.ui_defaultLibraryId)
+                        controller.refreshData()
+                    }
+                }
                 MenuSeparator { }
                 Action {
                     text: qsTr("&Quit")

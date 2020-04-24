@@ -56,10 +56,12 @@ void SeriesModel::loadSeries(int library) {
 }
 void SeriesModel::resetSeries() {
     qDebug() << "reset series ";
-    emit beginResetModel();
+//    emit beginResetModel();
+    emit beginRemoveRows(QModelIndex(), 0, m_series.size() - 1);
     qDeleteAll(m_series);
     m_series.clear();
-    emit endResetModel();
+//    emit endResetModel();
+    emit endRemoveRows();
 }
 
 void SeriesModel::apiDataReceived(QJsonObject page) {

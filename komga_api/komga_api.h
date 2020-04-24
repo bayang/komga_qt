@@ -2,7 +2,9 @@
 #define KOMGA_API_H
 
 #include <QList>
+#include <QCache>
 #include <QNetworkAccessManager>
+#include <QSignalMapper>
 #include <QObject>
 #include <QNetworkReply>
 #include <QAuthenticator>
@@ -35,23 +37,28 @@ public:
     enum RequestReason {
         Libraries = QNetworkRequest::Attribute::User + 1,
         SeriesReason = QNetworkRequest::Attribute::User + 2,
-        Books = QNetworkRequest::Attribute::User + 3
+        Books = QNetworkRequest::Attribute::User + 3,
+        Thumbnail = QNetworkRequest::Attribute::User + 4
     };
     enum ThumbnailType {
         SeriesThumbnail,
         BookThumbnail
     };
     QByteArray getThumbnail(int id, ThumbnailType type);
+    QNetworkRequest getThumbnailAsync(QString id);
     QByteArray getPage(int id, int pageNum);
+    void getPageAsync(int id, int pageNum);
     QString getServerUrl();
+    void authenticate(QNetworkReply *reply, QAuthenticator *authenticator);
 
 
 private:
     QNetworkAccessManager* manager = nullptr;
     QNetworkAccessManager* thumbnailsManager = nullptr;
-//    QNetworkReply* apiReply;
-    void authenticate(QNetworkReply *reply, QAuthenticator *authenticator);
     void apiReplyFinished(QNetworkReply *reply);
+    QSignalMapper* m_mapper = nullptr;
+    QHash<QString, QNetworkReply*> m_replies;
+    void preloadImageReady(const QString &id);
 
 signals:
     void libraryDataReady(QJsonDocument libraries);
@@ -59,6 +66,7 @@ signals:
     void booksDataReady(QJsonObject books);
     void netWorkAccessibleChanged(bool accessible);
     void networkErrorHappened(QString message);
+    void preloadImageDataReady(QPair<QString, QByteArray> res);
 };
 
 #endif // KOMGA_API_H
