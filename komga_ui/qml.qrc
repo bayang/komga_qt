@@ -1,14 +1,14 @@
 <RCC>
     <qresource prefix="/">
-        <file>masterview.qml</file>
-        <file>LibraryView.qml</file>
-        <file>seriesview.qml</file>
-        <file>booksview.qml</file>
         <file>qtquickcontrols2.conf</file>
-        <file>CardItem.qml</file>
-        <file>TextLink.qml</file>
-        <file>bookdetailview.qml</file>
-        <file>bookreadview.qml</file>
-        <file>SettingsView.qml</file>
+        <file>qml/bookdetailview.qml</file>
+        <file>qml/bookreadview.qml</file>
+        <file>qml/booksview.qml</file>
+        <file>qml/CardItem.qml</file>
+        <file>qml/LibraryView.qml</file>
+        <file>qml/masterview.qml</file>
+        <file>qml/seriesview.qml</file>
+        <file>qml/SettingsView.qml</file>
+        <file>qml/TextLink.qml</file>
     </qresource>
 </RCC>

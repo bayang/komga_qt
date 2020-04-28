@@ -7,6 +7,7 @@ Item {
     readonly property real thumbnailRequestedWidth: 175
     readonly property real backArrowIconSize: 18
     readonly property real defaultTextInputWidth: 400
+
     readonly property real mediumTextSize: 18
     readonly property real smallMediumTextSize: 13
     readonly property real smallTextSize: 11

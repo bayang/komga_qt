@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>favicon.ico</file>
+        <file>assets/favicon.ico</file>
         <file>assets/qmldir</file>
         <file>assets/style.qml</file>
         <file>assets/Font Awesome 5 Free-Regular-400.otf</file>

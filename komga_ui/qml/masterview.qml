@@ -25,7 +25,7 @@ ApplicationWindow {
                 title: qsTr("&File")
                 Action {
                     text: qsTr("&Settings...")
-                    onTriggered: contentFrame.push("qrc:/SettingsView.qml")
+                    onTriggered: contentFrame.push("qrc:/qml/SettingsView.qml")
                 }
                 Action {
                     text: qsTr("&Refresh...")
@@ -44,22 +44,22 @@ ApplicationWindow {
 
     Connections {
         target: controller
-        onGoSeriesView: contentFrame.replace("qrc:/seriesview.qml")
+        onGoSeriesView: contentFrame.replace("qrc:/qml/seriesview.qml")
     }
 
     Connections {
         target: controller
-        onGoBooksView: contentFrame.push("qrc:/booksview.qml")
+        onGoBooksView: contentFrame.push("qrc:/qml/booksview.qml")
     }
 
     Connections {
         target: controller
-        onGoBookDetailView: contentFrame.push("qrc:/bookdetailview.qml")
+        onGoBookDetailView: contentFrame.push("qrc:/qml/bookdetailview.qml")
     }
 
     Connections {
         target: controller
-        onGoBookReadView: contentFrame.push("qrc:/bookreadview.qml")
+        onGoBookReadView: contentFrame.push("qrc:/qml/bookreadview.qml")
     }
 
     Connections {
@@ -86,7 +86,7 @@ ApplicationWindow {
        anchors.right: parent.right
        anchors.bottom: parent.bottom
        clip: true
-       initialItem: "qrc:/seriesview.qml"
+       initialItem: "qrc:/qml/seriesview.qml"
        focus: true
    }
 

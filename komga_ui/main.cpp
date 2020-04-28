@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
-    QGuiApplication::setWindowIcon(QIcon(":/favicon.ico"));
+    QGuiApplication::setWindowIcon(QIcon(":/assets/favicon.ico"));
     QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
 //    QQuickStyle::setStyle(QStringLiteral("Material"));
     QQuickStyle::setFallbackStyle(QStringLiteral("Material"));
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     engine.addImageProvider("page", new BookPageProvider(bookModel));
     engine.addImageProvider("async", new AsyncImageProvider(api));
 
-    const QUrl url(QStringLiteral("qrc:/masterview.qml"));
+    const QUrl url(QStringLiteral("qrc:/qml/masterview.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)

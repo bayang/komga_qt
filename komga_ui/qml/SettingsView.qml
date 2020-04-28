@@ -7,8 +7,6 @@ import assets 1.0
 
 Item {
     id: page
-    width: parent.width
-    height: parent.height
 
     Settings {
         id: serverSettings
@@ -19,7 +17,6 @@ Item {
     }
 
     ColumnLayout {
-        Layout.preferredWidth: serverRow.minimumWidth
         Button {
             onClicked: {
                 serverSettings.sync()
@@ -35,45 +32,43 @@ Item {
             text: "\uf060"
         }
         Label {
-            text: "settings"
+            text: qsTr("Settings")
+            font.pointSize: Style.mediumTextSize
         }
-        RowLayout {
-            id: serverRow
-            Layout.fillWidth: true
+        GridLayout {
+            columns: 2
             Label {
                 id: serverLabel
-                text: "Server Adress"
+                text: qsTr("Server Adress")
                 rightPadding: 20
+                font.pointSize: Style.smallMediumTextSize
             }
             TextField {
                 id: serverInput
                 Layout.minimumWidth: Style.defaultTextInputWidth
                 selectByMouse: true
+                placeholderText: qsTr("eg : http://localhost:8080/api/v1")
             }
-        }
-        RowLayout {
-            Layout.fillWidth: true
             Label {
-                text: "User name"
+                text: qsTr("User name")
                 rightPadding: 20
                 width: serverLabel.width
+                font.pointSize: Style.smallMediumTextSize
             }
             TextField {
                 id: userNameInput
                 Layout.minimumWidth: Style.defaultTextInputWidth
             }
-        }
-        RowLayout {
             Label {
                 width: serverLabel.width
-                text: "Password"
+                text: qsTr("Password")
                 rightPadding: 20
+                font.pointSize: Style.smallMediumTextSize
             }
             TextField {
                 id: passwordInput
                 Layout.minimumWidth: Style.defaultTextInputWidth
             }
         }
-
     }
 }
