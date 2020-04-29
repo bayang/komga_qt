@@ -3,6 +3,9 @@ QT += quick \
 
 CONFIG += c++14
 
+include(../qmake-target-platform.pri)
+include(../qmake-destination-path.pri)
+
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Refer to the documentation for the
@@ -34,9 +37,11 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../komga_api/release/ -lkomga_api
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../komga_api/debug/ -lkomga_api
-else:unix: LIBS += -L$$OUT_PWD/../komga_api/ -lkomga_api
+#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../komga_api/release/ -lkomga_api
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../komga_api/debug/ -lkomga_api
+#else:unix: LIBS += -L$$OUT_PWD/../komga_api/ -lkomga_api
+
+LIBS += -L$$PWD/../binaries/$$DESTINATION_PATH -lkomga_api
 
 INCLUDEPATH += $$PWD/../komga_api
 DEPENDPATH += $$PWD/../komga_api
@@ -47,3 +52,9 @@ HEADERS += \
     bookpageprovider.h
 
 DISTFILES +=
+
+DESTDIR = $$PWD/../binaries/$$DESTINATION_PATH
+OBJECTS_DIR = $$PWD/build/$$DESTINATION_PATH/.obj
+MOC_DIR = $$PWD/build/$$DESTINATION_PATH/.moc
+RCC_DIR = $$PWD/build/$$DESTINATION_PATH/.qrc
+UI_DIR = $$PWD/build/$$DESTINATION_PATH/.ui
