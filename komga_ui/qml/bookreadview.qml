@@ -73,7 +73,7 @@ Item {
                 console.log("readConH  readCon w" +readContainer.height + " " + readContainer.width)
                 lastSpacePressedTime = 0
                 if (imgScale === 0) {
-                    imgScale = readContainer.height / bookReadPage.paintedHeight
+                    fitHeight()
                 }
                 if (! flickArea.atYBeginning) {
                     flickArea.contentY = 0
@@ -84,20 +84,6 @@ Item {
                 console.log("scaled changed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
                 console.log("xy " + readContainer.x + " " + readContainer.y + " / " + bookReadPage.x + " " + bookReadPage.y)
 
-            }
-
-            MouseArea {
-                id : imageMouseArea
-                anchors.fill: parent
-                cursorShape: pressed ? Qt.ClosedHandCursor : Qt.ArrowCursor;
-                onWheel: {
-                    if (wheel.angleDelta.y > 0) {
-                        scaleUp()
-                    }
-                    else {
-                        scaleDown()
-                    }
-                }
             }
         }
     }
@@ -115,6 +101,34 @@ Item {
     function scaleDown() {
         if (imgScale >= 0.2) {
             imgScale -= 0.1
+        }
+    }
+
+    function fitWidth() {
+        imgScale = readContainer.width / bookReadPage.paintedWidth
+    }
+
+    function fitHeight() {
+        imgScale = readContainer.height / bookReadPage.paintedHeight
+    }
+
+    MouseArea {
+        id : imageMouseArea
+        anchors.fill: parent
+        cursorShape: pressed || flickArea.dragging ? Qt.ClosedHandCursor : Qt.ArrowCursor;
+        onWheel: {
+            if (wheel.angleDelta.y > 0) {
+                scaleUp()
+            }
+            else {
+                scaleDown()
+            }
+        }
+        hoverEnabled: true
+        onPositionChanged: {
+            pageNumberWrapper.y  = readContainer.height - 50
+            backButtonWrapper.x = 20
+            visibilityTimer.restart()
         }
     }
 
@@ -177,22 +191,11 @@ Item {
         }
         visible: false
     }
-    MouseArea {
-        id: bookPageMouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        onPositionChanged: {
-            pageNumberWrapper.y  = readContainer.height - 50
-            backButtonWrapper.x = 20
-            visibilityTimer.restart()
-        }
-    }
 
     Item {
         id: backButtonWrapper
         width: backButtonBackground.width
         height: backButtonBackground.height
-//        anchors.left: width
         anchors.top: parent.top
 
         XAnimator {
@@ -282,6 +285,16 @@ Item {
         else if (event.key === Qt.Key_Home) {
             console.log("begin")
             controller.ui_currPageNumber = 0
+            event.accepted = true
+        }
+        else if (event.key === Qt.Key_W) {
+            console.log("W")
+            fitWidth()
+            event.accepted = true
+        }
+        else if (event.key === Qt.Key_H) {
+            console.log("H")
+            fitHeight()
             event.accepted = true
         }
     }
