@@ -4,6 +4,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 import Qt.labs.settings 1.0
 import komga_api 1.0
+import assets 1.0
 
 ApplicationWindow {
     id: window
@@ -13,6 +14,7 @@ ApplicationWindow {
     title: qsTr("Komga")
 
     Settings {
+        id: settings
         category: "layout"
         property alias x: window.x
         property alias y: window.y
@@ -71,24 +73,24 @@ ApplicationWindow {
         }
     }
 
-    LibraryView {
-        id: navColumn
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
+    SplitView {
+        id: splitView
+        anchors.fill: parent
+        padding: 5
+        LibraryView {
+            id: navColumn
+            SplitView.preferredWidth: Style.libraryPaneWidth
+            SplitView.minimumWidth: Style.libraryPaneMinWidth
+            SplitView.maximumWidth: Style.libraryPaneMaxWidth
+        }
+
+       StackView {
+           id: contentFrame
+           clip: true
+           initialItem: "qrc:/qml/seriesview.qml"
+           focus: true
+       }
     }
-
-
-   StackView {
-       id: contentFrame
-       anchors.top: parent.top
-       anchors.left: navColumn.right
-       anchors.right: parent.right
-       anchors.bottom: parent.bottom
-       clip: true
-       initialItem: "qrc:/qml/seriesview.qml"
-       focus: true
-   }
 
    Label {
        text: "ERROR network is down"
@@ -102,7 +104,6 @@ ApplicationWindow {
        x: window.width / 2
        y: window.height - 100
    }
-
 
    Timer {
        id : errorVisibilityTimer

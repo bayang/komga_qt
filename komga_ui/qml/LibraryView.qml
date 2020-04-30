@@ -5,7 +5,7 @@ import komga_api 1.0
 import assets 1.0
 
 Pane {
-    width: Style.libraryPaneWidth
+//    width: Style.libraryPaneWidth
 
     Component.onCompleted: {
         controller.setSelectedLibrary(controller.ui_defaultLibraryId)
