@@ -136,7 +136,7 @@ Item {
     Item {
         id: pageNumberWrapper
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: 20
+        y: readContainer.height - 50
 //        visible: infoVisibility
 
         YAnimator {
@@ -209,9 +209,9 @@ Item {
         Rectangle {
             id: backButtonBackground
             opacity: 0.6
-            width: backButton.width + 5
+            width: backButton.width
             color: "gray"
-            height: backButton.height + 5
+            height: backButton.height
             anchors.centerIn: parent
         }
 

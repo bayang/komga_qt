@@ -61,7 +61,7 @@ ApplicationWindow {
 
     Connections {
         target: controller
-        onGoBookReadView: contentFrame.push("qrc:/qml/bookreadview.qml")
+        onGoBookReadView: contentFrame.push("qrc:/qml/BookReadView.qml")
     }
 
     Connections {
@@ -76,7 +76,8 @@ ApplicationWindow {
     SplitView {
         id: splitView
         anchors.fill: parent
-        padding: 5
+//        padding: 5
+
         LibraryView {
             id: navColumn
             SplitView.preferredWidth: Style.libraryPaneWidth

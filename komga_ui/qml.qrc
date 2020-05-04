@@ -2,7 +2,7 @@
     <qresource prefix="/">
         <file>qtquickcontrols2.conf</file>
         <file>qml/bookdetailview.qml</file>
-        <file>qml/bookreadview.qml</file>
+        <file>qml/BookReadView.qml</file>
         <file>qml/booksview.qml</file>
         <file>qml/CardItem.qml</file>
         <file>qml/LibraryView.qml</file>

@@ -1,7 +1,10 @@
 pragma Singleton
 import QtQuick 2.14
+import QtQuick.Controls.Material 2.14
 
 Item {
+    readonly property color backgroundColor: Material.backgroundColor
+
     readonly property real libraryPaneWidth: 240
     readonly property real libraryPaneMinWidth: 125
     readonly property real libraryPaneMaxWidth: 350

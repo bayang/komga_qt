@@ -5,6 +5,7 @@ import komga_api 1.0
 import assets 1.0
 
 Item {
+    id: bookDetailRoot
     property bool imageCurrentlyHovered: false
 
     ColumnLayout {
@@ -53,7 +54,7 @@ Item {
                     height: bookDetailImage.height
                     hoverEnabled: true
                     onClicked: {
-                        controller.goBookReadView()
+                        readPopup.open()
                     }
                     onEntered: {
                         cursorShape = Qt.PointingHandCursor
@@ -97,7 +98,7 @@ Item {
             Layout.alignment: Qt.AlignLeft
             Button {
                 text: qsTr("Read")
-                onClicked: controller.goBookReadView()
+                onClicked: readPopup.open()
                 font.pointSize: Style.smallTextSize
             }
 
@@ -121,5 +122,30 @@ Item {
             font.pointSize: Style.smallTextSize
         }
 
+    }
+
+    Popup {
+        id: readPopup
+        parent: Overlay.overlay
+
+        contentWidth: ApplicationWindow.window.width
+        contentHeight: ApplicationWindow.window.height
+
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape
+        opacity: 1.0
+        Overlay.modal: Rectangle {
+            color: Qt.darker(Style.backgroundColor)
+        }
+        enter: Transition {
+            NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 800 }
+        }
+        exit: Transition {
+            NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 500 }
+        }
+        BookReadView {
+            anchors.fill: parent
+        }
     }
 }
