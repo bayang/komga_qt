@@ -142,7 +142,7 @@ Item {
             NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 800 }
         }
         exit: Transition {
-            NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 500 }
+            NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 300 }
         }
         BookReadView {
             anchors.fill: parent

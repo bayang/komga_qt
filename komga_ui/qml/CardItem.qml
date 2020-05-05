@@ -1,7 +1,6 @@
 import QtQuick 2.14
 import QtGraphicalEffects 1.14
 import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
 import assets 1.0
 
 Item {
@@ -28,7 +27,7 @@ Item {
         anchors.horizontalCenter: root.horizontalCenter
         width: parent.width
         height: parent.height
-        color: Qt.lighter(Material.backgroundColor)
+        color: Qt.lighter(Style.backgroundColor)
         radius: 8
 
         Column {

@@ -1,6 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import assets 1.0
 
 Item {
     id: root
@@ -20,7 +20,7 @@ Item {
         id: innerLabel
         wrapMode: Text.Wrap
         width: parent.width
-        color: currentlyHovered ? Material.accent : Material.foreground
+        color: currentlyHovered ? Style.accentColor : Style.foregroundColor
         MouseArea {
             id : libraryDelegateMouseArea
             width: parent.width

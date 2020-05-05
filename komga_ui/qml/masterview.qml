@@ -1,7 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
 import Qt.labs.settings 1.0
 import komga_api 1.0
 import assets 1.0
@@ -57,11 +56,6 @@ ApplicationWindow {
     Connections {
         target: controller
         onGoBookDetailView: contentFrame.push("qrc:/qml/bookdetailview.qml")
-    }
-
-    Connections {
-        target: controller
-        onGoBookReadView: contentFrame.push("qrc:/qml/BookReadView.qml")
     }
 
     Connections {

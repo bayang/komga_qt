@@ -4,6 +4,8 @@ import QtQuick.Controls.Material 2.14
 
 Item {
     readonly property color backgroundColor: Material.backgroundColor
+    readonly property color accentColor: Material.accent
+    readonly property color foregroundColor: Material.foreground
 
     readonly property real libraryPaneWidth: 240
     readonly property real libraryPaneMinWidth: 125
