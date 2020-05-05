@@ -13,6 +13,9 @@
 
 const QString Komga_api::URL_LIBRARIES{"/libraries"};
 const QString Komga_api::URL_SERIES{"/series"};
+const QString Komga_api::URL_SERIES_LATEST{"/latest"};
+const QString Komga_api::URL_SERIES_NEW{"/new"};
+const QString Komga_api::URL_SERIES_UPDATED{"/updated"};
 const QString Komga_api::URL_BOOKS{"/books"};
 const QString Komga_api::URL_THUMBNAILS{"/thumbnail"};
 const QString Komga_api::URL_PAGE{"/pages"};
@@ -86,10 +89,22 @@ void Komga_api::getSeries(int libraryId, int page) {
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesReason));
     QUrl url;
-    url.setUrl(getServerUrl() + URL_SERIES);
+    if (libraryId == MasterController::SERIES_NEW_ID) {
+        url.setUrl(getServerUrl() + URL_SERIES + URL_SERIES_NEW);
+    }
+    else if (libraryId == MasterController::SERIES_LATEST_ID) {
+        url.setUrl(getServerUrl() + URL_SERIES + URL_SERIES_LATEST);
+    }
+    else if (libraryId == MasterController::SERIES_UPDATED_ID) {
+        url.setUrl(getServerUrl() + URL_SERIES + URL_SERIES_UPDATED);
+    }
+    else {
+        url.setUrl(getServerUrl() + URL_SERIES);
+    }
     QUrlQuery query;
     query.addQueryItem("size", "30");
-    if (libraryId != MasterController::DEFAULT_LIBRARY_ID) {
+    // only works if library id is always positive, should check this
+    if (libraryId > MasterController::DEFAULT_LIBRARY_ID) {
         query.addQueryItem("library_id", QString::number(libraryId));
     }
     if (page != 0) {

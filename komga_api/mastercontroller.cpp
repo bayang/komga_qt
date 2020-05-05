@@ -1,5 +1,10 @@
 #include "mastercontroller.h"
 
+const QString MasterController::SERIES_NEW_NAME{"New series"};
+const QString MasterController::SERIES_LATEST_NAME{"Latest series"};
+const QString MasterController::SERIES_UPDATED_NAME{"Updated series"};
+
+
 MasterController::MasterController(SeriesModel* seriesModel, BookModel* bookModel, NetworkInformer *informer, QObject *parent) :
     m_seriesModel{seriesModel}, m_bookModel{bookModel}, m_networkInformer{informer}, QObject{parent},
     defaultLibrary{new Library(this)}, currentSeries{new Series(this)}, currentBook{new Book(this)}
@@ -146,6 +151,18 @@ void MasterController::setSelectedLibraryIdx(int value)
             emit currentLibraryChanged(MasterController::DEFAULT_LIBRARY_ID);
             emit currentLibraryNameChanged(getDefaultLibrary()->name());
         }
+        else if (value == MasterController::SERIES_NEW_ID) {
+            emit currentLibraryChanged(MasterController::SERIES_NEW_ID);
+            emit currentLibraryNameChanged(MasterController::SERIES_NEW_NAME);
+        }
+        else if (value == MasterController::SERIES_LATEST_ID) {
+            emit currentLibraryChanged(MasterController::SERIES_LATEST_ID);
+            emit currentLibraryNameChanged(MasterController::SERIES_LATEST_NAME);
+        }
+        else if (value == MasterController::SERIES_UPDATED_ID) {
+            emit currentLibraryChanged(MasterController::SERIES_UPDATED_ID);
+            emit currentLibraryNameChanged(MasterController::SERIES_UPDATED_NAME);
+        }
         else {
             emit currentLibraryChanged(getLibraryModel()->data(getLibraryModel()->index(value, 0), LibraryModel::LibraryRoles::IdRole).toInt());
             emit currentLibraryNameChanged(getLibraryModel()->data(getLibraryModel()->index(value, 0), LibraryModel::LibraryRoles::NameRole).toString());
@@ -203,6 +220,15 @@ void MasterController::setCurrentImageNumber(int currentImageNumber)
 QString MasterController::getCurrentLibraryName() const {
     if (getSelectedLibraryIdx() == MasterController::DEFAULT_LIBRARY_ID) {
         return getDefaultLibrary()->name();
+    }
+    else if (getSelectedLibraryIdx() == MasterController::SERIES_NEW_ID) {
+        return MasterController::SERIES_NEW_NAME;
+    }
+    else if (getSelectedLibraryIdx() == MasterController::SERIES_LATEST_ID) {
+        return MasterController::SERIES_LATEST_NAME;
+    }
+    else if (getSelectedLibraryIdx() == MasterController::SERIES_UPDATED_ID) {
+        return MasterController::SERIES_UPDATED_NAME;
     }
     return getLibraryModel()->data(getLibraryModel()->index(getSelectedLibraryIdx(), 0), LibraryModel::LibraryRoles::NameRole).toString();
 }

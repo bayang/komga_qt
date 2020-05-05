@@ -24,6 +24,9 @@ class KOMGA_API_EXPORT MasterController : public QObject
     Q_PROPERTY( BookModel* ui_bookModel READ getBookModel CONSTANT )
     Q_PROPERTY( LibraryModel* ui_libraryModel READ getLibraryModel CONSTANT )
     Q_PROPERTY( int ui_defaultLibraryId MEMBER DEFAULT_LIBRARY_ID CONSTANT )
+    Q_PROPERTY( int ui_newSeriesId MEMBER SERIES_NEW_ID CONSTANT )
+    Q_PROPERTY( int ui_latestSeriesId MEMBER SERIES_LATEST_ID CONSTANT )
+    Q_PROPERTY( int ui_updatedSeriesId MEMBER SERIES_UPDATED_ID CONSTANT )
     Q_PROPERTY( int ui_currPageNumber READ getCurrentImageNumber WRITE setCurrentImageNumber NOTIFY currentImageNumberChanged )
     Q_PROPERTY( QString ui_currentLibraryName READ getCurrentLibraryName NOTIFY currentLibraryNameChanged )
     Q_PROPERTY( NetworkInformer* ui_networkInformer READ getNetworkInformer CONSTANT )
@@ -32,6 +35,13 @@ public:
     explicit MasterController(SeriesModel *seriesModel, BookModel *bookModel, NetworkInformer *informer, QObject *parent = nullptr);
 
     static const int DEFAULT_LIBRARY_ID{-100};
+    static const int SERIES_NEW_ID{-101};
+    static const int SERIES_LATEST_ID{-102};
+    static const int SERIES_UPDATED_ID{-103};
+
+    static const QString SERIES_UPDATED_NAME;
+    static const QString SERIES_NEW_NAME;
+    static const QString SERIES_LATEST_NAME;
 
     Book *getCurrentBook() const;
 

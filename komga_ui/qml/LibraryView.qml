@@ -48,5 +48,38 @@ Pane {
                 }
             }
         }
+        TextLink {
+            onTextLinkClicked: {
+                controller.setSelectedLibrary(controller.ui_newSeriesId)
+                if (contentFrame.depth > 1) {
+                    controller.goSeriesView()
+                }
+            }
+            textLinkLabel: "New Series"
+            textLinkLabelBold: true
+            textLinkLabelSize: Style.mediumTextSize
+        }
+        TextLink {
+            onTextLinkClicked: {
+                controller.setSelectedLibrary(controller.ui_updatedSeriesId)
+                if (contentFrame.depth > 1) {
+                    controller.goSeriesView()
+                }
+            }
+            textLinkLabel: "Updated Series"
+            textLinkLabelBold: true
+            textLinkLabelSize: Style.mediumTextSize
+        }
+        TextLink {
+            onTextLinkClicked: {
+                controller.setSelectedLibrary(controller.ui_latestSeriesId)
+                if (contentFrame.depth > 1) {
+                    controller.goSeriesView()
+                }
+            }
+            textLinkLabel: "Latest Series"
+            textLinkLabelBold: true
+            textLinkLabelSize: Style.mediumTextSize
+        }
     }
 }
