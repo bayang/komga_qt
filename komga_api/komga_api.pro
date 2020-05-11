@@ -2,6 +2,7 @@ QT -= gui
 QT += network
 
 TEMPLATE = lib
+TARGET = komga_api
 DEFINES += KOMGA_API_LIBRARY
 
 CONFIG += c++14
@@ -47,7 +48,13 @@ HEADERS += \
     seriesfiltersortproxymodel.h \
     seriesmodel.h
 
-!isEmpty(target.path): INSTALLS += target
+unix
+{
+target.path = /usr/lib
+INSTALLS += target
+}
+
+#!isEmpty(target.path): INSTALLS += target
 message(komga api project dir: $${PWD})
 DESTDIR = $$PWD/../binaries/$$DESTINATION_PATH
 OBJECTS_DIR = $$PWD/build/$$DESTINATION_PATH/.obj

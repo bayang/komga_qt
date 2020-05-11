@@ -1,6 +1,8 @@
 QT += quick \
       quickcontrols2
 
+TEMPLATE = app
+
 CONFIG += c++14
 
 include(../qmake-target-platform.pri)
@@ -33,9 +35,9 @@ QML_IMPORT_PATH += $$PWD
 QML_DESIGNER_IMPORT_PATH =
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+#qnx: target.path = /tmp/$${TARGET}/bin
+#else: unix:!android: target.path = /opt/$${TARGET}/bin
+#!isEmpty(target.path): INSTALLS += target
 
 #win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../komga_api/release/ -lkomga_api
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../komga_api/debug/ -lkomga_api
@@ -44,14 +46,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 LIBS += -L$$PWD/../binaries/$$DESTINATION_PATH -lkomga_api
 
 INCLUDEPATH += $$PWD/../komga_api
-DEPENDPATH += $$PWD/../komga_api
+#DEPENDPATH += $$PWD/../komga_api
 
 HEADERS += \
     asyncimageprovider.h \
     asyncimageresponse.h \
     bookpageprovider.h
 
-DISTFILES +=
+#DISTFILES +=
 
 DESTDIR = $$PWD/../binaries/$$DESTINATION_PATH
 OBJECTS_DIR = $$PWD/build/$$DESTINATION_PATH/.obj
