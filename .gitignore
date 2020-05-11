@@ -1,3 +1,5 @@
 komga-app.pro.user
 binaries/**
 **/build/**
+**/installer/**
+
