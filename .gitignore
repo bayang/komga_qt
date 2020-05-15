@@ -2,4 +2,6 @@ komga-app.pro.user
 binaries/**
 **/build/**
 **/installer/**
+**/build-dir/**
+.flatpak-builder/**
 
