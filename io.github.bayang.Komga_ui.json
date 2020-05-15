@@ -1,0 +1,29 @@
+{
+    "app-id": "io.github.bayang.Komga_ui",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "5.14",
+    "sdk": "org.kde.Sdk",
+    "command": "komga-ui",
+        "finish-args": [
+           "--socket=x11",
+           "--socket=wayland",
+           "--device=dri",
+           "--share=ipc",
+           "--share=network"
+        ],
+    "modules": [
+        {
+            "name": "komga_ui",
+            "buildsystem": "simple",
+            "build-commands": [
+                "install -D komga-ui /app/bin/komga-ui"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "build/komga_ui/komga-ui"
+                }
+            ]
+        }
+    ]
+}
