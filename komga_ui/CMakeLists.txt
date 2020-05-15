@@ -12,6 +12,21 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif()
 
+# Make Qt Creator aware of where the QML modules live
+set (_QML_IMPORT_PATHS "")
+
+## Add new module paths here.
+list (APPEND _QML_IMPORT_PATHS ${CMAKE_CURRENT_SOURCE_DIR})
+
+set (
+    QML_IMPORT_PATH
+    ${_QML_IMPORT_PATHS}
+    CACHE
+    STRING
+    "Path used to locate CMake modules by Qt Creator"
+    FORCE
+)
+
 find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Core Network Qml Quick QuickControls2)
 
 # otherwise imports from api in ui fail
