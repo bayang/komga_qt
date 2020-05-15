@@ -4,4 +4,4 @@ binaries/**
 **/installer/**
 **/build-dir/**
 .flatpak-builder/**
-
+CMakeLists.txt.user
