@@ -14,6 +14,7 @@
 #include "networkinformer.h"
 #include "asyncimageprovider.h"
 #include <QQuickStyle>
+#include <QtGlobal>
 
 int main(int argc, char *argv[])
 {
@@ -23,11 +24,13 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QGuiApplication::setWindowIcon(QIcon(":/assets/favicon.ico"));
 //    QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
-    QQuickStyle::setStyle(QStringLiteral("Universal"));
+    QQuickStyle::setStyle(QStringLiteral("Material"));
     QQuickStyle::setFallbackStyle(QStringLiteral("Material"));
     app.setOrganizationName("bayang");
     app.setOrganizationDomain("bayang.github.com");
     app.setApplicationName("Komga-ui");
+
+    qSetMessagePattern("[%{type}] %{time} (%{file}:%{line}) - %{message}");
 
     Komga_api *api = new Komga_api(&app);
     LibraryModel *lm = new LibraryModel(&app, api);
