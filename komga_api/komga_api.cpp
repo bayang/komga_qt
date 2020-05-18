@@ -154,7 +154,7 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
     }
     // else emit an error event
     else {
-        qDebug() << "ERROR " << reply->errorString();
+        qWarning() << "ERROR " << reply->errorString();
         emit networkErrorHappened("ERROR " + reply->errorString());
     }
 }
@@ -191,7 +191,7 @@ QByteArray Komga_api::getThumbnail(int id, Komga_api::ThumbnailType type) {
         return reply->readAll();
     }
     else {
-        qDebug() << "error fetching thumbnail " << reply->errorString();
+        qWarning() << "error fetching thumbnail " << reply->errorString();
         return QByteArray();
     }
 }
@@ -231,7 +231,7 @@ QByteArray Komga_api::getPage(int id, int pageNum) {
         return reply->readAll();
     }
     else {
-        qDebug() << "error fetching page " << reply->errorString();
+        qWarning() << "error fetching page " << reply->errorString();
         return QByteArray();
     }
 }

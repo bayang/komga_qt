@@ -23,9 +23,8 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
     QGuiApplication::setWindowIcon(QIcon(":/assets/favicon.ico"));
-//    QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
     QQuickStyle::setStyle(QStringLiteral("Material"));
-    QQuickStyle::setFallbackStyle(QStringLiteral("Material"));
+    QQuickStyle::setFallbackStyle(QStringLiteral("Default"));
     app.setOrganizationName("bayang");
     app.setOrganizationDomain("bayang.github.com");
     app.setApplicationName("Komga-ui");

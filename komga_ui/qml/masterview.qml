@@ -61,7 +61,7 @@ ApplicationWindow {
     Connections {
         target: controller.ui_networkInformer
         onErrorMessageChanged: {
-            console.log("error" + errorMessage)
+            console.error("error " + errorMessage)
             errorMessageLabel.visible = true
             errorVisibilityTimer.restart()
         }

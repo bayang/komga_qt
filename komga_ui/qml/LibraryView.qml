@@ -4,8 +4,6 @@ import komga_api 1.0
 import assets 1.0
 
 Pane {
-//    width: Style.libraryPaneWidth
-
     Component.onCompleted: {
         controller.setSelectedLibrary(controller.ui_defaultLibraryId)
         controller.refreshData()
@@ -56,7 +54,6 @@ Pane {
                 }
             }
             textLinkLabel: "New Series"
-            textLinkLabelBold: true
             textLinkLabelSize: Style.mediumTextSize
         }
         TextLink {
@@ -67,7 +64,6 @@ Pane {
                 }
             }
             textLinkLabel: "Updated Series"
-            textLinkLabelBold: true
             textLinkLabelSize: Style.mediumTextSize
         }
         TextLink {
@@ -78,7 +74,6 @@ Pane {
                 }
             }
             textLinkLabel: "Latest Series"
-            textLinkLabelBold: true
             textLinkLabelSize: Style.mediumTextSize
         }
     }

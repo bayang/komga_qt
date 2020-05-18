@@ -9,14 +9,6 @@ Item {
 
     property real lastNextPageCalledTime: 0
 
-//    Connections {
-//        target: controller.ui_seriesModel
-//        onRefresh: {
-//            console.log("refresh called")
-//            seriesList.forceLayout()
-//        }
-//    }
-
     Column {
         anchors.fill: parent
         Label {
