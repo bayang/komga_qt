@@ -45,4 +45,5 @@ add_executable(komga-ui
     qml.qrc
 )
 
+target_compile_definitions(komga-ui PUBLIC "$<$<CONFIG:Release>:QT_NO_DEBUG_OUTPUT>")
 target_link_libraries(komga-ui PUBLIC komga-api Qt5::Core Qt5::Quick Qt5::QuickControls2)
