@@ -5,3 +5,5 @@ binaries/**
 **/build-dir/**
 .flatpak-builder/**
 CMakeLists.txt.user
+**.flatpak
+
