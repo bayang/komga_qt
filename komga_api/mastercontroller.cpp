@@ -233,6 +233,16 @@ QString MasterController::getCurrentLibraryName() const {
     return getLibraryModel()->data(getLibraryModel()->index(getSelectedLibraryIdx(), 0), LibraryModel::LibraryRoles::NameRole).toString();
 }
 
+SearchModel *MasterController::getSearchModel() const
+{
+    return m_searchModel;
+}
+
+void MasterController::setSearchModel(SearchModel *searchModel)
+{
+    m_searchModel = searchModel;
+}
+
 NetworkInformer *MasterController::getNetworkInformer() const
 {
     return m_networkInformer;
@@ -241,4 +251,7 @@ NetworkInformer *MasterController::getNetworkInformer() const
 void MasterController::setNetworkInformer(NetworkInformer *networkInformer)
 {
     m_networkInformer = networkInformer;
+}
+void MasterController::doSearch(const QString &searchTerm) {
+    qDebug() << "search for " << searchTerm;
 }

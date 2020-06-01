@@ -11,11 +11,21 @@ Item {
 
     Column {
         anchors.fill: parent
+        SearchBar {
+            width: parent.width > 600 ? 600 : parent.width
+            height: 30
+            anchors.horizontalCenter: parent.horizontalCenter
+            onSearchTriggered: {
+                controller.doSearch(searchTerm)
+            }
+        }
+
         Label {
             id: libraryText
             text: controller.ui_currentLibraryName
             font.pointSize: Style.mediumTextSize
             anchors.horizontalCenter: parent.horizontalCenter
+            topPadding: 20
         }
         GridView {
             id: seriesList

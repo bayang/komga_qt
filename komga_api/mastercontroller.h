@@ -12,6 +12,7 @@
 #include "bookmodel.h"
 #include "librarymodel.h"
 #include "seriesmodel.h"
+#include "searchmodel.h"
 #include "networkinformer.h"
 
 class KOMGA_API_EXPORT MasterController : public QObject
@@ -23,6 +24,7 @@ class KOMGA_API_EXPORT MasterController : public QObject
     Q_PROPERTY( SeriesModel* ui_seriesModel READ getSeriesModel CONSTANT )
     Q_PROPERTY( BookModel* ui_bookModel READ getBookModel CONSTANT )
     Q_PROPERTY( LibraryModel* ui_libraryModel READ getLibraryModel CONSTANT )
+    Q_PROPERTY( SearchModel* ui_searchModel READ getSearchModel CONSTANT )
     Q_PROPERTY( int ui_defaultLibraryId MEMBER DEFAULT_LIBRARY_ID CONSTANT )
     Q_PROPERTY( int ui_newSeriesId MEMBER SERIES_NEW_ID CONSTANT )
     Q_PROPERTY( int ui_latestSeriesId MEMBER SERIES_LATEST_ID CONSTANT )
@@ -78,6 +80,9 @@ public:
     NetworkInformer *getNetworkInformer() const;
     void setNetworkInformer(NetworkInformer *networkInformer);
 
+    SearchModel *getSearchModel() const;
+    void setSearchModel(SearchModel *searchModel);
+
 signals:
     void goSeriesView();
     void goBooksView();
@@ -100,6 +105,7 @@ public slots:
     void setSelectedBook(int selectedBook);
     void refreshData();
     QString getCurrentLibraryName() const;
+    void doSearch(const QString &searchTerm);
 
 private:
     Library* defaultLibrary{nullptr};
@@ -108,6 +114,7 @@ private:
     LibraryModel* m_libraryModel{nullptr};
     SeriesModel* m_seriesModel{nullptr};
     BookModel* m_bookModel{nullptr};
+    SearchModel* m_searchModel{nullptr};
     int m_currentImageNumber{0};
     int selectedSeriesIdx{-1};
     int selectedLibraryIdx{MasterController::DEFAULT_LIBRARY_ID};
