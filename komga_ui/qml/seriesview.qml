@@ -12,6 +12,7 @@ Item {
     Column {
         anchors.fill: parent
         SearchBar {
+            id: searchBar
             width: parent.width > 600 ? 600 : parent.width
             height: 30
             anchors.horizontalCenter: parent.horizontalCenter
