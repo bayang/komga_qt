@@ -21,11 +21,20 @@ public:
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
+    void doSearch(const QString &searchTerm);
+
+    qlonglong currentTimestamp() const;
+    void setCurrentTimestamp(qlonglong currentTimestamp);
 
 private:
     Komga_api* m_api = nullptr;
     QList<SearchResult*> m_results{};
+    qlonglong m_currentTimestamp{0};
 
+    void resetModel();
+public slots:
+    void searchBookDataReceived(QPair<QString, QJsonDocument> res);
+    void searchSeriesDataReceived(QPair<QString, QJsonDocument> res);
 };
 
 #endif // SEARCHMODEL_H

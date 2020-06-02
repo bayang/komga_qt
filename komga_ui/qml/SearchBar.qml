@@ -57,15 +57,15 @@ Item {
                    contentItem:
                        ListView {
                            id: dropDownList
-                           model: testModel
+//                           model: testModel
+                           model: controller.ui_searchModel
                            clip: true
                            anchors.fill: parent
                            delegate:
                                Label {
-                                   text: "book named " + name
+                                   text: "named " + resultName + " id " + resultId + " type " + resultType
                            }
                        }
-
                }
            }
            Button {
