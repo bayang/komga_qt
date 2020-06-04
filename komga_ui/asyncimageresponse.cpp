@@ -7,11 +7,8 @@ AsyncImageResponse::AsyncImageResponse(const QString &id, const QSize &requested
 
 {
     qDebug() << "start runnable ";
-//    connect(&m_manager, &QNetworkAccessManager::authenticationRequired,
-//            this, &AsyncImageResponse::authenticate);
     connect(&m_manager, &QNetworkAccessManager::authenticationRequired, [=](QNetworkReply *reply, QAuthenticator *authenticator){
         Q_UNUSED(reply);
-        qDebug() << "authenticate async";
         QSettings settings;
         settings.beginGroup(Komga_api::SETTINGS_SECTION_SERVER);
         QString user = settings.value(Komga_api::SETTINGS_KEY_SERVER_USER).toString();
@@ -51,15 +48,4 @@ void AsyncImageResponse::handleDone(QNetworkReply *reply) {
         reply->deleteLater();
         emit finished();
     }
-}
-void AsyncImageResponse::authenticate(QNetworkReply *reply, QAuthenticator *authenticator) {
-    Q_UNUSED(reply);
-    qDebug() << "authenticate async";
-    QSettings settings;
-    settings.beginGroup(Komga_api::SETTINGS_SECTION_SERVER);
-    QString user = settings.value(Komga_api::SETTINGS_KEY_SERVER_USER).toString();
-    QString pw = settings.value(Komga_api::SETTINGS_KEY_SERVER_PASSWORD).toString();
-    settings.endGroup();
-    authenticator->setUser(user);
-    authenticator->setPassword(pw);
 }

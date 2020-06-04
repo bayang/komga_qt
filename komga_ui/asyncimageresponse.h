@@ -15,7 +15,6 @@ public:
 
 public slots:
     void handleDone(QNetworkReply *reply);
-    void authenticate(QNetworkReply *reply, QAuthenticator *authenticator);
 
     // QQuickImageResponse interface
 public:
