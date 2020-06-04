@@ -81,7 +81,10 @@ Item {
                                 id: innerLabel
                                 width: parent.width
                                 elide: Text.ElideRight
-                                text: resultName + " - " + resultId + " - " + resultType
+                                text: resultName
+                                Layout.alignment: Qt.AlignLeft
+                                Layout.fillWidth: true
+                                Layout.leftMargin: 5
                             }
                         }
                         MouseArea {
