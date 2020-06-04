@@ -132,7 +132,6 @@ void MasterController::setSelectedBookIdx(int value)
         currentBook->bookMetadata()->setAgeRating(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::AgeRatingRole).toString());
         emit currentBookChanged(getCurrentBook());
     }
-
 }
 
 int MasterController::getSelectedLibraryIdx() const
@@ -255,4 +254,40 @@ void MasterController::setNetworkInformer(NetworkInformer *networkInformer)
 void MasterController::doSearch(const QString &searchTerm) {
     qDebug() << "search for " << searchTerm;
     m_searchModel->doSearch(searchTerm);
+}
+
+void MasterController::setSearchResult(int index)
+{
+    SearchResult* sr = getSearchModel()->at(index);
+    if (sr->resultType() == SearchResult::ResultType::BookType) {
+        setCurrentImageNumber(0);
+        currentBook->setId(sr->book()->id());
+        currentBook->setUrl(sr->book()->url());
+        currentBook->setName(sr->book()->name());
+        currentBook->setSize(sr->book()->size());
+        currentBook->setNumber(sr->book()->number());
+        currentBook->setPagesCount(sr->book()->pagesCount());
+        currentBook->setMediaType(sr->book()->mediaType());
+        currentBook->setMediaStatus(sr->book()->mediaStatus());
+        currentBook->bookMetadata()->setTitle(sr->book()->bookMetadata()->title());
+        currentBook->bookMetadata()->setSummary(sr->book()->bookMetadata()->summary());
+        currentBook->bookMetadata()->setPublisher(sr->book()->bookMetadata()->publisher());
+        currentBook->bookMetadata()->setReleaseDate(sr->book()->bookMetadata()->releaseDate());
+        currentBook->bookMetadata()->setAuthors(sr->book()->bookMetadata()->authors());
+        currentBook->bookMetadata()->setAgeRating(sr->book()->bookMetadata()->ageRating());
+        emit currentBookChanged(getCurrentBook());
+        goBookDetailView();
+    }
+    else {
+        selectedSeriesIdx = -1;
+        setSelectedBookIdx(-1);
+        currentSeries->setId(sr->series()->id());
+        QString qs = sr->series()->name();
+        currentSeries->setName(qs);
+        currentSeries->setMetadataStatus(sr->series()->metadataStatus());
+        currentSeries->setBooksCount(sr->series()->booksCount());
+        emit currentSeriesChanged(getCurrentSeries());
+        goBooksView();
+    }
+    getSearchModel()->resetModel();
 }

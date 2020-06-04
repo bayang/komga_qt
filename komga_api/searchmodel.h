@@ -25,14 +25,15 @@ public:
 
     qlonglong currentTimestamp() const;
     void setCurrentTimestamp(qlonglong currentTimestamp);
+    SearchResult* at(int index);
 
 private:
     Komga_api* m_api = nullptr;
     QList<SearchResult*> m_results{};
     qlonglong m_currentTimestamp{0};
 
-    void resetModel();
 public slots:
+    void resetModel();
     void searchBookDataReceived(QPair<QString, QJsonDocument> res);
     void searchSeriesDataReceived(QPair<QString, QJsonDocument> res);
 };

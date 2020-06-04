@@ -8,13 +8,15 @@ import assets 1.0
 Item {
 
     property real lastNextPageCalledTime: 0
+    anchors.fill: parent
+    anchors.leftMargin: 10
 
     Column {
         anchors.fill: parent
         SearchBar {
             id: searchBar
             width: parent.width > 600 ? 600 : parent.width
-            height: 30
+            height: 20
             anchors.horizontalCenter: parent.horizontalCenter
             onSearchTriggered: {
                 controller.doSearch(searchTerm)

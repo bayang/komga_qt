@@ -15,6 +15,7 @@ public:
         SeriesType,
         BookType
     };
+    Q_ENUM(ResultType);
     int id() const;
     void setId(int id);
 

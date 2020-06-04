@@ -1,6 +1,7 @@
 #include "searchmodel.h"
 #include <QDateTime>
 #include <QJsonArray>
+#include <QMetaEnum>
 
 SearchModel::SearchModel(QObject *parent, Komga_api* api) :
    QAbstractListModel{parent}, m_api{api}, m_results{}
@@ -32,8 +33,12 @@ QVariant SearchModel::data(const QModelIndex &index, int role) const {
         return result->name();
     else if (role == IdRole)
         return result->id();
-    else if (role == ResultTypeRole)
-        return result->resultType();
+    else if (role == ResultTypeRole) {
+        if (result->resultType() == SearchResult::ResultType::BookType) {
+            return QString("Books");
+        }
+        return QString("Series");
+    }
     return QVariant();
 }
 QHash<int, QByteArray> SearchModel::roleNames() const {
@@ -51,15 +56,17 @@ void SearchModel::doSearch(const QString &searchTerm)
 
 qlonglong SearchModel::currentTimestamp() const
 {
-    qDebug() << "curr " << m_currentTimestamp;
     return m_currentTimestamp;
 }
 
 void SearchModel::setCurrentTimestamp(qlonglong currentTimestamp)
 {
-    qDebug() << "set b " << m_currentTimestamp;
     m_currentTimestamp = currentTimestamp;
-    qDebug() << "set a " << m_currentTimestamp;
+}
+
+SearchResult *SearchModel::at(int index)
+{
+    return m_results.at(index);
 }
 
 void SearchModel::searchBookDataReceived(QPair<QString, QJsonDocument> res)
@@ -121,13 +128,13 @@ void SearchModel::searchSeriesDataReceived(QPair<QString, QJsonDocument> res)
     qDebug() << "search series received " << res.first << " " << res.second;
     QJsonObject page = res.second.object();
     int nbElems = page["numberOfElements"].toInt();
+    qlonglong n = res.first.section('/', 0, 0).toLongLong();
+    // new search result, clear previous data
+    if (n > currentTimestamp()) {
+        resetModel();
+        setCurrentTimestamp(n);
+    }
     if (nbElems > 0) {
-        qlonglong n = res.first.section('/', 0, 0).toLongLong();
-        // new search result, clear previous data
-        if (n > currentTimestamp()) {
-            resetModel();
-            setCurrentTimestamp(n);
-        }
         emit beginInsertRows(QModelIndex(), m_results.size(), m_results.size() + nbElems - 1);
         QJsonArray content = page["content"].toArray();
         foreach (const QJsonValue &value, content) {

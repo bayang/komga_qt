@@ -106,6 +106,7 @@ public slots:
     void refreshData();
     QString getCurrentLibraryName() const;
     void doSearch(const QString &searchTerm);
+    void setSearchResult(int index);
 
 private:
     Library* defaultLibrary{nullptr};
