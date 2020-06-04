@@ -41,7 +41,9 @@ public:
         Libraries = QNetworkRequest::Attribute::User + 1,
         SeriesReason = QNetworkRequest::Attribute::User + 2,
         Books = QNetworkRequest::Attribute::User + 3,
-        Thumbnail = QNetworkRequest::Attribute::User + 4
+        Thumbnail = QNetworkRequest::Attribute::User + 4,
+        SeriesSearch = QNetworkRequest::Attribute::User + 5,
+        BooksSearch = QNetworkRequest::Attribute::User + 6,
     };
     enum ThumbnailType {
         SeriesThumbnail,
@@ -53,15 +55,19 @@ public:
     void getPageAsync(int id, int pageNum);
     QString getServerUrl();
     void authenticate(QNetworkReply *reply, QAuthenticator *authenticator);
-
+    void doSearch(const QString &searchTerm, qint64 timestamp);
 
 private:
     QNetworkAccessManager* manager = nullptr;
     QNetworkAccessManager* thumbnailsManager = nullptr;
     void apiReplyFinished(QNetworkReply *reply);
     QSignalMapper* m_mapper = nullptr;
+    QSignalMapper* m_searchMapper = nullptr;
     QHash<QString, QNetworkReply*> m_replies;
     void preloadImageReady(const QString &id);
+    void searchDataReceived(const QString &id);
+    void searchSeries(const QString &searchTerm, qint64 timestamp);
+    void searchBooks(const QString &searchTerm, qint64 timestamp);
 
 signals:
     void libraryDataReady(QJsonDocument libraries);
@@ -70,6 +76,8 @@ signals:
     void netWorkAccessibleChanged(bool accessible);
     void networkErrorHappened(QString message);
     void preloadImageDataReady(QPair<QString, QByteArray> res);
+    void searchSeriesDataReady(QPair<QString, QJsonDocument> res);
+    void searchBookDataReady(QPair<QString, QJsonDocument> res);
 };
 
 #endif // KOMGA_API_H

@@ -31,6 +31,7 @@ Komga_api::Komga_api(QObject *parent):
     QNetworkConfigurationManager confManager;
     manager->setConfiguration(confManager.defaultConfiguration());
     m_mapper = new QSignalMapper(this);
+    m_searchMapper = new QSignalMapper(this);
     thumbnailsManager = new QNetworkAccessManager(this);
     connect(manager, &QNetworkAccessManager::finished,
             this, &Komga_api::apiReplyFinished);
@@ -51,6 +52,8 @@ Komga_api::Komga_api(QObject *parent):
     });
     connect(m_mapper, QOverload<const QString &>::of(&QSignalMapper::mapped), this,
         &Komga_api::preloadImageReady);
+    connect(m_searchMapper, QOverload<const QString &>::of(&QSignalMapper::mapped), this,
+        &Komga_api::searchDataReceived);
     connect(manager, &QNetworkAccessManager::networkAccessibleChanged, [this](QNetworkAccessManager::NetworkAccessibility accessible){
         qDebug() << "network available " << accessible;
         if (accessible == QNetworkAccessManager::NetworkAccessibility::NotAccessible) {
@@ -61,6 +64,24 @@ Komga_api::Komga_api(QObject *parent):
         }
     });
 
+}
+
+void Komga_api::searchDataReceived(const QString &id) {
+    qDebug() << "searchDataReceived " << id;
+    QNetworkReply *reply = m_replies.take(id);
+    if (reply->error() == QNetworkReply::NoError) {
+        QPair<QString, QJsonDocument> res;
+        res.first = id;
+        QByteArray response(reply->readAll());
+        res.second = QJsonDocument::fromJson(response);
+        if (id.contains(URL_SERIES)) {
+            emit searchSeriesDataReady(res);
+        }
+        else {
+            emit searchBookDataReady(res);
+        }
+    }
+    reply->deleteLater();
 }
 
 void Komga_api::preloadImageReady(const QString &id) {
@@ -113,6 +134,55 @@ void Komga_api::getSeries(int libraryId, int page) {
     url.setQuery(query);
     r.setUrl(url);
     manager->get(r);
+}
+
+void Komga_api::doSearch(const QString &searchTerm, qint64 timestamp) {
+    searchSeries(searchTerm, timestamp);
+    searchBooks(searchTerm, timestamp);
+}
+
+void Komga_api::searchSeries(const QString &searchTerm, qint64 timestamp) {
+    qDebug() << "search series for " << searchTerm;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesSearch));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_SERIES);
+    QUrlQuery query;
+    query.addQueryItem("size", "10");
+    query.addQueryItem("search", searchTerm);
+    url.setQuery(query);
+    r.setUrl(url);
+
+    QNetworkReply* reply = thumbnailsManager->get(r);
+    connect(reply, &QNetworkReply::finished, [=](){
+        m_searchMapper->map(reply);
+    });
+    QString key = QString::number(timestamp) + URL_SERIES;
+    m_replies.insert(key, reply);
+    m_searchMapper->setMapping(reply, key);
+}
+
+void Komga_api::searchBooks(const QString &searchTerm, qint64 timestamp) {
+    qDebug() << "search books for " << searchTerm;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::BooksSearch));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_BOOKS);
+    QUrlQuery query;
+    query.addQueryItem("size", "10");
+    query.addQueryItem("search", searchTerm);
+    url.setQuery(query);
+    qDebug() << " url " << url;
+    r.setUrl(url);
+
+    QNetworkReply* reply = thumbnailsManager->get(r);
+    connect(reply, &QNetworkReply::finished, [=](){
+        m_searchMapper->map(reply);
+    });
+    QString key = QString::number(timestamp) + URL_BOOKS;
+    qDebug() << "key for books " << key;
+    m_replies.insert(key, reply);
+    m_searchMapper->setMapping(reply, key);
 }
 
 void Komga_api::getBooks(int seriesId, int page) {
@@ -244,7 +314,7 @@ void Komga_api::getPageAsync(int id, int pageNum) {
     query.addQueryItem("zero_based", "true");
     url.setQuery(query);
     r.setUrl(url);
-    QEventLoop eventLoop;
+//    QEventLoop eventLoop;
 
     QNetworkReply* reply = thumbnailsManager->get(r);
     connect(reply, &QNetworkReply::finished, [=](){

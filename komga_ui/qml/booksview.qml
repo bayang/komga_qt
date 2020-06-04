@@ -1,43 +1,58 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.11
+import QtQuick.Layouts 1.14
 import komga_api 1.0
 import assets 1.0
 
 Item {
     property real lastNextPageCalledTime: 0
+    anchors.fill: parent
+    anchors.leftMargin: 10
 
-    Column {
+    ColumnLayout {
         anchors.fill: parent
 
-        Button {
-            id : booksViewBackButton
-            onClicked: {
-                if (contentFrame.depth > 0) {
-                    contentFrame.pop()
+        RowLayout {
+            id: searchAndButtonRow
+            Layout.bottomMargin: 15
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            Button {
+                id : booksViewBackButton
+                onClicked: {
+                    if (contentFrame.depth > 0) {
+                        contentFrame.pop()
+                    }
+                }
+                font {
+                    family: Style.fontAwesome
+                    pointSize: Style.backArrowIconSize
+                }
+                text: "\uf060"
+            }
+            SearchBar {
+                id: searchBar
+                Layout.preferredHeight: 20
+                Layout.preferredWidth: 600
+                onSearchTriggered: {
+                    controller.doSearch(searchTerm)
                 }
             }
-            font {
-                family: Style.fontAwesome
-                pointSize: Style.backArrowIconSize
-            }
-            text: "\uf060"
         }
 
-        Row {
+        RowLayout {
             id : firstRow
-            height: 350
-            bottomPadding: 0
+            Layout.bottomMargin: 15
             Image {
                 id: seriesDetailImage
                 source: "image://async/series/" + controller.ui_currentSeries.ui_seriesId
                 sourceSize.height: 300
                 sourceSize.width: -1
                 fillMode: Image.PreserveAspectCrop
+                Layout.preferredHeight: 350
             }
-            Column {
-                leftPadding: 20
-
+            ColumnLayout {
+                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                 RowLayout {
                     Label {
                         id: seriesText
@@ -66,15 +81,18 @@ Item {
 
         GridView {
             id: booksList
-            height: parent.height - firstRow.height - booksViewBackButton.height
             model: controller.ui_bookModel
             clip: true
             cellWidth : Style.thumbnailRequestedWidth + 10
             cellHeight: Style.thumbnailRequestedHeight + 85
-            width: parent.width
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.minimumHeight: 100
+            Layout.minimumWidth: 100
+            Layout.preferredHeight: parent.height - firstRow.height - searchAndButtonRow.height
             cacheBuffer: cellHeight
             ScrollBar.vertical: ScrollBar { }
-            bottomMargin: 20
+            Layout.bottomMargin: 2
             onMovementEnded: {
                 if (atYEnd) {
                     var curTime = new Date().getTime();

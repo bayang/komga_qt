@@ -39,6 +39,10 @@ add_library(komga-api
     series.h
     seriesfiltersortproxymodel.h
     seriesmodel.h
+    searchmodel.cpp
+    searchmodel.h
+    searchresult.cpp
+    searchresult.h
 )
 target_compile_definitions(komga-api PUBLIC "$<$<CONFIG:Release>:QT_NO_DEBUG_OUTPUT>")
 target_link_libraries(komga-api Qt5::Core)

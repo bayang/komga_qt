@@ -10,5 +10,6 @@
         <file>qml/seriesview.qml</file>
         <file>qml/SettingsView.qml</file>
         <file>qml/TextLink.qml</file>
+        <file>qml/SearchBar.qml</file>
     </qresource>
 </RCC>
