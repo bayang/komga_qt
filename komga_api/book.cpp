@@ -1,4 +1,5 @@
 #include "book.h"
+#include <QDebug>
 
 Book::Book(QObject *parent):
     QObject{parent}
@@ -127,4 +128,27 @@ BookMetadata* Book::bookMetadata() const
 void Book::setBookMetadata(BookMetadata* &bookMetadata)
 {
     m_bookMetadata = bookMetadata;
+}
+
+int Book::pageReached() const
+{
+    return m_pageReached;
+}
+
+void Book::setPageReached(int pageReached)
+{
+    if (pageReached != m_pageReached) {
+        m_pageReached = pageReached;
+        emit currentPageReachedChanged(m_pageReached);
+    }
+}
+
+bool Book::completed() const
+{
+    return m_completed;
+}
+
+void Book::setCompleted(bool completed)
+{
+    m_completed = completed;
 }

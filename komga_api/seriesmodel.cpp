@@ -25,18 +25,33 @@ QVariant SeriesModel::data(const QModelIndex &index, int role) const {
 
     const Series* series = m_series[index.row()];
     if (series) {
-        if (role == NameRole)
+        if (role == NameRole) {
             return series->name();
-        else if (role == IdRole)
+        }
+        else if (role == IdRole) {
             return series->id();
-        else if (role == LibraryIdRole)
+        }
+        else if (role == LibraryIdRole) {
             return series->libraryId();
-        else if (role == BookCountRole)
+        }
+        else if (role == BookCountRole) {
             return series->booksCount();
-        else if (role == UrlRole)
+        }
+        else if (role == UrlRole) {
             return series->url();
-        else if (role == MetadataStatusRole)
+        }
+        else if (role == MetadataStatusRole){
             return series->metadataStatus();
+        }
+        else if (role == BookReadCountRole) {
+            return series->booksReadCount();
+        }
+        else if (role == BookUnreadCountRole) {
+            return series->booksUnreadCount();
+        }
+        else if (role == BookInProgressCountRole) {
+            return series->booksInProgressCount();
+        }
     }
     return QVariant();
 }
@@ -46,6 +61,9 @@ QHash<int, QByteArray> SeriesModel::roleNames() const {
         roles[NameRole] = "seriesName";
         roles[LibraryIdRole] = "seriesLibraryId";
         roles[BookCountRole] = "seriesBookCount";
+        roles[BookReadCountRole] = "seriesBookReadCount";
+        roles[BookUnreadCountRole] = "seriesBookUnreadCount";
+        roles[BookInProgressCountRole] = "seriesBookInProgressCount";
         roles[UrlRole] = "seriesUrl";
         roles[MetadataStatusRole] = "seriesMetadataStatus";
         return roles;
@@ -64,6 +82,27 @@ void SeriesModel::resetSeries() {
     emit endRemoveRows();
 }
 
+Series* SeriesModel::parseSeries(const QJsonValue &value) {
+    Series* s = new Series(this);
+    QJsonObject jsob = value.toObject();
+    qDebug() << jsob["id"].toInt();
+    qDebug() << jsob["name"].toString();
+    s->setId(jsob["id"].toInt());
+    QString n = jsob["name"].toString();
+    s->setName(n);
+    s->setBooksCount(jsob["booksCount"].toInt());
+    s->setBooksReadCount(jsob["booksReadCount"].toInt());
+    s->setBooksUnreadCount(jsob["booksUnreadCount"].toInt());
+    s->setBooksInProgressCount(jsob["booksInProgressCount"].toInt());
+    s->setLibraryId(jsob["libraryId"].toInt());
+    QString u = jsob["url"].toString();
+    s->setUrl(u);
+    QJsonObject metadata = jsob["metadata"].toObject();
+    s->setMetadataTitle(metadata["title"].toString());
+    s->setMetadataStatus(metadata["status"].toString());
+    return s;
+}
+
 void SeriesModel::apiDataReceived(QJsonObject page) {
     int pageNum = page["number"].toInt();
     int totPages = page["totalPages"].toInt();
@@ -75,21 +114,22 @@ void SeriesModel::apiDataReceived(QJsonObject page) {
             emit beginInsertRows(QModelIndex(), m_series.size(), m_series.size() + nbElems - 1);
             QJsonArray content = page["content"].toArray();
             foreach (const QJsonValue &value, content) {
-                Series* s = new Series(this);
-                QJsonObject jsob = value.toObject();
-                qDebug() << jsob["id"].toInt();
-                qDebug() << jsob["name"].toString();
-                s->setId(jsob["id"].toInt());
-                QString n = jsob["name"].toString();
-                s->setName(n);
-                s->setBooksCount(jsob["booksCount"].toInt());
-                s->setLibraryId(jsob["libraryId"].toInt());
-                QString u = jsob["url"].toString();
-                s->setUrl(u);
-                QJsonObject metadata = jsob["metadata"].toObject();
-                s->setMetadataTitle(metadata["title"].toString());
-                s->setMetadataStatus(metadata["status"].toString());
-                m_series.append(std::move(s));
+//                Series* s = new Series(this);
+//                QJsonObject jsob = value.toObject();
+//                qDebug() << jsob["id"].toInt();
+//                qDebug() << jsob["name"].toString();
+//                s->setId(jsob["id"].toInt());
+//                QString n = jsob["name"].toString();
+//                s->setName(n);
+//                s->setBooksCount(jsob["booksCount"].toInt());
+//                s->setLibraryId(jsob["libraryId"].toInt());
+//                QString u = jsob["url"].toString();
+//                s->setUrl(u);
+//                QJsonObject metadata = jsob["metadata"].toObject();
+//                s->setMetadataTitle(metadata["title"].toString());
+//                s->setMetadataStatus(metadata["status"].toString());
+//                m_series.append(std::move(s));
+                m_series.append(std::move(parseSeries(value)));
             }
             emit endInsertRows();
         }
@@ -97,21 +137,23 @@ void SeriesModel::apiDataReceived(QJsonObject page) {
             QList<Series*> series{};
             QJsonArray content = page["content"].toArray();
             foreach (const QJsonValue &value, content) {
-                Series* s = new Series(this);
-                QJsonObject jsob = value.toObject();
-                qDebug() << jsob["id"].toInt();
-                qDebug() << jsob["name"].toString();
-                s->setId(jsob["id"].toInt());
-                QString n = jsob["name"].toString();
-                s->setName(n);
-                s->setBooksCount(jsob["booksCount"].toInt());
-                s->setLibraryId(jsob["libraryId"].toInt());
-                QString u = jsob["url"].toString();
-                s->setUrl(u);
-                QJsonObject metadata = jsob["metadata"].toObject();
-                s->setMetadataTitle(metadata["title"].toString());
-                s->setMetadataStatus(metadata["status"].toString());
-                series.append(std::move(s));
+//                Series* s = new Series(this);
+//                QJsonObject jsob = value.toObject();
+//                qDebug() << jsob["id"].toInt();
+//                qDebug() << jsob["name"].toString();
+//                s->setId(jsob["id"].toInt());
+//                QString n = jsob["name"].toString();
+//                s->setName(n);
+//                s->setBooksCount(jsob["booksCount"].toInt());
+//                s->setLibraryId(jsob["libraryId"].toInt());
+//                QString u = jsob["url"].toString();
+//                s->setUrl(u);
+//                QJsonObject metadata = jsob["metadata"].toObject();
+//                s->setMetadataTitle(metadata["title"].toString());
+//                s->setMetadataStatus(metadata["status"].toString());
+//                series.append(std::move(s));
+                series.append(std::move(parseSeries(value)));
+
             }
 
             emit layoutAboutToBeChanged();

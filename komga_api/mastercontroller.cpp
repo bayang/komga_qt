@@ -115,7 +115,6 @@ void MasterController::setSelectedBookIdx(int value)
     }
     if (value != selectedBookIdx) {
         selectedBookIdx = value;
-        setCurrentImageNumber(0);
         currentBook->setId(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::IdRole).toInt());
         currentBook->setUrl(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::UrlRole).toString());
         currentBook->setName(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::NameRole).toString());
@@ -130,6 +129,8 @@ void MasterController::setSelectedBookIdx(int value)
         currentBook->bookMetadata()->setReleaseDate(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::ReleaseDateRole).toString());
         currentBook->bookMetadata()->setAuthors(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::AuthorsRole).toStringList());
         currentBook->bookMetadata()->setAgeRating(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::AgeRatingRole).toString());
+        currentBook->setCompleted(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::CompletedRole).toBool());
+        currentBook->setPageReached(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::PageReachedRole).toInt());
         emit currentBookChanged(getCurrentBook());
     }
 }
@@ -189,18 +190,16 @@ void MasterController::setSelectedSeriesIdx(int value)
         currentSeries->setName(qs);
         currentSeries->setMetadataStatus(getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::MetadataStatusRole).toString());
         currentSeries->setBooksCount(getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::BookCountRole).toInt());
+        currentSeries->setBooksReadCount(getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::BookReadCountRole).toInt());
+        currentSeries->setBooksUnreadCount(getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::BookUnreadCountRole).toInt());
+        currentSeries->setBooksInProgressCount(getSeriesModel()->data(getSeriesModel()->index(getSelectedSeriesIdx(), 0), SeriesModel::SeriesRoles::BookInProgressCountRole).toInt());
         emit currentSeriesChanged(getCurrentSeries());
     }
 }
 
-int MasterController::getCurrentImageNumber() const
+void MasterController::setCurrentBookPageReached(int currentImageNumber)
 {
-    return m_currentImageNumber;
-}
-
-void MasterController::setCurrentImageNumber(int currentImageNumber)
-{
-    if (currentImageNumber != m_currentImageNumber) {
+    if (currentImageNumber != getCurrentBook()->pageReached()) {
         if (currentImageNumber < 0) {
             emit firstBookPageReached();
             return;
@@ -211,8 +210,8 @@ void MasterController::setCurrentImageNumber(int currentImageNumber)
         }
         else {
             qDebug() << "current image nb changed in controller " << currentImageNumber ;
-            m_currentImageNumber = currentImageNumber;
-            emit currentImageNumberChanged(currentImageNumber);
+            getCurrentBook()->setPageReached(currentImageNumber);
+            m_bookModel->updateProgress(getCurrentBook()->id(), currentImageNumber);
         }
     }
 }
@@ -260,7 +259,6 @@ void MasterController::setSearchResult(int index)
 {
     SearchResult* sr = getSearchModel()->at(index);
     if (sr->resultType() == SearchResult::ResultType::BookType) {
-        setCurrentImageNumber(0);
         currentBook->setId(sr->book()->id());
         currentBook->setUrl(sr->book()->url());
         currentBook->setName(sr->book()->name());
@@ -275,6 +273,8 @@ void MasterController::setSearchResult(int index)
         currentBook->bookMetadata()->setReleaseDate(sr->book()->bookMetadata()->releaseDate());
         currentBook->bookMetadata()->setAuthors(sr->book()->bookMetadata()->authors());
         currentBook->bookMetadata()->setAgeRating(sr->book()->bookMetadata()->ageRating());
+        currentBook->setCompleted(sr->book()->completed());
+        currentBook->setPageReached(sr->book()->pageReached());
         emit currentBookChanged(getCurrentBook());
         goBookDetailView();
     }
@@ -286,6 +286,9 @@ void MasterController::setSearchResult(int index)
         currentSeries->setName(qs);
         currentSeries->setMetadataStatus(sr->series()->metadataStatus());
         currentSeries->setBooksCount(sr->series()->booksCount());
+        currentSeries->setBooksReadCount(sr->series()->booksReadCount());
+        currentSeries->setBooksUnreadCount(sr->series()->booksUnreadCount());
+        currentSeries->setBooksInProgressCount(sr->series()->booksInProgressCount());
         emit currentSeriesChanged(getCurrentSeries());
         goBooksView();
     }

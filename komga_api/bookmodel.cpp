@@ -60,6 +60,10 @@ QVariant BookModel::data(const QModelIndex &index, int role) const {
         return book->bookMetadata()->ageRating();
     else if (role == TitleRole)
         return book->bookMetadata()->title();
+    else if (role == PageReachedRole)
+        return book->pageReached();
+    else if (role == CompletedRole)
+        return book->completed();
     return QVariant();
 }
 QHash<int, QByteArray> BookModel::roleNames() const {
@@ -81,11 +85,53 @@ QHash<int, QByteArray> BookModel::roleNames() const {
         roles[AgeRatingRole] = "bookAgeRating";
         roles[TitleRole] = "bookTitle";
         roles[MediaTypeFullRole] = "bookMediaTypeFull";
+        roles[PageReachedRole] = "bookPageReached";
+        roles[CompletedRole] = "bookCompleted";
         return roles;
 }
 void BookModel::loadBooks(Series* series) {
     m_api->getBooks(series->id());
     resetBooks();
+}
+Book* BookModel::parseBook(const QJsonValue &value) {
+    Book* b = new Book(this);
+    QJsonObject jsob = value.toObject();
+    b->setId(jsob["id"].toInt());
+    b->setSeriesId(jsob["seriesId"].toInt());
+    b->setName(jsob["name"].toString());
+    b->setUrl(jsob["url"].toString());
+    b->setSizeBytes(jsob["sizeBytes"].toInt());
+    b->setSize(jsob["size"].toString());
+    QJsonObject media = jsob["media"].toObject();
+    b->setMediaStatus(media["status"].toString());
+    b->setPagesCount(media["pagesCount"].toInt());
+    b->setMediaType(media["mediaType"].toString());
+    BookMetadata* meta = new BookMetadata();
+    QJsonObject metadata = jsob["metadata"].toObject();
+    meta->setTitle(metadata["title"].toString());
+    meta->setSummary(metadata["summary"].toString());
+    meta->setNumber(metadata["number"].toString());
+    meta->setNumberSort(metadata["numberSort"].toInt());
+    meta->setPublisher(metadata["publisher"].toString());
+    meta->setAgeRating(metadata["ageRating"].toString());
+    meta->setReleaseDate(metadata["releaseDate"].toString());
+    QJsonArray authors = metadata["authors"].toArray();
+    QList<QString> aut{""};
+    foreach (const QJsonValue &value, authors) {
+        aut.append(value.toString());
+    }
+    meta->setAuthors(aut);
+    if (jsob.contains("readProgress")) {
+        QJsonObject progress = jsob["readProgress"].toObject();
+        if (progress.contains("page")) {
+            b->setPageReached(progress["page"].toInt());
+        }
+        if (progress.contains("completed")) {
+            b->setCompleted(progress["completed"].toBool());
+        }
+    }
+    b->setBookMetadata(meta);
+    return b;
 }
 void BookModel::apiDataReceived(QJsonObject books) {
     int pageNum = books["number"].toInt();
@@ -98,35 +144,36 @@ void BookModel::apiDataReceived(QJsonObject books) {
             emit beginInsertRows(QModelIndex(), m_books.size(), m_books.size() + nbElems - 1);
             QJsonArray content = books["content"].toArray();
             foreach (const QJsonValue &value, content) {
-                Book* b = new Book(this);
-                QJsonObject jsob = value.toObject();
-                b->setId(jsob["id"].toInt());
-                b->setSeriesId(jsob["seriesId"].toInt());
-                b->setName(jsob["name"].toString());
-                b->setUrl(jsob["url"].toString());
-                b->setSizeBytes(jsob["sizeBytes"].toInt());
-                b->setSize(jsob["size"].toString());
-                QJsonObject media = jsob["media"].toObject();
-                b->setMediaStatus(media["status"].toString());
-                b->setPagesCount(media["pagesCount"].toInt());
-                b->setMediaType(media["mediaType"].toString());
-                BookMetadata* meta = new BookMetadata();
-                QJsonObject metadata = jsob["metadata"].toObject();
-                meta->setTitle(metadata["title"].toString());
-                meta->setSummary(metadata["summary"].toString());
-                meta->setNumber(metadata["number"].toString());
-                meta->setNumberSort(metadata["numberSort"].toInt());
-                meta->setPublisher(metadata["publisher"].toString());
-                meta->setAgeRating(metadata["ageRating"].toString());
-                meta->setReleaseDate(metadata["releaseDate"].toString());
-                QJsonArray authors = metadata["authors"].toArray();
-                QList<QString> aut{""};
-                foreach (const QJsonValue &value, authors) {
-                    aut.append(value.toString());
-                }
-                meta->setAuthors(aut);
-                b->setBookMetadata(meta);
-                m_books.append(std::move(b));
+//                Book* b = new Book(this);
+//                QJsonObject jsob = value.toObject();
+//                b->setId(jsob["id"].toInt());
+//                b->setSeriesId(jsob["seriesId"].toInt());
+//                b->setName(jsob["name"].toString());
+//                b->setUrl(jsob["url"].toString());
+//                b->setSizeBytes(jsob["sizeBytes"].toInt());
+//                b->setSize(jsob["size"].toString());
+//                QJsonObject media = jsob["media"].toObject();
+//                b->setMediaStatus(media["status"].toString());
+//                b->setPagesCount(media["pagesCount"].toInt());
+//                b->setMediaType(media["mediaType"].toString());
+//                BookMetadata* meta = new BookMetadata();
+//                QJsonObject metadata = jsob["metadata"].toObject();
+//                meta->setTitle(metadata["title"].toString());
+//                meta->setSummary(metadata["summary"].toString());
+//                meta->setNumber(metadata["number"].toString());
+//                meta->setNumberSort(metadata["numberSort"].toInt());
+//                meta->setPublisher(metadata["publisher"].toString());
+//                meta->setAgeRating(metadata["ageRating"].toString());
+//                meta->setReleaseDate(metadata["releaseDate"].toString());
+//                QJsonArray authors = metadata["authors"].toArray();
+//                QList<QString> aut{""};
+//                foreach (const QJsonValue &value, authors) {
+//                    aut.append(value.toString());
+//                }
+//                meta->setAuthors(aut);
+//                b->setBookMetadata(meta);
+//                m_books.append(std::move(b));
+                m_books.append(std::move(parseBook(value)));
             }
             emit endInsertRows();
         }
@@ -135,35 +182,37 @@ void BookModel::apiDataReceived(QJsonObject books) {
             QList<Book*> booksList{};
             QJsonArray content = books["content"].toArray();
             foreach (const QJsonValue &value, content) {
-                Book* b = new Book(this);
-                QJsonObject jsob = value.toObject();
-                b->setId(jsob["id"].toInt());
-                b->setSeriesId(jsob["seriesId"].toInt());
-                b->setName(jsob["name"].toString());
-                b->setUrl(jsob["url"].toString());
-                b->setSizeBytes(jsob["sizeBytes"].toInt());
-                b->setSize(jsob["size"].toString());
-                QJsonObject media = jsob["media"].toObject();
-                b->setMediaStatus(media["status"].toString());
-                b->setPagesCount(media["pagesCount"].toInt());
-                b->setMediaType(media["mediaType"].toString());
-                BookMetadata* meta = new BookMetadata();
-                QJsonObject metadata = jsob["metadata"].toObject();
-                meta->setTitle(metadata["title"].toString());
-                meta->setSummary(metadata["summary"].toString());
-                meta->setNumber(metadata["number"].toString());
-                meta->setNumberSort(metadata["numberSort"].toInt());
-                meta->setPublisher(metadata["publisher"].toString());
-                meta->setAgeRating(metadata["ageRating"].toString());
-                meta->setReleaseDate(metadata["releaseDate"].toString());
-                QJsonArray authors = metadata["authors"].toArray();
-                QList<QString> aut{""};
-                foreach (const QJsonValue &value, authors) {
-                    aut.append(value.toString());
-                }
-                meta->setAuthors(aut);
-                b->setBookMetadata(meta);
-                booksList.append(std::move(b));
+//                Book* b = new Book(this);
+//                QJsonObject jsob = value.toObject();
+//                b->setId(jsob["id"].toInt());
+//                b->setSeriesId(jsob["seriesId"].toInt());
+//                b->setName(jsob["name"].toString());
+//                b->setUrl(jsob["url"].toString());
+//                b->setSizeBytes(jsob["sizeBytes"].toInt());
+//                b->setSize(jsob["size"].toString());
+//                QJsonObject media = jsob["media"].toObject();
+//                b->setMediaStatus(media["status"].toString());
+//                b->setPagesCount(media["pagesCount"].toInt());
+//                b->setMediaType(media["mediaType"].toString());
+//                BookMetadata* meta = new BookMetadata();
+//                QJsonObject metadata = jsob["metadata"].toObject();
+//                meta->setTitle(metadata["title"].toString());
+//                meta->setSummary(metadata["summary"].toString());
+//                meta->setNumber(metadata["number"].toString());
+//                meta->setNumberSort(metadata["numberSort"].toInt());
+//                meta->setPublisher(metadata["publisher"].toString());
+//                meta->setAgeRating(metadata["ageRating"].toString());
+//                meta->setReleaseDate(metadata["releaseDate"].toString());
+//                QJsonArray authors = metadata["authors"].toArray();
+//                QList<QString> aut{""};
+//                foreach (const QJsonValue &value, authors) {
+//                    aut.append(value.toString());
+//                }
+//                meta->setAuthors(aut);
+//                b->setBookMetadata(meta);
+
+//                booksList.append(std::move(b));
+                booksList.append(std::move(parseBook(value)));
             }
 //            emit beginResetModel();
 //            qDeleteAll(m_books);
@@ -213,6 +262,11 @@ void BookModel::preloadImageDataReceived(QPair<QString, QByteArray> res) {
     if (! res.second.isNull() && ! res.second.isEmpty()) {
         m_picturesCache.insert(res.first, new QByteArray(res.second));
     }
+}
+
+void BookModel::updateProgress(int bookId, int page, bool completed)
+{
+    m_api->updateProgress(bookId, page, completed);
 }
 QByteArray* BookModel::getImageFromCache(const QString &key) {
     return m_picturesCache[key];

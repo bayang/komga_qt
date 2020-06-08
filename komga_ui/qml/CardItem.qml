@@ -15,6 +15,11 @@ Item {
     property alias subLabel: subText.text
     property alias topCornerLabel: nbBooksLabel.text
     property alias topCornerLabelFontSize: nbBooksLabel.font.pointSize
+    property alias topCornerLabelVisible: topCornerRectangle.visible
+
+    property alias progressValue: progress.value
+    property alias progressVisible: progress.visible
+    property alias progressHeight: progress.thickness
 
     signal cardClicked
 
@@ -58,6 +63,13 @@ Item {
                             }
                         }
                     }
+                    ProgressBar {
+                        id: progress
+                        property real thickness: 4
+                        anchors.bottom: seriesImage.bottom
+                        width: seriesDelegateBackgound.width
+                        contentItem.implicitHeight: thickness
+                    }
             }
             Label {
                 id : labelText
@@ -79,6 +91,7 @@ Item {
 
         }
     }
+
     MouseArea {
         id : seriesDelegateMouseArea
         width: parent.width
@@ -111,6 +124,7 @@ Item {
     }
 
     Rectangle {
+        id: topCornerRectangle
         anchors.top: seriesDelegateRect.top
         anchors.right: seriesDelegateRect.right
         height: 30
