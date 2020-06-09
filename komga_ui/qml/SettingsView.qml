@@ -7,6 +7,8 @@ import assets 1.0
 
 Item {
     id: page
+    anchors.fill: parent
+    anchors.leftMargin: 10
 
     Settings {
         id: serverSettings
