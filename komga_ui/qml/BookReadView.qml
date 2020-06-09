@@ -37,7 +37,7 @@ Item {
         contentY: contentHeight === readContainer.height ? 0 : bookReadPage.paintedHeight * imgScale / 2 - flickArea.height / 2
         Image {
             id: bookReadPage
-            source: "image://page/" + controller.ui_currentBook.ui_bookId + "/" + controller.ui_currPageNumber
+            source: "image://page/" + controller.ui_currentBook.ui_bookId + "/" + controller.ui_currentBook.ui_bookPageReached
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
             asynchronous: true
@@ -127,7 +127,6 @@ Item {
         hoverEnabled: true
         onPositionChanged: {
             pageNumberWrapper.y  = readContainer.height - 50
-            backButtonWrapper.x = 20
             visibilityTimer.restart()
         }
     }
@@ -158,7 +157,7 @@ Item {
         Label {
             id: pageNumberLabel
             anchors.centerIn: parent
-            text: (controller.ui_currPageNumber + 1).toString() + "/" + controller.ui_currentBook.ui_bookPagesCount
+            text: (controller.ui_currentBook.ui_bookPageReached + 1).toString() + "/" + controller.ui_currentBook.ui_bookPagesCount
         }
     }
 
@@ -169,7 +168,6 @@ Item {
         repeat: false
         onTriggered: {
             pageNumberWrapperAnimator.start()
-            backButtonWrapperAnimator.start()
         }
     }
 
@@ -192,44 +190,6 @@ Item {
         visible: false
     }
 
-    Item {
-        id: backButtonWrapper
-        width: backButtonBackground.width
-        height: backButtonBackground.height
-        anchors.top: parent.top
-
-        XAnimator {
-            id: backButtonWrapperAnimator
-               target: backButtonWrapper;
-               from: backButtonWrapper.width;
-               to: - 100;
-               duration: 1000
-               easing.type: Easing.Linear
-           }
-        Rectangle {
-            id: backButtonBackground
-            opacity: 0.6
-            width: backButton.width
-            color: "gray"
-            height: backButton.height
-            anchors.centerIn: parent
-        }
-
-        Button {
-            id: backButton
-            anchors.centerIn: parent
-            font {
-                family: Style.fontAwesome
-                pointSize: Style.backArrowIconSize
-            }
-            text: "\uf060"
-            onClicked: {
-                if (contentFrame.depth > 0) {
-                    contentFrame.pop()
-                }
-            }
-        }
-    }
     Keys.onSpacePressed: {
         flickArea.contentY += bookReadPage.paintedHeight / 4
         flickArea.returnToBounds()
@@ -237,7 +197,7 @@ Item {
             var curTime = new Date().getTime();
             console.log("atYEnd " + curTime + " " + lastSpacePressedTime)
             if (curTime - lastSpacePressedTime < 2000) {
-                controller.ui_currPageNumber += 1
+                controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPageReached + 1)
                 console.log("next page")
             }
             lastSpacePressedTime = curTime
@@ -269,22 +229,22 @@ Item {
             event.accepted = true
         }
         else if (event.key === Qt.Key_PageUp) {
-            controller.ui_currPageNumber -= 1
+            controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPageReached - 1)
             event.accepted = true
         }
         else if (event.key === Qt.Key_PageDown) {
             console.log("down")
-            controller.ui_currPageNumber += 1
+            controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPageReached + 1)
             event.accepted = true
         }
         else if (event.key === Qt.Key_End) {
             console.log("end")
-            controller.ui_currPageNumber = controller.ui_currentBook.ui_bookPagesCount - 1
+            controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPagesCount - 1)
             event.accepted = true
         }
         else if (event.key === Qt.Key_Home) {
             console.log("begin")
-            controller.ui_currPageNumber = 0
+            controller.setCurrentBookPageReached(0)
             event.accepted = true
         }
         else if (event.key === Qt.Key_W) {

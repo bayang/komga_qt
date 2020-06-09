@@ -32,6 +32,7 @@ public:
     static const QString URL_BOOKS;
     static const QString URL_THUMBNAILS;
     static const QString URL_PAGE;
+    static const QString URL_PROGRESS;
     static const QString SETTINGS_SECTION_SERVER;
     static const QString SETTINGS_KEY_SERVER_URL;
     static const QString SETTINGS_KEY_SERVER_USER;
@@ -44,6 +45,7 @@ public:
         Thumbnail = QNetworkRequest::Attribute::User + 4,
         SeriesSearch = QNetworkRequest::Attribute::User + 5,
         BooksSearch = QNetworkRequest::Attribute::User + 6,
+        Progress = QNetworkRequest::Attribute::User + 7,
     };
     enum ThumbnailType {
         SeriesThumbnail,
@@ -56,6 +58,7 @@ public:
     QString getServerUrl();
     void authenticate(QNetworkReply *reply, QAuthenticator *authenticator);
     void doSearch(const QString &searchTerm, qint64 timestamp);
+    void updateProgress(int bookId, int page, bool completed = false);
 
 private:
     QNetworkAccessManager* manager = nullptr;

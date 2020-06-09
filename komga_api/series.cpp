@@ -36,7 +36,7 @@ void Series::setLibraryId(int id) {
 void Series::setBooksCount(int count) {
     if (count != m_booksCount) {
         m_booksCount = count;
-        emit booksCountChanged();
+        emit booksCountChanged(count);
     }
 }
 
@@ -58,4 +58,43 @@ QString Series::metadataTitle() const
 void Series::setMetadataTitle(const QString &metadataTitle)
 {
     m_metadataTitle = metadataTitle;
+}
+
+int Series::booksReadCount() const
+{
+    return m_booksReadCount;
+}
+
+void Series::setBooksReadCount(int booksReadCount)
+{
+    if (booksReadCount != m_booksReadCount) {
+        m_booksReadCount = booksReadCount;
+        emit booksReadCountChanged(booksReadCount);
+    }
+}
+
+int Series::booksUnreadCount() const
+{
+    return m_booksUnreadCount;
+}
+
+void Series::setBooksUnreadCount(int booksUnreadCount)
+{
+    if (booksUnreadCount != m_booksUnreadCount) {
+        m_booksUnreadCount = booksUnreadCount;
+        emit booksUnreadCountChanged(booksUnreadCount);
+    }
+}
+
+int Series::booksInProgressCount() const
+{
+    return m_booksInProgressCount;
+}
+
+void Series::setBooksInProgressCount(int booksInProgressCount)
+{
+    if (booksInProgressCount != m_booksInProgressCount) {
+        m_booksInProgressCount = booksInProgressCount;
+        emit booksInProgressCountChanged(m_booksInProgressCount);
+    }
 }

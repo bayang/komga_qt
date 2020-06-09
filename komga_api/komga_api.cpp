@@ -19,6 +19,7 @@ const QString Komga_api::URL_SERIES_UPDATED{"/updated"};
 const QString Komga_api::URL_BOOKS{"/books"};
 const QString Komga_api::URL_THUMBNAILS{"/thumbnail"};
 const QString Komga_api::URL_PAGE{"/pages"};
+const QString Komga_api::URL_PROGRESS{"read-progress"};
 const QString Komga_api::SETTINGS_SECTION_SERVER{"server"};
 const QString Komga_api::SETTINGS_KEY_SERVER_URL{"serverAdress"};
 const QString Komga_api::SETTINGS_KEY_SERVER_USER{"serverUsername"};
@@ -141,6 +142,26 @@ void Komga_api::doSearch(const QString &searchTerm, qint64 timestamp) {
     searchBooks(searchTerm, timestamp);
 }
 
+void Komga_api::updateProgress(int bookId, int page, bool completed)
+{
+    QJsonObject obj;
+    if (completed) {
+        obj.insert("completed", true);
+    }
+    else {
+        obj.insert("page", page);
+    }
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Progress));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_BOOKS + "/" + QString::number(bookId, 10) + "/" + URL_PROGRESS);
+    r.setUrl(url);
+    r.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "application/json; charset=utf8");
+    QJsonDocument doc{obj};
+    qDebug() << "doc " << doc.toJson(QJsonDocument::JsonFormat::Compact);
+    manager->sendCustomRequest(r, "PATCH", doc.toJson(QJsonDocument::JsonFormat::Compact));
+}
+
 void Komga_api::searchSeries(const QString &searchTerm, qint64 timestamp) {
     qDebug() << "search series for " << searchTerm;
     QNetworkRequest r;
@@ -221,10 +242,13 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
             QJsonObject page = doc.object();
             emit booksDataReady(page);
         }
+        else if (reason == RequestReason::Progress) {
+            qDebug() << "progress code " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        }
     }
     // else emit an error event
     else {
-        qWarning() << "ERROR " << reply->errorString();
+        qWarning() << "ERROR " << reply->errorString() << " code " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         emit networkErrorHappened("ERROR " + reply->errorString());
     }
 }

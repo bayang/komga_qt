@@ -37,6 +37,13 @@ Item {
                     sourceSize.height: 300
                     sourceSize.width: -1
                     fillMode: Image.PreserveAspectCrop
+                    ProgressBar {
+                        width: parent.width
+                        anchors.bottom: parent.bottom
+                        contentItem.implicitHeight: 10
+                        value: controller.ui_currentBook.ui_bookPageReached / controller.ui_currentBook.ui_bookPagesCount
+                        visible: controller.ui_currentBook.ui_bookPageReached > 0 && ! controller.ui_currentBook.ui_bookCompleted
+                    }
                 }
                 Label {
                     font {

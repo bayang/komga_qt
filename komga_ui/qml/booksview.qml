@@ -110,8 +110,12 @@ Item {
                 imagePath: "image://async/book/" + bookId
                 cardLabel: bookName
                 subLabel: bookPageCount + " pages\nsize: " + bookSize
-                topCornerLabel: bookMediaType
+                topCornerLabel: "✓"
                 topCornerLabelFontSize: 11
+                topCornerLabelVisible: bookCompleted
+                progressVisible: bookPageReached > 0 && ! bookCompleted
+                progressValue: bookPageReached/bookPageCount
+                progressHeight: 10
                 onCardClicked: {
                     booksList.currentIndex = index
                     controller.setSelectedBook(booksList.currentIndex)

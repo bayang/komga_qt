@@ -18,7 +18,10 @@ public:
         NameRole = Qt::UserRole + 3,
         BookCountRole = Qt::UserRole + 4,
         UrlRole = Qt::UserRole + 5,
-        MetadataStatusRole = Qt::UserRole + 6
+        MetadataStatusRole = Qt::UserRole + 6,
+        BookReadCountRole = Qt::UserRole + 7,
+        BookUnreadCountRole = Qt::UserRole + 8,
+        BookInProgressCountRole = Qt::UserRole + 9,
     };
 private slots:
     void apiDataReceived(QJsonObject series);
@@ -35,6 +38,7 @@ public:
     Series* find(int libraryId);
     void resetSeries();
 
+    Series *parseSeries(const QJsonValue &value);
 signals:
     void refresh();
 

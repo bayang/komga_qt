@@ -29,7 +29,6 @@ class KOMGA_API_EXPORT MasterController : public QObject
     Q_PROPERTY( int ui_newSeriesId MEMBER SERIES_NEW_ID CONSTANT )
     Q_PROPERTY( int ui_latestSeriesId MEMBER SERIES_LATEST_ID CONSTANT )
     Q_PROPERTY( int ui_updatedSeriesId MEMBER SERIES_UPDATED_ID CONSTANT )
-    Q_PROPERTY( int ui_currPageNumber READ getCurrentImageNumber WRITE setCurrentImageNumber NOTIFY currentImageNumberChanged )
     Q_PROPERTY( QString ui_currentLibraryName READ getCurrentLibraryName NOTIFY currentLibraryNameChanged )
     Q_PROPERTY( NetworkInformer* ui_networkInformer READ getNetworkInformer CONSTANT )
 
@@ -65,9 +64,6 @@ public:
     SeriesFilterSortProxyModel *getProxyModel() const;
     void setProxyModel(SeriesFilterSortProxyModel *proxyModel);
 
-    int getCurrentImageNumber() const;
-    void setCurrentImageNumber(int currentImageNumber);
-
     int getSelectedSeriesIdx() const;
     void setSelectedSeriesIdx(int value);
 
@@ -93,7 +89,6 @@ signals:
     void currentLibraryNameChanged(QString name);
     void defaultLibraryChanged();
     void currentSeriesChanged(Series *series);
-    void currentImageNumberChanged(int newValue);
     void firstBookPageReached();
     void lastBookPageReached();
 
@@ -107,6 +102,7 @@ public slots:
     QString getCurrentLibraryName() const;
     void doSearch(const QString &searchTerm);
     void setSearchResult(int index);
+    void setCurrentBookPageReached(int pageNumber);
 
 private:
     Library* defaultLibrary{nullptr};

@@ -30,11 +30,14 @@ public:
         AuthorsRole = Qt::UserRole + 14,
         AgeRatingRole = Qt::UserRole + 15,
         TitleRole = Qt::UserRole + 16,
-        MediaTypeFullRole = Qt::UserRole + 17
+        MediaTypeFullRole = Qt::UserRole + 17,
+        PageReachedRole = Qt::UserRole + 18,
+        CompletedRole = Qt::UserRole + 19,
     };
 public slots:
     void apiDataReceived(QJsonObject books);
     void preloadImageDataReceived(QPair<QString, QByteArray> res);
+    void updateProgress(int bookId, int page, bool completed = false);
 
     // QAbstractItemModel interface
 public:
@@ -50,6 +53,7 @@ public:
     void preloadPage(int id, int pageNum);
     QByteArray* getImageFromCache(const QString &key);
 
+    Book *parseBook(const QJsonValue &value);
 signals:
     void refresh();
 

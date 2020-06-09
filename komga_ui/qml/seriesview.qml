@@ -58,8 +58,11 @@ Item {
                     imagePath: "image://async/series/" + seriesId
                     cardLabel: seriesName
                     subLabel: seriesBookCount + " books"
-                    topCornerLabel: seriesBookCount
+                    topCornerLabel: seriesBookInProgressCount + "/" + seriesBookUnreadCount
                     topCornerLabelFontSize: 12
+                    topCornerLabelVisible: seriesBookUnreadCount > 0 || seriesBookInProgressCount > 0
+                    progressVisible: false
+//                    progressHeight: 4
                     onCardClicked: {
                         seriesList.currentIndex = index
                         controller.setSelectedSeries(seriesList.currentIndex)

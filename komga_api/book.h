@@ -59,6 +59,8 @@ class KOMGA_API_EXPORT Book: public QObject
     Q_PROPERTY( QString ui_bookMediaType READ mediaType CONSTANT )
     Q_PROPERTY( QString ui_bookShortMediaType READ mediaTypeShort CONSTANT )
     Q_PROPERTY( int ui_bookPagesCount READ pagesCount CONSTANT )
+    Q_PROPERTY( int ui_bookPageReached READ pageReached WRITE setPageReached NOTIFY currentPageReachedChanged )
+    Q_PROPERTY( bool ui_bookCompleted READ completed CONSTANT )
     Q_PROPERTY( BookMetadata* ui_bookMetadata READ bookMetadata CONSTANT )
 public:
     Book(QObject *parent = nullptr);
@@ -98,6 +100,15 @@ public:
     BookMetadata* bookMetadata() const;
     void setBookMetadata(BookMetadata* &bookMetadata);
 
+    int pageReached() const;
+    void setPageReached(int pageReached);
+
+    bool completed() const;
+    void setCompleted(bool completed);
+
+signals:
+    void currentPageReachedChanged(int page);
+
 private:
     int m_id {};
     int m_seriesId {};
@@ -109,6 +120,8 @@ private:
     QString m_mediaStatus{};
     QString m_mediaType{};
     int m_pagesCount {};
+    int m_pageReached {};
+    bool m_completed{false};
     BookMetadata* m_bookMetadata = nullptr;
 };
 
