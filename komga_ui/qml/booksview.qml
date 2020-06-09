@@ -111,7 +111,7 @@ Item {
                 cardLabel: bookName
                 subLabel: bookPageCount + " pages\nsize: " + bookSize
                 topCornerLabel: "✓"
-                topCornerLabelFontSize: 11
+                topCornerLabelFontSize: Style.mediumTextSize
                 topCornerLabelVisible: bookCompleted
                 progressVisible: bookPageReached > 0 && ! bookCompleted
                 progressValue: bookPageReached/bookPageCount

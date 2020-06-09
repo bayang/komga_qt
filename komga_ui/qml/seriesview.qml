@@ -37,9 +37,9 @@ Item {
             cellWidth : Style.thumbnailRequestedWidth + 12
             cellHeight: Style.thumbnailRequestedHeight + 80
             width: parent.width
-            height: parent.height
+            height: parent.height - libraryText.height - searchBar.height
             cacheBuffer: cellHeight
-            bottomMargin: 20
+            bottomMargin: 10
             ScrollBar.vertical: ScrollBar { }
             onMovementEnded: {
                 if (atYEnd) {
@@ -62,7 +62,6 @@ Item {
                     topCornerLabelFontSize: 12
                     topCornerLabelVisible: seriesBookUnreadCount > 0 || seriesBookInProgressCount > 0
                     progressVisible: false
-//                    progressHeight: 4
                     onCardClicked: {
                         seriesList.currentIndex = index
                         controller.setSelectedSeries(seriesList.currentIndex)

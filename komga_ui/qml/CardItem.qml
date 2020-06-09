@@ -128,7 +128,7 @@ Item {
         anchors.top: seriesDelegateRect.top
         anchors.right: seriesDelegateRect.right
         height: 30
-        width: 30
+        width: nbBooksLabel.implicitWidth + 4
         color: Style.hoverBorderColor
         radius: 8
         Label {
