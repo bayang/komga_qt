@@ -138,3 +138,4 @@ jobs:
         echo $ORIGIN
         cd build/komga_ui/
         macdeployqt komga-ui.app -qmldir=$ORIGIN/komga_ui/qml -dmg
+        ls .
