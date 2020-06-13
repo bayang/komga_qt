@@ -36,14 +36,14 @@ jobs:
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     # Runs a set of commands using the runners shell
-    - name: Run a multi-line script
+    - name: build app
       run: |
         chmod +x cmake_build.sh
         ./cmake_build.sh
         ls build/komga_ui
-    - name: Pull the Docker Image
+    - name: Pull flatpak Docker Image
       run: docker pull bilelmoussaoui/flatpak-github-actions:latest
-    - name: Run Docker Image
+    - name: build flatpak
       run: |
             docker run --cap-add SYS_ADMIN --cap-add NET_ADMIN --device /dev/fuse \
                  --security-opt apparmor:unconfined --security-opt seccomp=unconfined \
@@ -91,10 +91,41 @@ jobs:
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     # Runs a set of commands using the runners shell
-    - name: Run a multi-line script
+    - name: build app
       run: |
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
         cmake --build .
-        
+  build_mac:
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.14.2'
+        host: 'mac'
+        target: 'desktop'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
+    # Runs a set of commands using the runners shell
+    - name: build app
+      run: |
+        ls $Qt5_DIR
+        echo ------------------
+        chmod +x cmake_build.sh
+        ./cmake_build.sh
+        ls build/komga_ui
