@@ -1,5 +1,5 @@
 {
-    "app-id": "io.github.bayang.Komga_ui",
+    "app-id": "io.github.bayang.Komga_qt",
     "runtime": "org.kde.Platform",
     "runtime-version": "5.14",
     "sdk": "org.kde.Sdk",
