@@ -58,6 +58,6 @@ jobs:
                 -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" \
                 -v ${{ github.workspace }}:"/github/workspace" \
                 --rm -i bilelmoussaoui/flatpak-github-actions:latest \
-                    --manifest-path "io.github.bayang.Komga_ui.json" \
+                    --manifest-path "io.github.bayang.Komga_qt.json" \
                     --app-id "io.github.bayang.Komga_qt" \
                     --bundle "komga_qt.flatpak"
