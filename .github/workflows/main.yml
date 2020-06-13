@@ -1,0 +1,152 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build_linux:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.14.2'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
+    # Runs a set of commands using the runners shell
+    - name: build app
+      run: |
+        chmod +x cmake_build.sh
+        ./cmake_build.sh
+        ls build/komga_ui
+    - name: Pull flatpak Docker Image
+      run: docker pull bilelmoussaoui/flatpak-github-actions:latest
+    - name: build flatpak
+      run: |
+            docker run --cap-add SYS_ADMIN --cap-add NET_ADMIN --device /dev/fuse \
+                 --security-opt apparmor:unconfined --security-opt seccomp=unconfined \
+                --workdir /github/workspace \
+                --rm -e INPUT_ARGS -e HOME -e GITHUB_REF -e GITHUB_SHA  \
+                -e GITHUB_REPOSITORY -e GITHUB_ACTOR -e GITHUB_WORKFLOW  \
+                -e GITHUB_HEAD_REF -e GITHUB_BASE_REF -e GITHUB_EVENT_NAME \
+                -e GITHUB_WORKSPACE -e GITHUB_ACTION -e GITHUB_EVENT_PATH -e RUNNER_OS  \
+                -e RUNNER_TOOL_CACHE -e RUNNER_TEMP -e RUNNER_WORKSPACE \
+                -v "/var/run/docker.sock":"/var/run/docker.sock" \
+                -v "/home/runner/work/_temp/_github_home":"/github/home" \
+                -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" \
+                -v ${{ github.workspace }}:"/github/workspace" \
+                --rm -i bilelmoussaoui/flatpak-github-actions:latest \
+                    --manifest-path "io.github.bayang.Komga_qt.json" \
+                    --app-id "io.github.bayang.Komga_qt" \
+                    --bundle "komga_qt.flatpak"
+    - name: Upload flatpak
+      uses: actions/upload-artifact@v2
+      with:
+        name: komga_qt.flatpak
+        path: komga_qt.flatpak
+  build_windows:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.14.2'
+        host: 'windows'
+        target: 'desktop'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
+    # Runs a set of commands using the runners shell
+    - name: build app
+      run: |
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=RELEASE ..
+        cmake --build .
+  build_mac:
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.14.2'
+        host: 'mac'
+        target: 'desktop'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
+    # Runs a set of commands using the runners shell
+    - name: build app
+      run: |
+        ls $Qt5_DIR/bin/macdeployqt
+        echo ------------------
+        chmod +x cmake_build.sh
+        ./cmake_build.sh
+        ls build/komga_ui
+        ls build/komga_ui/komga-ui.app
+        ls build/komga_ui/komga-ui.app/Contents
+        cat build/komga_ui/komga-ui.app/Contents/Info.plist
+        ls build/komga_ui/komga-ui.app/Contents/MacOs
+        otool -L build/komga_ui/komga-ui.app/Contents/MacOs/komga-ui
+        ORIGIN=$(pwd)
+        echo $ORIGIN
+        cd build/komga_ui/
+        macdeployqt komga-ui.app -qmldir=$ORIGIN/komga_ui/qml -dmg
+        ls .
+        zip -r komga-ui.app.zip komga-ui.app/*
+    - name: Upload dmg
+      uses: actions/upload-artifact@v2
+      with:
+        name: komga-ui.dmg
+        path: build/komga_ui/komga-ui.dmg
+    - name: Upload .app folder
+      uses: actions/upload-artifact@v2
+      with:
+        name: komga-ui.app.zip
+        path: build/komga_ui/komga-ui.app.zip

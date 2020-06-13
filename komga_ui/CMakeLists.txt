@@ -33,6 +33,19 @@ find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Core Network Qml Quick Q
 # is it normal ?
 include_directories(../komga_api)
 
+if(APPLE)
+add_executable(komga-ui MACOSX_BUNDLE
+    asyncimageprovider.cpp
+    asyncimageprovider.h
+    asyncimageresponse.cpp
+    asyncimageresponse.h
+    bookpageprovider.cpp
+    bookpageprovider.h
+    main.cpp
+    assets.qrc
+    qml.qrc
+)
+else()
 add_executable(komga-ui
     asyncimageprovider.cpp
     asyncimageprovider.h
@@ -44,6 +57,8 @@ add_executable(komga-ui
     assets.qrc
     qml.qrc
 )
+endif()
+
 
 target_compile_definitions(komga-ui PUBLIC "$<$<CONFIG:Release>:QT_NO_DEBUG_OUTPUT>")
 target_link_libraries(komga-ui PUBLIC komga-api Qt5::Core Qt5::Quick Qt5::QuickControls2)
