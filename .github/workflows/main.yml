@@ -61,3 +61,9 @@ jobs:
                     --manifest-path "io.github.bayang.Komga_qt.json" \
                     --app-id "io.github.bayang.Komga_qt" \
                     --bundle "komga_qt.flatpak"
+    - name: Upload flatpak
+      uses: actions/upload-artifact@v2
+      with:
+        name: komga_qt.flatpak
+        path: komga_qt.flatpak
+        
