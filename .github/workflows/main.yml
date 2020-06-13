@@ -129,3 +129,4 @@ jobs:
         chmod +x cmake_build.sh
         ./cmake_build.sh
         ls build/komga_ui
+        ls build/komga_ui/komga-ui.app
