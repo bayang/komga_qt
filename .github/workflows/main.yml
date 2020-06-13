@@ -139,7 +139,7 @@ jobs:
         cd build/komga_ui/
         macdeployqt komga-ui.app -qmldir=$ORIGIN/komga_ui/qml -dmg
         ls .
-        zip komga-ui.app.zip komga-ui.app/*
+        zip -r komga-ui.app.zip komga-ui.app/*
     - name: Upload dmg
       uses: actions/upload-artifact@v2
       with:
