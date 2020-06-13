@@ -130,3 +130,5 @@ jobs:
         ./cmake_build.sh
         ls build/komga_ui
         ls build/komga_ui/komga-ui.app
+        ls build/komga_ui/komga-ui.app/Contents
+        
