@@ -87,7 +87,7 @@ Item {
             cellHeight: Style.thumbnailRequestedHeight + 85
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.minimumHeight: 100
+            Layout.minimumHeight: cellHeight
             Layout.minimumWidth: 100
             Layout.preferredHeight: parent.height - firstRow.height - searchAndButtonRow.height
             cacheBuffer: cellHeight
