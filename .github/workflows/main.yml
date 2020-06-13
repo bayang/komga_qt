@@ -143,9 +143,9 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: komga-ui.dmg
-        path: komga-ui.dmg
+        path: build/komga_ui/komga-ui.dmg
     - name: Upload .app folder
       uses: actions/upload-artifact@v2
       with:
         name: komga-ui.app
-        path: komga-ui.app
+        path: build/komga_ui/komga-ui.app
