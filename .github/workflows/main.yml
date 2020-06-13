@@ -131,4 +131,6 @@ jobs:
         ls build/komga_ui
         ls build/komga_ui/komga-ui.app
         ls build/komga_ui/komga-ui.app/Contents
+        cat build/komga_ui/komga-ui.app/Contents/Info.plist
+        ls build/komga_ui/komga-ui.app/Contents/MacOs
         
