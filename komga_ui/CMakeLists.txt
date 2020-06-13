@@ -45,7 +45,7 @@ add_executable(komga-ui MACOSX_BUNDLE
     assets.qrc
     qml.qrc
 )
-else
+else()
 add_executable(komga-ui
     asyncimageprovider.cpp
     asyncimageprovider.h
