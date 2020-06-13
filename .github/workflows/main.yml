@@ -134,3 +134,7 @@ jobs:
         cat build/komga_ui/komga-ui.app/Contents/Info.plist
         ls build/komga_ui/komga-ui.app/Contents/MacOs
         otool -L build/komga_ui/komga-ui.app/Contents/MacOs/komga-ui
+        ORIGIN=$(pwd)
+        echo $ORIGIN
+        cd build/komga_ui/
+        macdeployqt komga-ui.app -qmldir=$ORIGIN/komga_ui/qml -dmg
