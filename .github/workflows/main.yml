@@ -124,7 +124,7 @@ jobs:
     # Runs a set of commands using the runners shell
     - name: build app
       run: |
-        ls $Qt5_DIR
+        ls $Qt5_DIR/bin/macdeployqt
         echo ------------------
         chmod +x cmake_build.sh
         ./cmake_build.sh
@@ -133,4 +133,4 @@ jobs:
         ls build/komga_ui/komga-ui.app/Contents
         cat build/komga_ui/komga-ui.app/Contents/Info.plist
         ls build/komga_ui/komga-ui.app/Contents/MacOs
-        ls build/komga_ui/komga-ui.app/Contents/MacOs/komga-ui
+        otool -L build/komga_ui/komga-ui.app/Contents/MacOs/komga-ui
