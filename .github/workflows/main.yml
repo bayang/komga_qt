@@ -94,6 +94,8 @@ jobs:
     - name: build app
       run: |
         mkdir build
+        ls ../Qt/bin
+        ls /%Qt5_DIR%bin
         cd build
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
         cmake --build . --config Release
@@ -101,7 +103,8 @@ jobs:
         ls komga_api/
         ls komga_ui/Release
         ls komga_api/Release
-        ls %Qt5_DIR%/bin
+        ls ../komga_ui/qml
+        windeployqt komga_ui/Release/komga-ui.exe --qmldir ../komga_ui/qml
     - name: Upload exe
       uses: actions/upload-artifact@v2
       with:
