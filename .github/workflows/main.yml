@@ -6,7 +6,7 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches: [ master, ci ]
   pull_request:
     branches: [ master ]
 
@@ -98,11 +98,12 @@ jobs:
         cd build
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
         cmake --build . --config Release
+        ls
         ls komga_ui/
         ls komga_api/
         ls komga_ui/Release
         ls komga_api/Release
-        windeployqt komga_ui/Release/komga-ui.exe --qmldir %rootDir%/komga_ui/qml
+        windeployqt komga_ui/Release/komga-ui.exe
     - name: Upload exe
       uses: actions/upload-artifact@v2
       with:
