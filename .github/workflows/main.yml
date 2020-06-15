@@ -98,6 +98,7 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
         cmake --build . --config Release
         ls komga_ui/
+        ls komga_ui/Release
   build_mac:
     # The type of runner that the job will run on
     runs-on: macos-latest
