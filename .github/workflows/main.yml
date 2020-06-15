@@ -98,7 +98,10 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
         cmake --build . --config Release
         ls komga_ui/
+        ls komga_api/
         ls komga_ui/Release
+        ls komga_api/Release
+        ls %Qt5_DIR%/bin
     - name: Upload exe
       uses: actions/upload-artifact@v2
       with:
