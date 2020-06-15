@@ -96,7 +96,7 @@ jobs:
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
-        cmake --build .
+        cmake --build . --config Release
         ls komga_ui/
   build_mac:
     # The type of runner that the job will run on
