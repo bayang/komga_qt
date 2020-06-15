@@ -45,6 +45,18 @@ add_executable(komga-ui MACOSX_BUNDLE
     assets.qrc
     qml.qrc
 )
+elseif(WIN32)
+    add_executable(komga-ui WIN32
+        asyncimageprovider.cpp
+        asyncimageprovider.h
+        asyncimageresponse.cpp
+        asyncimageresponse.h
+        bookpageprovider.cpp
+        bookpageprovider.h
+        main.cpp
+        assets.qrc
+        qml.qrc
+    )
 else()
 add_executable(komga-ui
     asyncimageprovider.cpp
