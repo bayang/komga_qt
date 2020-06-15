@@ -94,14 +94,10 @@ jobs:
     - name: build app
       run: |
         mkdir build
-        set rootDir=%cd%
         cd build
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
         cmake --build . --config Release
         ls
-        ls x64/Release
-        ls komga_ui/
-        ls komga_api/
         ls komga_ui/Release
         ls komga_api/Release
         cd ..
