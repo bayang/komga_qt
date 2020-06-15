@@ -15,6 +15,8 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif()
 
+add_definitions(-DKOMGA_API_LIBRARY)
+
 add_library(komga-api
     book.cpp
     bookmetadata.cpp
