@@ -95,7 +95,6 @@ jobs:
       run: |
         mkdir build
         set rootDir=%cd%
-        ls /%Qt5_DIR%bin
         cd build
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
         cmake --build . --config Release
