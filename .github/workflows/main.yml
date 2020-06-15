@@ -103,7 +103,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: komga-ui.exe
-        path: komga_ui/Release/komga-ui.exe
+        path: build/komga_ui/Release/komga-ui.exe
   build_mac:
     # The type of runner that the job will run on
     runs-on: macos-latest
