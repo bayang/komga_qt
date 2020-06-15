@@ -109,11 +109,11 @@ jobs:
         copy build/komga_ui/Release/komga-ui.exe  komga_qt
         windeployqt komga_qt/komga-ui.exe --qmldir komga_ui/qml
         ls komga_qt
-    # - name: Upload exe
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: komga-ui.exe
-    #     path: build/komga_ui/Release/komga-ui.exe
+    - name: Upload exe
+      uses: actions/upload-artifact@v2
+      with:
+        name: komga-app
+        path: komga_qt/*
   build_mac:
     # The type of runner that the job will run on
     runs-on: macos-latest
