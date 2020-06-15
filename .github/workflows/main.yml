@@ -99,11 +99,13 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
         cmake --build . --config Release
         ls
+        ls x64/
         ls komga_ui/
         ls komga_api/
         ls komga_ui/Release
         ls komga_api/Release
         windeployqt komga_ui/Release/komga-ui.exe
+        ls
     - name: Upload exe
       uses: actions/upload-artifact@v2
       with:
