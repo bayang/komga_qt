@@ -228,21 +228,21 @@ Item {
             scaleDown()
             event.accepted = true
         }
-        else if (event.key === Qt.Key_PageUp) {
+        else if (event.key === Qt.Key_PageUp || event.key === Qt.Key_J) {
             controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPageReached - 1)
             event.accepted = true
         }
-        else if (event.key === Qt.Key_PageDown) {
+        else if (event.key === Qt.Key_PageDown || event.key === Qt.Key_K) {
             console.log("down")
             controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPageReached + 1)
             event.accepted = true
         }
-        else if (event.key === Qt.Key_End) {
+        else if (event.key === Qt.Key_End || event.key === Qt.Key_M) {
             console.log("end")
             controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPagesCount - 1)
             event.accepted = true
         }
-        else if (event.key === Qt.Key_Home) {
+        else if (event.key === Qt.Key_Home || event.key === Qt.Key_L) {
             console.log("begin")
             controller.setCurrentBookPageReached(0)
             event.accepted = true
