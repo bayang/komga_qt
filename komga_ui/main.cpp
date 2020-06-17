@@ -18,6 +18,7 @@
 #include <QtGlobal>
 #include <QDebug>
 #include <QFile>
+#include "KomgaConfig.h"
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -50,6 +51,7 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 
 int main(int argc, char *argv[])
 {
+    qDebug() << PROJECT_NAME << " version: " << PROJECT_VER << endl;
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
@@ -94,6 +96,8 @@ int main(int argc, char *argv[])
     engine.addImportPath("qrc:/");
     engine.rootContext()->setContextProperty("controller",
     controller);
+    engine.rootContext()->setContextProperty("APP_VERSION",
+    PROJECT_VER);
     engine.addImageProvider("page", new BookPageProvider(bookModel));
     engine.addImageProvider("async", new AsyncImageProvider(api));
 
