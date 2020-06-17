@@ -11,7 +11,7 @@ NetworkInformer::NetworkInformer(QObject *parent, Komga_api* api) :
         }
     });
     connect(m_api, &Komga_api::networkErrorHappened, this, [this](QString error) {
-        qDebug() << "network error " << error;
+        qWarning() << "network error " << error;
         if (error != m_errorMessage) {
             this->setErrorMessage(error);
             emit errorMessageChanged(error);

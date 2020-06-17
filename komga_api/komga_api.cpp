@@ -338,7 +338,6 @@ void Komga_api::getPageAsync(int id, int pageNum) {
     query.addQueryItem("zero_based", "true");
     url.setQuery(query);
     r.setUrl(url);
-//    QEventLoop eventLoop;
 
     QNetworkReply* reply = thumbnailsManager->get(r);
     connect(reply, &QNetworkReply::finished, [=](){
