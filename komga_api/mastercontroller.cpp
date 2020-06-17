@@ -211,7 +211,7 @@ void MasterController::setCurrentBookPageReached(int currentImageNumber)
         else {
             qDebug() << "current image nb changed in controller " << currentImageNumber ;
             getCurrentBook()->setPageReached(currentImageNumber);
-            m_bookModel->updateProgress(getCurrentBook()->id(), currentImageNumber);
+            getBookModel()->setData(getBookModel()->index(getSelectedBookIdx(), 0), QVariant{currentImageNumber}, BookModel::PageReachedRole);
         }
     }
 }

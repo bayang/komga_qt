@@ -54,6 +54,9 @@ public:
     QByteArray* getImageFromCache(const QString &key);
 
     Book *parseBook(const QJsonValue &value);
+    bool setData(const QModelIndex& index, const QVariant& value,
+                 int role);
+
 signals:
     void refresh();
 

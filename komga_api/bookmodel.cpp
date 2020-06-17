@@ -133,6 +133,18 @@ Book* BookModel::parseBook(const QJsonValue &value) {
     b->setBookMetadata(meta);
     return b;
 }
+
+bool BookModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (! index.isValid() || role != PageReachedRole) {
+        return false;
+    }
+    Book* b = m_books.at(index.row());
+    b->setPageReached(value.toInt());
+    updateProgress(b->id(), value.toInt());
+    emit dataChanged(index, index);
+    return true;
+}
 void BookModel::apiDataReceived(QJsonObject books) {
     int pageNum = books["number"].toInt();
     int totPages = books["totalPages"].toInt();
