@@ -46,10 +46,10 @@ Item {
             Image {
                 id: seriesDetailImage
                 source: "image://async/series/" + controller.ui_currentSeries.ui_seriesId
-                sourceSize.height: 300
+                sourceSize.height: 270
                 sourceSize.width: -1
                 fillMode: Image.PreserveAspectCrop
-                Layout.preferredHeight: 350
+                Layout.preferredHeight: 320
             }
             ColumnLayout {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
