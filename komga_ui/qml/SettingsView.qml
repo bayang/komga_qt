@@ -49,7 +49,7 @@ Item {
                 id: serverInput
                 Layout.minimumWidth: Style.defaultTextInputWidth
                 selectByMouse: true
-                placeholderText: qsTr("eg : http://localhost:8080/api/v1")
+                placeholderText: qsTr("eg : http://localhost:8080")
             }
             Label {
                 text: qsTr("User name")

@@ -353,9 +353,9 @@ QString Komga_api::getServerUrl() {
     QString url = settings.value(Komga_api::SETTINGS_KEY_SERVER_URL).toString();
     settings.endGroup();
     if (! url.endsWith("/")) {
-        return url;
+        return url + "/api/v1";
     }
     else {
-        return url;
+        return url + "api/v1";
     }
 }
