@@ -18,6 +18,7 @@ Item {
     readonly property real mediumTextSize: 18
     readonly property real smallMediumTextSize: 13
     readonly property real smallTextSize: 11
+    readonly property real microTextSize: 8
 
     readonly property color badgeBackground: "gray"
     readonly property color hoverBorderColor: "lightsteelblue"
