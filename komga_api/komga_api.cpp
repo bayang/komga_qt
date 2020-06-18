@@ -38,6 +38,8 @@ Komga_api::Komga_api(QObject *parent):
             this, &Komga_api::apiReplyFinished);
     connect(manager, &QNetworkAccessManager::authenticationRequired,
             this, &Komga_api::authenticate);
+    connect(manager, &QNetworkAccessManager::sslErrors,
+            this, &Komga_api::onSslErrors);
     connect(thumbnailsManager, &QNetworkAccessManager::authenticationRequired, [=](QNetworkReply *reply, QAuthenticator *authenticator){
         Q_UNUSED(reply);
         qDebug() << "[net] authentication tm";
@@ -156,6 +158,20 @@ void Komga_api::updateProgress(int bookId, int page, bool completed)
     manager->sendCustomRequest(r, "PATCH", doc.toJson(QJsonDocument::JsonFormat::Compact));
 }
 
+void Komga_api::onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
+{
+    Q_UNUSED(reply);
+    QString msg = "";
+    for (QSslError er : errors) {
+        msg += er.errorString();
+        msg += " ";
+        msg += er.error();
+        msg += "; ";
+    }
+    qWarning() << "[net] SSL Errors: " << msg;
+    emit networkErrorHappened("[net] SSL Errors: " + msg);
+}
+
 void Komga_api::searchSeries(const QString &searchTerm, qint64 timestamp) {
     qDebug() << "search series for " << searchTerm;
     QNetworkRequest r;
@@ -239,7 +255,7 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
     // else emit an error event
     else {
         qWarning() << "[net] ERROR " << reply->errorString() << " code " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        emit networkErrorHappened("ERROR " + reply->errorString());
+        emit networkErrorHappened("[net] ERROR " + reply->errorString());
     }
 }
 
