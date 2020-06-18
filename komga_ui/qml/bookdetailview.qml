@@ -7,9 +7,12 @@ import assets 1.0
 Item {
     id: bookDetailRoot
     property bool imageCurrentlyHovered: false
+
     ScrollView {
         clip: true
         anchors.fill: parent
+        anchors.leftMargin: 10
+        anchors.bottomMargin: 10
         ColumnLayout {
             width: parent.width
             Button {
