@@ -7,7 +7,6 @@ BookPageProvider::BookPageProvider(BookModel* model) :
 }
 QImage BookPageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize) {
     Q_UNUSED(requestedSize);
-    qDebug() << "id" << id;
     QStringList parts = id.split("/");
     int idNb = parts.at(0).toInt();
     int pageNb = parts.at(1).toInt();
@@ -17,7 +16,6 @@ QImage BookPageProvider::requestImage(const QString &id, QSize *size, const QSiz
         QImage pic;
         pic.loadFromData(*c);
         *size = QSize(pic.width(), pic.height());
-        qDebug() << "loaded image from cache " << pic;
         return pic;
     }
     else {
@@ -26,7 +24,7 @@ QImage BookPageProvider::requestImage(const QString &id, QSize *size, const QSiz
             QImage pix;
 
             pix.fill(QColor("gray"));
-            qDebug() << "is null or empty";
+            qDebug() << "page is null or empty";
             return pix;
         }
         QImage pic;

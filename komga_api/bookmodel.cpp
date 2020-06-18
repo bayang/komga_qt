@@ -19,7 +19,6 @@ int BookModel::rowCount(const QModelIndex &parent) const {
 QVariant BookModel::data(const QModelIndex &index, int role) const {
     Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid));
     if (! index.isValid()) {
-        qDebug() << "invalid indx " << index.row();
         return QVariant();
     }
     if (index.row() < 0 || index.row() >= m_books.count())
@@ -149,8 +148,6 @@ void BookModel::apiDataReceived(QJsonObject books) {
     int pageNum = books["number"].toInt();
     int totPages = books["totalPages"].toInt();
     int nbElems = books["numberOfElements"].toInt();
-    qDebug() << "page : " << pageNum;
-    qDebug() << "page number : " << totPages;
     if (nbElems > 0) {
         if (pageNum > 0) {
             emit beginInsertRows(QModelIndex(), m_books.size(), m_books.size() + nbElems - 1);
@@ -190,7 +187,6 @@ void BookModel::nextBooksPage(Series *series) {
     }
 }
 void BookModel::resetBooks() {
-    qDebug() << "reset books";
     emit beginRemoveRows(QModelIndex(), 0, m_books.size() - 1);
     qDeleteAll(m_books);
     m_books.clear();

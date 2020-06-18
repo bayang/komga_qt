@@ -22,7 +22,6 @@ int SearchModel::rowCount(const QModelIndex &parent) const {
 QVariant SearchModel::data(const QModelIndex &index, int role) const {
     Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid));
     if (! index.isValid()) {
-        qDebug() << "invalid indx " << index.row();
         return QVariant();
     }
     if (index.row() < 0 || index.row() >= m_results.count())
@@ -71,7 +70,6 @@ SearchResult *SearchModel::at(int index)
 
 void SearchModel::searchBookDataReceived(QPair<QString, QJsonDocument> res)
 {
-    qDebug() << "search book received " << res.first << " " << res.second;
     QJsonObject page = res.second.object();
     int nbElems = page["numberOfElements"].toInt();
     if (nbElems > 0) {
@@ -125,7 +123,6 @@ void SearchModel::searchBookDataReceived(QPair<QString, QJsonDocument> res)
 
 void SearchModel::searchSeriesDataReceived(QPair<QString, QJsonDocument> res)
 {
-    qDebug() << "search series received " << res.first << " " << res.second;
     QJsonObject page = res.second.object();
     int nbElems = page["numberOfElements"].toInt();
     qlonglong n = res.first.section('/', 0, 0).toLongLong();
@@ -141,8 +138,6 @@ void SearchModel::searchSeriesDataReceived(QPair<QString, QJsonDocument> res)
             QJsonObject jsob = value.toObject();
             SearchResult* sr = new SearchResult(this);
             Series* s = new Series(this);
-            qDebug() << jsob["id"].toInt();
-            qDebug() << jsob["name"].toString();
             QString n = jsob["name"].toString();
             sr->setId(jsob["id"].toInt());
             sr->setName(n);
@@ -164,11 +159,8 @@ void SearchModel::searchSeriesDataReceived(QPair<QString, QJsonDocument> res)
 }
 
 void SearchModel::resetModel() {
-    qDebug() << "reset model ";
-//    emit beginResetModel();
     emit beginRemoveRows(QModelIndex(), 0, m_results.size() - 1);
     qDeleteAll(m_results);
     m_results.clear();
-//    emit endResetModel();
     emit endRemoveRows();
 }

@@ -91,7 +91,7 @@ Item {
                             anchors.fill: parent
                             hoverEnabled: true
                             onClicked: {
-                                console.log("clicked index " + index)
+//                                console.log("clicked index " + index)
                                 controller.setSearchResult(index)
                                 dropDownPopup.close()
                                 searchText.text = ""

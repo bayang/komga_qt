@@ -47,9 +47,8 @@ Item {
             scale: imgScale
 
             onProgressChanged: {
-                console.log("progress " + bookReadPage.progress + " " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
+//                console.log("progress " + bookReadPage.progress + " " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
                 if (progress === 1) {
-                    console.log("prog 1")
                     lastSpacePressedTime = 0
                     if (! flickArea.atYBeginning) {
                         flickArea.contentY = 0
@@ -57,20 +56,20 @@ Item {
                 }
             }
             onStatusChanged: {
-                console.log("status " + bookReadPage.status + " " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
+//                console.log("status " + bookReadPage.status + " " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
             }
 
             onSourceChanged: {
-                console.log("source changed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
+//                console.log("source changed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
                 lastSpacePressedTime = 0
             }
             Component.onCompleted: {
-                console.log("completed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
+//                console.log("completed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
             }
 
             onSourceSizeChanged: {
-                console.log("source size changed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
-                console.log("readConH  readCon w" +readContainer.height + " " + readContainer.width)
+//                console.log("source size changed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
+//                console.log("readConH  readCon w" +readContainer.height + " " + readContainer.width)
                 lastSpacePressedTime = 0
                 if (imgScale === 0) {
                     fitHeight()
@@ -78,11 +77,11 @@ Item {
                 if (! flickArea.atYBeginning) {
                     flickArea.contentY = 0
                 }
-                console.log("imgScale " + imgScale)
+//                console.log("imgScale " + imgScale)
             }
             onScaleChanged: {
-                console.log("scaled changed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
-                console.log("xy " + readContainer.x + " " + readContainer.y + " / " + bookReadPage.x + " " + bookReadPage.y)
+//                console.log("scaled changed " + bookReadPage.sourceSize.width + " w " + bookReadPage.width + " pw " + bookReadPage.paintedWidth + " sc " + bookReadPage.scale + " scx " + bookReadPage.paintedWidth * bookReadPage.scale)
+//                console.log("xy " + readContainer.x + " " + readContainer.y + " / " + bookReadPage.x + " " + bookReadPage.y)
 
             }
         }
@@ -195,10 +194,8 @@ Item {
         flickArea.returnToBounds()
         if (flickArea.atYEnd) {
             var curTime = new Date().getTime();
-            console.log("atYEnd " + curTime + " " + lastSpacePressedTime)
             if (curTime - lastSpacePressedTime < 2000) {
                 controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPageReached + 1)
-                console.log("next page")
             }
             lastSpacePressedTime = curTime
         }
@@ -233,27 +230,22 @@ Item {
             event.accepted = true
         }
         else if (event.key === Qt.Key_PageDown || event.key === Qt.Key_K) {
-            console.log("down")
             controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPageReached + 1)
             event.accepted = true
         }
         else if (event.key === Qt.Key_End || event.key === Qt.Key_M) {
-            console.log("end")
             controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPagesCount - 1)
             event.accepted = true
         }
         else if (event.key === Qt.Key_Home || event.key === Qt.Key_L) {
-            console.log("begin")
             controller.setCurrentBookPageReached(0)
             event.accepted = true
         }
         else if (event.key === Qt.Key_W) {
-            console.log("W")
             fitWidth()
             event.accepted = true
         }
         else if (event.key === Qt.Key_H) {
-            console.log("H")
             fitHeight()
             event.accepted = true
         }

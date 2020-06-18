@@ -251,7 +251,6 @@ void MasterController::setNetworkInformer(NetworkInformer *networkInformer)
     m_networkInformer = networkInformer;
 }
 void MasterController::doSearch(const QString &searchTerm) {
-    qDebug() << "search for " << searchTerm;
     m_searchModel->doSearch(searchTerm);
 }
 

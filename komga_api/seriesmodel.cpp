@@ -17,7 +17,6 @@ int SeriesModel::rowCount(const QModelIndex &parent) const {
 QVariant SeriesModel::data(const QModelIndex &index, int role) const {
     Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid));
     if (! index.isValid()) {
-        qDebug() << "invalid indx " << index.row();
         return QVariant();
     }
     if (index.row() < 0 || index.row() >= m_series.count())
@@ -73,7 +72,6 @@ void SeriesModel::loadSeries(int library) {
         resetSeries();
 }
 void SeriesModel::resetSeries() {
-    qDebug() << "reset series ";
     emit beginRemoveRows(QModelIndex(), 0, m_series.size() - 1);
     qDeleteAll(m_series);
     m_series.clear();
@@ -83,8 +81,6 @@ void SeriesModel::resetSeries() {
 Series* SeriesModel::parseSeries(const QJsonValue &value) {
     Series* s = new Series(this);
     QJsonObject jsob = value.toObject();
-    qDebug() << jsob["id"].toInt();
-    qDebug() << jsob["name"].toString();
     s->setId(jsob["id"].toInt());
     QString n = jsob["name"].toString();
     s->setName(n);
@@ -105,8 +101,6 @@ void SeriesModel::apiDataReceived(QJsonObject page) {
     int pageNum = page["number"].toInt();
     int totPages = page["totalPages"].toInt();
     int nbElems = page["numberOfElements"].toInt();
-    qDebug() << "page : " << pageNum;
-    qDebug() << "page number : " << totPages;
     if (nbElems > 0) {
         if (pageNum > 0) {
             emit beginInsertRows(QModelIndex(), m_series.size(), m_series.size() + nbElems - 1);
@@ -138,7 +132,7 @@ QByteArray SeriesModel::getThumbnail(int id) {
     return a;
 }
 void SeriesModel::nextSeriesPage(int libraryId) {
-    qDebug() << "curr p :" << m_currentPageNumber << " total p : " << m_totalPageNumber;
+    qDebug() << "current p :" << m_currentPageNumber << " total p : " << m_totalPageNumber;
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
         m_api->getSeries(libraryId, m_currentPageNumber + 1);
     }
@@ -146,7 +140,6 @@ void SeriesModel::nextSeriesPage(int libraryId) {
 Series* SeriesModel::find(int libraryId) {
     auto itr = std::find_if(m_series.begin(), m_series.end(), [libraryId](Series* series) { return series->libraryId() == libraryId; });
     if(itr != m_series.end()) {
-        qDebug() << "find " << (*itr)->name();
         return *itr;
     }
     return nullptr;

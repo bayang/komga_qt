@@ -12,10 +12,7 @@ bool SeriesFilterSortProxyModel::filterAcceptsRow(int source_row, const QModelIn
     if (libraryId() == MasterController::DEFAULT_LIBRARY_ID) {
         return true;
     }
-//    int dat = parentModel()->get(source_row)->libraryId();
     int dat = parentModel()->data(parentModel()->index(source_row, 0), SeriesModel::SeriesRoles::IdRole).toInt();
-
-//    qDebug() << "dat " << dat << " lib " << libraryId();
     return dat == libraryId();
 }
 
