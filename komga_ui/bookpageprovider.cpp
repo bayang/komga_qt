@@ -24,7 +24,7 @@ QImage BookPageProvider::requestImage(const QString &id, QSize *size, const QSiz
             QImage pix;
 
             pix.fill(QColor("gray"));
-            qDebug() << "page is null or empty";
+            qWarning() << "page is null or empty " << idNb << " " << pageNb;
             return pix;
         }
         QImage pic;
