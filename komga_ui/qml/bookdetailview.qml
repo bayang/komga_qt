@@ -76,7 +76,7 @@ Item {
                 }
 
                 ColumnLayout {
-    //                Layout.preferredWidth: parent.width - imageBookWrapper.width
+                    Layout.preferredWidth: parent.width - imageBookWrapper.width - navColumn.width
                     Layout.alignment: Qt.AlignTop
                     Label {
                         id: curBookStatus
@@ -84,15 +84,26 @@ Item {
                         font.pointSize: Style.mediumTextSize
                     }
                     Label {
-                        text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataAuthors)
+                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataWriters ? "Writers :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataWriters) : ""
                         font.pointSize: Style.smallMediumTextSize
+                    }
+                    Label {
+                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers ? "Pencillers :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers) : ""
+                        font.pointSize: Style.smallMediumTextSize
+                        visible: controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers
+                    }
+                    Label {
+                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists ? "Colorists :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists) : ""
+                        font.pointSize: Style.smallMediumTextSize
+                        visible: controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists
                     }
                     Label {
                         text: controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber ? "# " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber) : ""
                         font.pointSize: Style.smallMediumTextSize
+                        visible: controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber
                     }
                     Label {
-                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher ? "PUBLISHER : " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher) : ""
+                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher ? "Publisher : " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher) : ""
                         font.pointSize: Style.smallMediumTextSize
                     }
                     Label {

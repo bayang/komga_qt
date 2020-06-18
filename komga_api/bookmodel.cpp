@@ -54,7 +54,7 @@ QVariant BookModel::data(const QModelIndex &index, int role) const {
     else if (role == ReleaseDateRole)
         return book->bookMetadata()->releaseDate();
     else if (role == AuthorsRole)
-        return book->bookMetadata()->authors().join(",");
+        return QVariant::fromValue(book->bookMetadata()->authors());
     else if (role == AgeRatingRole)
         return book->bookMetadata()->ageRating();
     else if (role == TitleRole)
@@ -92,8 +92,8 @@ void BookModel::loadBooks(Series* series) {
     m_api->getBooks(series->id());
     resetBooks();
 }
-Book* BookModel::parseBook(const QJsonValue &value) {
-    Book* b = new Book(this);
+Book* BookModel::parseBook(const QJsonValue &value, QObject* parent) {
+    Book* b = new Book(parent);
     QJsonObject jsob = value.toObject();
     b->setId(jsob["id"].toInt());
     b->setSeriesId(jsob["seriesId"].toInt());
@@ -105,7 +105,7 @@ Book* BookModel::parseBook(const QJsonValue &value) {
     b->setMediaStatus(media["status"].toString());
     b->setPagesCount(media["pagesCount"].toInt());
     b->setMediaType(media["mediaType"].toString());
-    BookMetadata* meta = new BookMetadata();
+    BookMetadata* meta = new BookMetadata(b);
     QJsonObject metadata = jsob["metadata"].toObject();
     meta->setTitle(metadata["title"].toString());
     meta->setSummary(metadata["summary"].toString());
@@ -115,9 +115,13 @@ Book* BookModel::parseBook(const QJsonValue &value) {
     meta->setAgeRating(metadata["ageRating"].toString());
     meta->setReleaseDate(metadata["releaseDate"].toString());
     QJsonArray authors = metadata["authors"].toArray();
-    QList<QString> aut{""};
+    QList<Author*> aut{};
     foreach (const QJsonValue &value, authors) {
-        aut.append(value.toString());
+        QJsonObject ob = value.toObject();
+        Author* au = new Author(meta);
+        au->setName(ob["name"].toString());
+        au->setRole(ob["role"].toString());
+        aut.append(std::move(au));
     }
     meta->setAuthors(aut);
     if (jsob.contains("readProgress")) {
@@ -153,7 +157,7 @@ void BookModel::apiDataReceived(QJsonObject books) {
             emit beginInsertRows(QModelIndex(), m_books.size(), m_books.size() + nbElems - 1);
             QJsonArray content = books["content"].toArray();
             foreach (const QJsonValue &value, content) {
-                m_books.append(std::move(parseBook(value)));
+                m_books.append(std::move(parseBook(value, this)));
             }
             emit endInsertRows();
         }
@@ -161,7 +165,7 @@ void BookModel::apiDataReceived(QJsonObject books) {
             QList<Book*> booksList{};
             QJsonArray content = books["content"].toArray();
             foreach (const QJsonValue &value, content) {
-                booksList.append(std::move(parseBook(value)));
+                booksList.append(std::move(parseBook(value, this)));
             }
             emit layoutAboutToBeChanged();
             m_books = booksList;

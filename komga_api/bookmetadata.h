@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QList>
 #include "komga_api_global.h"
+#include "author.h"
 
 /**
  *
@@ -40,7 +41,9 @@ class KOMGA_API_EXPORT BookMetadata: public QObject
     Q_PROPERTY( QString ui_metadataNumber READ number CONSTANT )
     Q_PROPERTY( QString ui_metadataPublisher READ publisher CONSTANT )
     Q_PROPERTY( QString ui_metadataAgeRating READ ageRating CONSTANT )
-    Q_PROPERTY( QString ui_metadataAuthors READ authorsAsString CONSTANT )
+    Q_PROPERTY( QString ui_metadataWriters READ writersAsString NOTIFY writersChanged)
+    Q_PROPERTY( QString ui_metadataPencillers READ pencillersAsString NOTIFY pencillersChanged)
+    Q_PROPERTY( QString ui_metadataColorists READ coloristsAsString NOTIFY coloristsChanged)
     Q_PROPERTY( QString ui_metadataReleaseDate READ releaseDate CONSTANT )
 
 public:
@@ -94,13 +97,20 @@ public:
     bool releaseDateLock() const;
     void setReleaseDateLock(bool releaseDateLock);
 
-    QList<QString> authors() const;
-    void setAuthors(const QList<QString> &authors);
+    QList<Author*> authors() const;
+    void setAuthors(const QList<Author*> &authors);
 
     bool authorsLock() const;
     void setAuthorsLock(bool authorsLock);
 
-    QString authorsAsString() const;
+    QString writersAsString() const;
+    QString pencillersAsString() const;
+    QString coloristsAsString() const;
+
+signals:
+    void writersChanged();
+    void pencillersChanged();
+    void coloristsChanged();
 
 private:
     QString m_title{};
@@ -119,7 +129,7 @@ private:
     bool m_ageRatingLock{};
     QString m_releaseDate{};
     bool m_releaseDateLock{};
-    QList<QString> m_authors{};
+    QList<Author*> m_authors{};
     bool m_authorsLock{};
 
 };

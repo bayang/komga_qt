@@ -1,4 +1,5 @@
 #include "bookmetadata.h"
+#include <QDebug>
 
 BookMetadata::BookMetadata(QObject *parent):
     QObject{parent}
@@ -160,14 +161,15 @@ void BookMetadata::setReleaseDateLock(bool releaseDateLock)
     m_releaseDateLock = releaseDateLock;
 }
 
-QList<QString> BookMetadata::authors() const
+QList<Author*> BookMetadata::authors() const
 {
     return m_authors;
 }
 
-void BookMetadata::setAuthors(const QList<QString> &authors)
+void BookMetadata::setAuthors(const QList<Author*> &authors)
 {
     m_authors = authors;
+    emit writersChanged();
 }
 
 bool BookMetadata::authorsLock() const
@@ -179,6 +181,33 @@ void BookMetadata::setAuthorsLock(bool authorsLock)
 {
     m_authorsLock = authorsLock;
 }
-QString BookMetadata::authorsAsString() const {
-    return m_authors.join(",");
+QString BookMetadata::writersAsString() const {
+    QString auth = "";
+    for (Author* a: m_authors) {
+        if (a->role() == "writer") {
+            auth += a->name();
+            auth += " ";
+        }
+    }
+    return auth;
+}
+QString BookMetadata::coloristsAsString() const {
+    QString auth = "";
+    for (Author* a: m_authors) {
+        if (a->role() == "colorist") {
+            auth += a->name();
+            auth += " ";
+        }
+    }
+    return auth;
+}
+QString BookMetadata::pencillersAsString() const {
+    QString auth = "";
+    for (Author* a: m_authors) {
+        if (a->role() == "penciller") {
+            auth += a->name();
+            auth += " ";
+        }
+    }
+    return auth;
 }

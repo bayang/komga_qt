@@ -53,7 +53,7 @@ public:
     void preloadPage(int id, int pageNum);
     QByteArray* getImageFromCache(const QString &key);
 
-    Book *parseBook(const QJsonValue &value);
+    static Book *parseBook(const QJsonValue &value, QObject* parent);
     bool setData(const QModelIndex& index, const QVariant& value,
                  int role);
 
