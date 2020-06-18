@@ -6,7 +6,7 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master, ci ]
+    branches: [ master, ci, wintls ]
   pull_request:
     branches: [ master ]
 
@@ -93,6 +93,9 @@ jobs:
     # Runs a set of commands using the runners shell
     - name: build app
       run: |
+        python -m aqt tool windows tools_openssl_x64 1.1.1-4 qt.tools.openssl.win_x64
+        dir %QT5_DIR%
+        dir %QT5_DIR%/Tools
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
