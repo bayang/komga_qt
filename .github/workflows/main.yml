@@ -97,9 +97,7 @@ jobs:
         pip3 install py7zr==0.7
         pip3 install aqtinstall==0.9
         python -m aqt tool windows tools_openssl_x64 1.1.1-4 qt.tools.openssl.win_x64
-        dir "%RUNNER_WORKSPACE%"
-        dir D:/a/komga_qt/Qt/
-        dir "%QT5_DIR%"/Tools
+        dir D:/a/komga_qt/Qt/Tools/OpenSSL/Win_x64/bin
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
@@ -111,6 +109,8 @@ jobs:
         mkdir komga_qt
         copy build/komga_ui/Release/komga-ui.exe  komga_qt
         windeployqt komga_qt/komga-ui.exe --qmldir komga_ui/qml
+        copy D:/a/komga_qt/Qt/Tools/OpenSSL/Win_x64/bin/libcrypto-1_1-x64.dll  komga_qt
+        copy D:/a/komga_qt/Qt/Tools/OpenSSL/Win_x64/bin/libssl-1_1-x64.dll  komga_qt
         ls komga_qt
     - name: Upload exe
       uses: actions/upload-artifact@v2
