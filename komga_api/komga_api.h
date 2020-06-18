@@ -59,6 +59,7 @@ public:
     void authenticate(QNetworkReply *reply, QAuthenticator *authenticator);
     void doSearch(const QString &searchTerm, qint64 timestamp);
     void updateProgress(int bookId, int page, bool completed = false);
+    void onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
 
 private:
     QNetworkAccessManager* manager = nullptr;

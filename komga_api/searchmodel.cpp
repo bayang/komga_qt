@@ -2,6 +2,7 @@
 #include <QDateTime>
 #include <QJsonArray>
 #include <QMetaEnum>
+#include "bookmodel.h"
 
 SearchModel::SearchModel(QObject *parent, Komga_api* api) :
    QAbstractListModel{parent}, m_api{api}, m_results{}
@@ -22,7 +23,6 @@ int SearchModel::rowCount(const QModelIndex &parent) const {
 QVariant SearchModel::data(const QModelIndex &index, int role) const {
     Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid));
     if (! index.isValid()) {
-        qDebug() << "invalid indx " << index.row();
         return QVariant();
     }
     if (index.row() < 0 || index.row() >= m_results.count())
@@ -71,7 +71,6 @@ SearchResult *SearchModel::at(int index)
 
 void SearchModel::searchBookDataReceived(QPair<QString, QJsonDocument> res)
 {
-    qDebug() << "search book received " << res.first << " " << res.second;
     QJsonObject page = res.second.object();
     int nbElems = page["numberOfElements"].toInt();
     if (nbElems > 0) {
@@ -86,37 +85,39 @@ void SearchModel::searchBookDataReceived(QPair<QString, QJsonDocument> res)
         foreach (const QJsonValue &value, content) {
             QJsonObject jsob = value.toObject();
             SearchResult* sr = new SearchResult(this);
-            Book* b = new Book(this);
-            sr->setId(jsob["id"].toInt());
-            sr->setName(jsob["name"].toString());
             sr->setResultType(SearchResult::ResultType::BookType);
-            b->setId(jsob["id"].toInt());
-            b->setSeriesId(jsob["seriesId"].toInt());
-            b->setName(jsob["name"].toString());
-            b->setUrl(jsob["url"].toString());
-            b->setSizeBytes(jsob["sizeBytes"].toInt());
-            b->setSize(jsob["size"].toString());
-            QJsonObject media = jsob["media"].toObject();
-            b->setMediaStatus(media["status"].toString());
-            b->setPagesCount(media["pagesCount"].toInt());
-            b->setMediaType(media["mediaType"].toString());
-            BookMetadata* meta = new BookMetadata();
-            QJsonObject metadata = jsob["metadata"].toObject();
-            meta->setTitle(metadata["title"].toString());
-            meta->setSummary(metadata["summary"].toString());
-            meta->setNumber(metadata["number"].toString());
-            meta->setNumberSort(metadata["numberSort"].toInt());
-            meta->setPublisher(metadata["publisher"].toString());
-            meta->setAgeRating(metadata["ageRating"].toString());
-            meta->setReleaseDate(metadata["releaseDate"].toString());
-            QJsonArray authors = metadata["authors"].toArray();
-            QList<QString> aut{""};
-            foreach (const QJsonValue &value, authors) {
-                aut.append(value.toString());
-            }
-            meta->setAuthors(aut);
-            b->setBookMetadata(meta);
-            sr->setBook(std::move(b));
+//            Book* b = new Book(this);
+//            b->setId(jsob["id"].toInt());
+//            b->setSeriesId(jsob["seriesId"].toInt());
+//            b->setName(jsob["name"].toString());
+//            b->setUrl(jsob["url"].toString());
+//            b->setSizeBytes(jsob["sizeBytes"].toInt());
+//            b->setSize(jsob["size"].toString());
+//            QJsonObject media = jsob["media"].toObject();
+//            b->setMediaStatus(media["status"].toString());
+//            b->setPagesCount(media["pagesCount"].toInt());
+//            b->setMediaType(media["mediaType"].toString());
+//            BookMetadata* meta = new BookMetadata();
+//            QJsonObject metadata = jsob["metadata"].toObject();
+//            meta->setTitle(metadata["title"].toString());
+//            meta->setSummary(metadata["summary"].toString());
+//            meta->setNumber(metadata["number"].toString());
+//            meta->setNumberSort(metadata["numberSort"].toInt());
+//            meta->setPublisher(metadata["publisher"].toString());
+//            meta->setAgeRating(metadata["ageRating"].toString());
+//            meta->setReleaseDate(metadata["releaseDate"].toString());
+//            QJsonArray authors = metadata["authors"].toArray();
+//            QList<QString> aut{""};
+//            foreach (const QJsonValue &value, authors) {
+//                aut.append(value.toString());
+//            }
+//            meta->setAuthors(aut);
+//            b->setBookMetadata(meta);
+            Book* parsed = BookModel::parseBook(value, sr);
+            sr->setId(parsed->id());
+            sr->setName(parsed->name());
+            sr->setBook(parsed);
+//            sr->setBook(std::move(b));
             m_results.append(std::move(sr));
         }
         emit endInsertRows();
@@ -125,7 +126,6 @@ void SearchModel::searchBookDataReceived(QPair<QString, QJsonDocument> res)
 
 void SearchModel::searchSeriesDataReceived(QPair<QString, QJsonDocument> res)
 {
-    qDebug() << "search series received " << res.first << " " << res.second;
     QJsonObject page = res.second.object();
     int nbElems = page["numberOfElements"].toInt();
     qlonglong n = res.first.section('/', 0, 0).toLongLong();
@@ -141,8 +141,6 @@ void SearchModel::searchSeriesDataReceived(QPair<QString, QJsonDocument> res)
             QJsonObject jsob = value.toObject();
             SearchResult* sr = new SearchResult(this);
             Series* s = new Series(this);
-            qDebug() << jsob["id"].toInt();
-            qDebug() << jsob["name"].toString();
             QString n = jsob["name"].toString();
             sr->setId(jsob["id"].toInt());
             sr->setName(n);
@@ -164,11 +162,8 @@ void SearchModel::searchSeriesDataReceived(QPair<QString, QJsonDocument> res)
 }
 
 void SearchModel::resetModel() {
-    qDebug() << "reset model ";
-//    emit beginResetModel();
     emit beginRemoveRows(QModelIndex(), 0, m_results.size() - 1);
     qDeleteAll(m_results);
     m_results.clear();
-//    emit endResetModel();
     emit endRemoveRows();
 }

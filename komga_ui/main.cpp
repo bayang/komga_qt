@@ -16,9 +16,42 @@
 #include "asyncimageprovider.h"
 #include <QQuickStyle>
 #include <QtGlobal>
+#include <QDebug>
+#include <QFile>
+#include "KomgaConfig.h"
+
+void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    const char *file = context.file ? context.file : "";
+    QString dt = QDateTime::currentDateTime().toString("dd/MM/yyyy hh:mm:ss");
+    QString txt = QString("[%1] ").arg(dt);
+
+    switch (type) {
+    case QtDebugMsg:
+        txt += QString("[Debug] %1:%2-%3").arg(file).arg(context.line).arg(msg);
+        break;
+    case QtInfoMsg:
+        txt += QString("[Info] %1:%2-%3").arg(file).arg(context.line).arg(msg);
+        break;
+    case QtWarningMsg:
+        txt += QString("[Warn] %1:%2-%3").arg(file).arg(context.line).arg(msg);
+        break;
+    case QtCriticalMsg:
+        txt += QString("[Critical] %1:%2-%3").arg(file).arg(context.line).arg(msg);
+        break;
+    case QtFatalMsg:
+        txt += QString("[Fatal] %1:%2-%3").arg(file).arg(context.line).arg(msg);
+        break;
+    }
+    QFile outFile("komga_qt.log");
+    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    QDebug deb{&outFile};
+    deb << txt << endl;
+}
 
 int main(int argc, char *argv[])
 {
+    qDebug() << PROJECT_NAME << " version: " << PROJECT_VER << endl;
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
@@ -31,6 +64,11 @@ int main(int argc, char *argv[])
     app.setApplicationName("Komga-ui");
 
     qSetMessagePattern("[%{type}] %{time} (%{file}:%{line}) - %{message}");
+    #if defined(Q_OS_WIN)
+        qInstallMessageHandler(myMessageOutput);
+    #elif defined(Q_OS_MACOS)
+        qInstallMessageHandler(myMessageOutput);
+    #endif
 
     Komga_api *api = new Komga_api(&app);
     LibraryModel *lm = new LibraryModel(&app, api);
@@ -58,6 +96,8 @@ int main(int argc, char *argv[])
     engine.addImportPath("qrc:/");
     engine.rootContext()->setContextProperty("controller",
     controller);
+    engine.rootContext()->setContextProperty("APP_VERSION",
+    PROJECT_VER);
     engine.addImageProvider("page", new BookPageProvider(bookModel));
     engine.addImageProvider("async", new AsyncImageProvider(api));
 

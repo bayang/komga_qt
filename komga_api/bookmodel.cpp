@@ -19,7 +19,6 @@ int BookModel::rowCount(const QModelIndex &parent) const {
 QVariant BookModel::data(const QModelIndex &index, int role) const {
     Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid));
     if (! index.isValid()) {
-        qDebug() << "invalid indx " << index.row();
         return QVariant();
     }
     if (index.row() < 0 || index.row() >= m_books.count())
@@ -55,7 +54,7 @@ QVariant BookModel::data(const QModelIndex &index, int role) const {
     else if (role == ReleaseDateRole)
         return book->bookMetadata()->releaseDate();
     else if (role == AuthorsRole)
-        return book->bookMetadata()->authors().join(",");
+        return QVariant::fromValue(book->bookMetadata()->authors());
     else if (role == AgeRatingRole)
         return book->bookMetadata()->ageRating();
     else if (role == TitleRole)
@@ -93,8 +92,8 @@ void BookModel::loadBooks(Series* series) {
     m_api->getBooks(series->id());
     resetBooks();
 }
-Book* BookModel::parseBook(const QJsonValue &value) {
-    Book* b = new Book(this);
+Book* BookModel::parseBook(const QJsonValue &value, QObject* parent) {
+    Book* b = new Book(parent);
     QJsonObject jsob = value.toObject();
     b->setId(jsob["id"].toInt());
     b->setSeriesId(jsob["seriesId"].toInt());
@@ -106,7 +105,7 @@ Book* BookModel::parseBook(const QJsonValue &value) {
     b->setMediaStatus(media["status"].toString());
     b->setPagesCount(media["pagesCount"].toInt());
     b->setMediaType(media["mediaType"].toString());
-    BookMetadata* meta = new BookMetadata();
+    BookMetadata* meta = new BookMetadata(b);
     QJsonObject metadata = jsob["metadata"].toObject();
     meta->setTitle(metadata["title"].toString());
     meta->setSummary(metadata["summary"].toString());
@@ -116,9 +115,13 @@ Book* BookModel::parseBook(const QJsonValue &value) {
     meta->setAgeRating(metadata["ageRating"].toString());
     meta->setReleaseDate(metadata["releaseDate"].toString());
     QJsonArray authors = metadata["authors"].toArray();
-    QList<QString> aut{""};
+    QList<Author*> aut{};
     foreach (const QJsonValue &value, authors) {
-        aut.append(value.toString());
+        QJsonObject ob = value.toObject();
+        Author* au = new Author(meta);
+        au->setName(ob["name"].toString());
+        au->setRole(ob["role"].toString());
+        aut.append(std::move(au));
     }
     meta->setAuthors(aut);
     if (jsob.contains("readProgress")) {
@@ -133,18 +136,28 @@ Book* BookModel::parseBook(const QJsonValue &value) {
     b->setBookMetadata(meta);
     return b;
 }
+
+bool BookModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (! index.isValid() || role != PageReachedRole) {
+        return false;
+    }
+    Book* b = m_books.at(index.row());
+    b->setPageReached(value.toInt());
+    updateProgress(b->id(), value.toInt());
+    emit dataChanged(index, index);
+    return true;
+}
 void BookModel::apiDataReceived(QJsonObject books) {
     int pageNum = books["number"].toInt();
     int totPages = books["totalPages"].toInt();
     int nbElems = books["numberOfElements"].toInt();
-    qDebug() << "page : " << pageNum;
-    qDebug() << "page number : " << totPages;
     if (nbElems > 0) {
         if (pageNum > 0) {
             emit beginInsertRows(QModelIndex(), m_books.size(), m_books.size() + nbElems - 1);
             QJsonArray content = books["content"].toArray();
             foreach (const QJsonValue &value, content) {
-                m_books.append(std::move(parseBook(value)));
+                m_books.append(std::move(parseBook(value, this)));
             }
             emit endInsertRows();
         }
@@ -152,7 +165,7 @@ void BookModel::apiDataReceived(QJsonObject books) {
             QList<Book*> booksList{};
             QJsonArray content = books["content"].toArray();
             foreach (const QJsonValue &value, content) {
-                booksList.append(std::move(parseBook(value)));
+                booksList.append(std::move(parseBook(value, this)));
             }
             emit layoutAboutToBeChanged();
             m_books = booksList;
@@ -178,7 +191,6 @@ void BookModel::nextBooksPage(Series *series) {
     }
 }
 void BookModel::resetBooks() {
-    qDebug() << "reset books";
     emit beginRemoveRows(QModelIndex(), 0, m_books.size() - 1);
     qDeleteAll(m_books);
     m_books.clear();

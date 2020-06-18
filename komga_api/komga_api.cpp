@@ -38,11 +38,11 @@ Komga_api::Komga_api(QObject *parent):
             this, &Komga_api::apiReplyFinished);
     connect(manager, &QNetworkAccessManager::authenticationRequired,
             this, &Komga_api::authenticate);
-//    connect(thumbnailsManager, &QNetworkAccessManager::authenticationRequired,
-//            this, &Komga_api::authenticate);
+    connect(manager, &QNetworkAccessManager::sslErrors,
+            this, &Komga_api::onSslErrors);
     connect(thumbnailsManager, &QNetworkAccessManager::authenticationRequired, [=](QNetworkReply *reply, QAuthenticator *authenticator){
         Q_UNUSED(reply);
-        qDebug() << "authenticate thumb";
+        qDebug() << "[net] authentication tm";
         QSettings settings;
         settings.beginGroup(Komga_api::SETTINGS_SECTION_SERVER);
         QString user = settings.value(Komga_api::SETTINGS_KEY_SERVER_USER).toString();
@@ -56,7 +56,7 @@ Komga_api::Komga_api(QObject *parent):
     connect(m_searchMapper, QOverload<const QString &>::of(&QSignalMapper::mapped), this,
         &Komga_api::searchDataReceived);
     connect(manager, &QNetworkAccessManager::networkAccessibleChanged, [this](QNetworkAccessManager::NetworkAccessibility accessible){
-        qDebug() << "network available " << accessible;
+        qDebug() << "[net] network available " << accessible;
         if (accessible == QNetworkAccessManager::NetworkAccessibility::NotAccessible) {
             emit netWorkAccessibleChanged(false);
         }
@@ -68,7 +68,6 @@ Komga_api::Komga_api(QObject *parent):
 }
 
 void Komga_api::searchDataReceived(const QString &id) {
-    qDebug() << "searchDataReceived " << id;
     QNetworkReply *reply = m_replies.take(id);
     if (reply->error() == QNetworkReply::NoError) {
         QPair<QString, QJsonDocument> res;
@@ -86,7 +85,6 @@ void Komga_api::searchDataReceived(const QString &id) {
 }
 
 void Komga_api::preloadImageReady(const QString &id) {
-    qDebug() << "preloadImageReady " << id;
     QNetworkReply *reply = m_replies.take(id);
     if (reply->error() == QNetworkReply::NoError) {
         QPair<QString, QByteArray> res;
@@ -97,7 +95,6 @@ void Komga_api::preloadImageReady(const QString &id) {
     reply->deleteLater();
 }
 void Komga_api::getLibraries() {
-    qDebug() << "fetch libraries";
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Libraries));
     QUrl url;
@@ -107,7 +104,7 @@ void Komga_api::getLibraries() {
 }
 
 void Komga_api::getSeries(int libraryId, int page) {
-    qDebug() << "fetch series for library " << libraryId;
+    qDebug() << "fetching series for library " << libraryId;
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesReason));
     QUrl url;
@@ -158,8 +155,21 @@ void Komga_api::updateProgress(int bookId, int page, bool completed)
     r.setUrl(url);
     r.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "application/json; charset=utf8");
     QJsonDocument doc{obj};
-    qDebug() << "doc " << doc.toJson(QJsonDocument::JsonFormat::Compact);
     manager->sendCustomRequest(r, "PATCH", doc.toJson(QJsonDocument::JsonFormat::Compact));
+}
+
+void Komga_api::onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
+{
+    Q_UNUSED(reply);
+    QString msg = "";
+    for (QSslError er : errors) {
+        msg += er.errorString();
+        msg += " ";
+        msg += er.error();
+        msg += "; ";
+    }
+    qWarning() << "[net] SSL Errors: " << msg;
+    emit networkErrorHappened("[net] SSL Errors: " + msg);
 }
 
 void Komga_api::searchSeries(const QString &searchTerm, qint64 timestamp) {
@@ -193,7 +203,6 @@ void Komga_api::searchBooks(const QString &searchTerm, qint64 timestamp) {
     query.addQueryItem("size", "10");
     query.addQueryItem("search", searchTerm);
     url.setQuery(query);
-    qDebug() << " url " << url;
     r.setUrl(url);
 
     QNetworkReply* reply = thumbnailsManager->get(r);
@@ -201,7 +210,6 @@ void Komga_api::searchBooks(const QString &searchTerm, qint64 timestamp) {
         m_searchMapper->map(reply);
     });
     QString key = QString::number(timestamp) + URL_BOOKS;
-    qDebug() << "key for books " << key;
     m_replies.insert(key, reply);
     m_searchMapper->setMapping(reply, key);
 }
@@ -215,11 +223,9 @@ void Komga_api::getBooks(int seriesId, int page) {
     QUrlQuery query;
     query.addQueryItem("size", "20");
     if (page != 0) {
-        qDebug() << " page " << page;
         query.addQueryItem("page", QString::number(page, 10));
     }
     url.setQuery(query);
-    qDebug() << " url " << url;
     r.setUrl(url);
     manager->get(r);
 }
@@ -243,19 +249,19 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
             emit booksDataReady(page);
         }
         else if (reason == RequestReason::Progress) {
-            qDebug() << "progress code " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+//            qDebug() << "progress response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         }
     }
     // else emit an error event
     else {
-        qWarning() << "ERROR " << reply->errorString() << " code " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        emit networkErrorHappened("ERROR " + reply->errorString());
+        qWarning() << "[net] ERROR " << reply->errorString() << " code " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        emit networkErrorHappened("[net] ERROR " + reply->errorString());
     }
 }
 
 void Komga_api::authenticate(QNetworkReply *reply, QAuthenticator *authenticator) {
     Q_UNUSED(reply);
-    qDebug() << "authenticate";
+    qDebug() << "[net] authentication";
     QSettings settings;
     settings.beginGroup(Komga_api::SETTINGS_SECTION_SERVER);
     QString user = settings.value(Komga_api::SETTINGS_KEY_SERVER_USER).toString();
@@ -265,7 +271,7 @@ void Komga_api::authenticate(QNetworkReply *reply, QAuthenticator *authenticator
     authenticator->setPassword(pw);
 }
 QByteArray Komga_api::getThumbnail(int id, Komga_api::ThumbnailType type) {
-    qDebug() << "fetch thumbnail for id " << id;
+    qDebug() << "fetching thumbnail for id " << id;
     QNetworkRequest r;
     QUrl url;
     if (type == ThumbnailType::BookThumbnail) {
@@ -285,7 +291,7 @@ QByteArray Komga_api::getThumbnail(int id, Komga_api::ThumbnailType type) {
         return reply->readAll();
     }
     else {
-        qWarning() << "error fetching thumbnail " << reply->errorString();
+        qWarning() << "[net] error fetching thumbnail " << reply->errorString();
         return QByteArray();
     }
 }
@@ -325,7 +331,7 @@ QByteArray Komga_api::getPage(int id, int pageNum) {
         return reply->readAll();
     }
     else {
-        qWarning() << "error fetching page " << reply->errorString();
+        qWarning() << "[net] error fetching page " << reply->errorString();
         return QByteArray();
     }
 }
@@ -338,7 +344,6 @@ void Komga_api::getPageAsync(int id, int pageNum) {
     query.addQueryItem("zero_based", "true");
     url.setQuery(query);
     r.setUrl(url);
-//    QEventLoop eventLoop;
 
     QNetworkReply* reply = thumbnailsManager->get(r);
     connect(reply, &QNetworkReply::finished, [=](){
@@ -354,9 +359,9 @@ QString Komga_api::getServerUrl() {
     QString url = settings.value(Komga_api::SETTINGS_KEY_SERVER_URL).toString();
     settings.endGroup();
     if (! url.endsWith("/")) {
-        return url;
+        return url + "/api/v1";
     }
     else {
-        return url;
+        return url + "api/v1";
     }
 }

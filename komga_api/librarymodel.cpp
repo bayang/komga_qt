@@ -18,8 +18,6 @@ void LibraryModel::apiDataReceived(QJsonDocument libraries) {
     foreach (const QJsonValue &value, array) {
         Library* l = new Library(this);
         QJsonObject jsob = value.toObject();
-        qDebug() << jsob["id"].toInt();
-        qDebug() << jsob["name"].toString();
         l->setId(jsob["id"].toInt());
         l->setName(jsob["name"].toString());
         l->setRoot(jsob["root"].toString());
@@ -43,7 +41,6 @@ QHash<int, QByteArray> LibraryModel::roleNames() const {
 }
 QVariant LibraryModel::data(const QModelIndex &index, int role) const {
     if (! index.isValid()) {
-        qDebug() << "invalid indx " << index.row();
         return QVariant();
     }
     if (index.row() < 0 || index.row() >= m_libraries.count())
@@ -59,16 +56,10 @@ QVariant LibraryModel::data(const QModelIndex &index, int role) const {
             return library->root();
         else if (role == ObjectRole)
             qDebug() << library->name();
-        return library;
+            return library;
     }
     return QVariant();
 }
 void LibraryModel::fetchData() {
     m_api -> getLibraries();
 }
-//Library* LibraryModel::get(int index) const {
-//    if (index < 0 || index > m_libraries.count()) {
-
-//    }
-//    return m_libraries.at(index);
-//}

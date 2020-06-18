@@ -127,7 +127,19 @@ void MasterController::setSelectedBookIdx(int value)
         currentBook->bookMetadata()->setSummary(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::SummaryRole).toString());
         currentBook->bookMetadata()->setPublisher(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::PublisherRole).toString());
         currentBook->bookMetadata()->setReleaseDate(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::ReleaseDateRole).toString());
-        currentBook->bookMetadata()->setAuthors(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::AuthorsRole).toStringList());
+        QVariant qv = getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::AuthorsRole);
+        QSequentialIterable iterable = qv.value<QSequentialIterable>();
+        QList<Author*> as{};
+        currentBook->bookMetadata()->authors().clear();
+        for (const QVariant &v : iterable) {
+            Author* a = v.value<Author*>();
+            Author* copy = new Author(currentBook->bookMetadata());
+            copy->setName(a->name());
+            copy->setRole(a->role());
+            as.append(std::move(copy));
+        }
+        currentBook->bookMetadata()->setAuthors(as);
+        qDebug() << "authors " << currentBook->bookMetadata()->authors();
         currentBook->bookMetadata()->setAgeRating(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::AgeRatingRole).toString());
         currentBook->setCompleted(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::CompletedRole).toBool());
         currentBook->setPageReached(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::PageReachedRole).toInt());
@@ -211,7 +223,7 @@ void MasterController::setCurrentBookPageReached(int currentImageNumber)
         else {
             qDebug() << "current image nb changed in controller " << currentImageNumber ;
             getCurrentBook()->setPageReached(currentImageNumber);
-            m_bookModel->updateProgress(getCurrentBook()->id(), currentImageNumber);
+            getBookModel()->setData(getBookModel()->index(getSelectedBookIdx(), 0), QVariant{currentImageNumber}, BookModel::PageReachedRole);
         }
     }
 }
@@ -251,7 +263,6 @@ void MasterController::setNetworkInformer(NetworkInformer *networkInformer)
     m_networkInformer = networkInformer;
 }
 void MasterController::doSearch(const QString &searchTerm) {
-    qDebug() << "search for " << searchTerm;
     m_searchModel->doSearch(searchTerm);
 }
 

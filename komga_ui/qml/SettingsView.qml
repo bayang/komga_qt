@@ -19,6 +19,17 @@ Item {
     }
 
     ColumnLayout {
+        Label {
+            text: '<html><style type="text/css"></style><a href="https://github.com/bayang/komga_qt">Komga_qt Version: ' + APP_VERSION + '</a></html>'
+            font.pointSize: Style.microTextSize
+            Layout.alignment: Qt.AlignRight
+            onLinkActivated: Qt.openUrlExternally(link)
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+            }
+        }
         Button {
             onClicked: {
                 serverSettings.sync()
@@ -49,7 +60,7 @@ Item {
                 id: serverInput
                 Layout.minimumWidth: Style.defaultTextInputWidth
                 selectByMouse: true
-                placeholderText: qsTr("eg : http://localhost:8080/api/v1")
+                placeholderText: qsTr("eg : http://localhost:8080")
             }
             Label {
                 text: qsTr("User name")

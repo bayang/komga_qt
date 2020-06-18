@@ -6,7 +6,6 @@ AsyncImageResponse::AsyncImageResponse(const QString &id, const QSize &requested
     m_requestedSize{requestedSize}, m_api{api}, m_id{id}
 
 {
-    qDebug() << "start runnable ";
     connect(&m_manager, &QNetworkAccessManager::authenticationRequired, [=](QNetworkReply *reply, QAuthenticator *authenticator){
         Q_UNUSED(reply);
         QSettings settings;
@@ -24,7 +23,6 @@ QQuickTextureFactory* AsyncImageResponse::textureFactory() const {
     return QQuickTextureFactory::textureFactoryForImage(m_image);
 }
 void AsyncImageResponse::handleDone(QNetworkReply *reply) {
-    qDebug() << "handle done " << m_requestedSize;
     QImage i;
     if (reply->error() == QNetworkReply::NoError) {
         QByteArray ba = reply->readAll();
@@ -38,12 +36,11 @@ void AsyncImageResponse::handleDone(QNetworkReply *reply) {
             }
         }
         m_image = i;
-        qDebug() << "handle done im " << m_image.height() << " " << m_image.width();
         reply->deleteLater();
         emit finished();
     }
     else {
-        qDebug() << "ERROR " << reply->errorString();
+        qDebug() << "[net] ERROR " << reply->errorString();
         m_image = i;
         reply->deleteLater();
         emit finished();

@@ -1,6 +1,29 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(komga-app)
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 1)
+
+message(STATUS ${CMAKE_SOURCE_DIR})
+
+if(EXISTS ${CMAKE_SOURCE_DIR}/.git/)
+    execute_process(
+            COMMAND git rev-list HEAD --count
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+
+            OUTPUT_VARIABLE VERSION_TWEAK
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if (VERSION_TWEAK STREQUAL "")
+        set(VERSION_TWEAK 0)
+    endif()
+else()
+    set(VERSION_TWEAK 0)
+endif()
+
+project(komga-app VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}.${VERSION_TWEAK}")
+
+message(STATUS "komga-app version ${PROJECT_VERSION}")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-fno-sized-deallocation")

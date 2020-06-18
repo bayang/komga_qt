@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(komga-ui)
+project(komga-ui VERSION "${CMAKE_PROJECT_VERSION}")
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -32,6 +32,8 @@ find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Core Network Qml Quick Q
 # otherwise imports from api in ui fail
 # is it normal ?
 include_directories(../komga_api)
+
+configure_file(KomgaConfig.h.in KomgaConfig.h)
 
 if(APPLE)
 add_executable(komga-ui MACOSX_BUNDLE
@@ -71,6 +73,8 @@ add_executable(komga-ui
 )
 endif()
 
-
+target_include_directories(komga-ui PUBLIC
+                           "${PROJECT_BINARY_DIR}"
+                           )
 target_compile_definitions(komga-ui PUBLIC "$<$<CONFIG:Release>:QT_NO_DEBUG_OUTPUT>")
 target_link_libraries(komga-ui PUBLIC komga-api Qt5::Core Qt5::Quick Qt5::QuickControls2)
