@@ -233,7 +233,7 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
             emit booksDataReady(page);
         }
         else if (reason == RequestReason::Progress) {
-            qDebug() << "progress response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+//            qDebug() << "progress response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         }
     }
     // else emit an error event
