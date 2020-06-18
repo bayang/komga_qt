@@ -6,7 +6,7 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master, ci ]
+    branches: [ master, ci, wintls ]
   pull_request:
     branches: [ master ]
 
@@ -93,6 +93,12 @@ jobs:
     # Runs a set of commands using the runners shell
     - name: build app
       run: |
+        pip3 install setuptools wheel
+        pip3 install py7zr==0.7
+        pip3 install aqtinstall==0.9
+        python -m aqt tool -O D:/a/komga_qt/Qt/ windows tools_openssl_x64 1.1.1-4 qt.tools.openssl.win_x64
+        dir D:/a/komga_qt/Qt/Tools/
+        dir D:/a/komga_qt/Qt/Tools/OpenSSL/
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE=RELEASE ..
@@ -104,6 +110,8 @@ jobs:
         mkdir komga_qt
         copy build/komga_ui/Release/komga-ui.exe  komga_qt
         windeployqt komga_qt/komga-ui.exe --qmldir komga_ui/qml
+        copy D:/a/komga_qt/Qt/Tools/OpenSSL/Win_x64/bin/libcrypto-1_1-x64.dll  komga_qt
+        copy D:/a/komga_qt/Qt/Tools/OpenSSL/Win_x64/bin/libssl-1_1-x64.dll  komga_qt
         ls komga_qt
     - name: Upload exe
       uses: actions/upload-artifact@v2
