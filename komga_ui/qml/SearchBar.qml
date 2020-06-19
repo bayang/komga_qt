@@ -108,12 +108,11 @@ Item {
             id: searchButton
             onClicked: root.searchTriggered(searchText.text)
             font {
-                family: Style.fontAwesome
+                family: Style.fontAwesomeSolid
                 pointSize: Style.smallMediumTextSize
             }
             text : "\uf002"
         }
-
     }
     function getSourceType(type) {
         if (type === "Books") {
