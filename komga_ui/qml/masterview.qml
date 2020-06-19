@@ -102,7 +102,7 @@ ApplicationWindow {
 
    Timer {
        id : errorVisibilityTimer
-       interval: 2000
+       interval: 4000
        repeat: false
        onTriggered: {
            errorMessageLabel.visible = false
