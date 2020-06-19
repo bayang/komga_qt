@@ -12,6 +12,7 @@ QImage BookPageProvider::requestImage(const QString &id, QSize *size, const QSiz
     int pageNb = parts.at(1).toInt();
 
     bookModel->preloadPage(idNb, pageNb + 1);
+    // test test
     if (QByteArray* c = bookModel->getImageFromCache(id)) {
         QImage pic;
         pic.loadFromData(*c);
