@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     controller);
     engine.rootContext()->setContextProperty("APP_VERSION",
     PROJECT_VER);
-    engine.addImageProvider("page", new BookPageProvider(bookModel));
+    engine.addImageProvider("page", new BookPageProvider(controller));
     engine.addImageProvider("async", new AsyncImageProvider(api));
 
     const QUrl url(QStringLiteral("qrc:/qml/masterview.qml"));

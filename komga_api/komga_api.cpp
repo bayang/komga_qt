@@ -86,7 +86,7 @@ void Komga_api::searchDataReceived(const QString &id) {
 
 void Komga_api::preloadImageReady(const QString &id) {
     QNetworkReply *reply = m_replies.take(id);
-    if (reply->error() == QNetworkReply::NoError) {
+    if (reply && reply->error() == QNetworkReply::NoError) {
         QPair<QString, QByteArray> res;
         res.first = id;
         res.second = reply->readAll();

@@ -79,6 +79,8 @@ public:
     SearchModel *getSearchModel() const;
     void setSearchModel(SearchModel *searchModel);
 
+    void preloadBookPages(int bookId, int currentPage);
+
 signals:
     void goSeriesView();
     void goBooksView();

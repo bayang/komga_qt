@@ -139,7 +139,6 @@ void MasterController::setSelectedBookIdx(int value)
             as.append(std::move(copy));
         }
         currentBook->bookMetadata()->setAuthors(as);
-        qDebug() << "authors " << currentBook->bookMetadata()->authors();
         currentBook->bookMetadata()->setAgeRating(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::AgeRatingRole).toString());
         currentBook->setCompleted(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::CompletedRole).toBool());
         currentBook->setPageReached(getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::PageReachedRole).toInt());
@@ -251,6 +250,19 @@ SearchModel *MasterController::getSearchModel() const
 void MasterController::setSearchModel(SearchModel *searchModel)
 {
     m_searchModel = searchModel;
+}
+
+void MasterController::preloadBookPages(int bookId, int currentPage)
+{
+    int currentBookPageTotal = getBookModel()->data(getBookModel()->index(getSelectedBookIdx(), 0), BookModel::BooksRoles::PageCountRole).toInt();
+    for (int i = 1; i <= 5; i++) {
+        if ((currentPage + i < currentBookPageTotal) && (! getBookModel()->hasImageInCache(bookId, currentPage + i))) {
+            getBookModel()->preloadPage(bookId, currentPage + i);
+        }
+        if ((currentPage - i >= 0) && (! getBookModel()->hasImageInCache(bookId, currentPage - i))) {
+            getBookModel()->preloadPage(bookId, currentPage - i);
+        }
+    }
 }
 
 NetworkInformer *MasterController::getNetworkInformer() const

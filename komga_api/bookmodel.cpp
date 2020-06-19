@@ -212,3 +212,8 @@ void BookModel::updateProgress(int bookId, int page, bool completed)
 QByteArray* BookModel::getImageFromCache(const QString &key) {
     return m_picturesCache[key];
 }
+
+bool BookModel::hasImageInCache(int bookId, int currentPage)
+{
+    return m_picturesCache.contains(QString::number(bookId) + "/"+QString::number(currentPage));
+}
