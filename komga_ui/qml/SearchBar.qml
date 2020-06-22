@@ -92,7 +92,10 @@ Item {
                             hoverEnabled: true
                             onClicked: {
 //                                console.log("clicked index " + index)
-                                controller.setSearchResult(index)
+                                dropDownList.currentIndex = index
+//                                controller.setSearchResult(index)
+//                                controller.goBooksView(seriesId)
+//                                stack.push("qrc:/qml/booksview.qml", {currentSeriesId: seriesId, currentSeriesName: seriesName, currentSeriesBookCount: seriesBookCount, currentSeriesMetadataStatus: seriesMetadataStatus})
                                 dropDownPopup.close()
                                 searchText.text = ""
                             }

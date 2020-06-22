@@ -33,6 +33,9 @@ public:
         MediaTypeFullRole = Qt::UserRole + 17,
         PageReachedRole = Qt::UserRole + 18,
         CompletedRole = Qt::UserRole + 19,
+        WritersRole = Qt::UserRole + 20,
+        ColoristsRole = Qt::UserRole + 21,
+        PencillersRole = Qt::UserRole + 22,
     };
 public slots:
     void apiDataReceived(QJsonObject books);
@@ -44,11 +47,11 @@ public:
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
-    Q_INVOKABLE void loadBooks(Series* series);
+    Q_INVOKABLE void loadBooks(int seriesId);
 //    Q_INVOKABLE Book* get(int index);
     QByteArray getThumbnail(int id);
     QByteArray getPage(int id, int pageNum);
-    void nextBooksPage(Series *series);
+    void nextBooksPage(int seriesId);
     void resetBooks();
     void preloadPage(int id, int pageNum);
     QByteArray* getImageFromCache(const QString &key);

@@ -18,9 +18,9 @@
 class KOMGA_API_EXPORT MasterController : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( Book* ui_currentBook READ getCurrentBook NOTIFY currentBookChanged )
+//    Q_PROPERTY( Book* ui_currentBook READ getCurrentBook NOTIFY currentBookChanged )
     Q_PROPERTY( Library* ui_defautLibrary READ getDefaultLibrary WRITE setDefaultLibrary NOTIFY defaultLibraryChanged )
-    Q_PROPERTY( Series* ui_currentSeries READ getCurrentSeries NOTIFY currentSeriesChanged )
+//    Q_PROPERTY( Series* ui_currentSeries READ getCurrentSeries NOTIFY currentSeriesChanged )
     Q_PROPERTY( SeriesModel* ui_seriesModel READ getSeriesModel CONSTANT )
     Q_PROPERTY( BookModel* ui_bookModel READ getBookModel CONSTANT )
     Q_PROPERTY( LibraryModel* ui_libraryModel READ getLibraryModel CONSTANT )
@@ -29,7 +29,8 @@ class KOMGA_API_EXPORT MasterController : public QObject
     Q_PROPERTY( int ui_newSeriesId MEMBER SERIES_NEW_ID CONSTANT )
     Q_PROPERTY( int ui_latestSeriesId MEMBER SERIES_LATEST_ID CONSTANT )
     Q_PROPERTY( int ui_updatedSeriesId MEMBER SERIES_UPDATED_ID CONSTANT )
-    Q_PROPERTY( QString ui_currentLibraryName READ getCurrentLibraryName NOTIFY currentLibraryNameChanged )
+//    Q_PROPERTY( QString ui_currentLibraryName READ getCurrentLibraryName NOTIFY currentLibraryNameChanged )
+    Q_PROPERTY( QString ui_defaultLibraryName READ getDefaultLibraryName )
     Q_PROPERTY( NetworkInformer* ui_networkInformer READ getNetworkInformer CONSTANT )
 
 public:
@@ -40,13 +41,17 @@ public:
     static const int SERIES_LATEST_ID{-102};
     static const int SERIES_UPDATED_ID{-103};
 
+    static const QString DEFAULT_LIBRARY_NAME;
+
     static const QString SERIES_UPDATED_NAME;
     static const QString SERIES_NEW_NAME;
     static const QString SERIES_LATEST_NAME;
 
-    Book *getCurrentBook() const;
+    static const QString BOOKS_CURRENTLY_READING_NAME;
 
-    Series *getCurrentSeries() const;
+//    Book *getCurrentBook() const;
+
+//    Series *getCurrentSeries() const;
 
     Library *getDefaultLibrary() const;
     void setDefaultLibrary(Library *value);
@@ -64,14 +69,13 @@ public:
     SeriesFilterSortProxyModel *getProxyModel() const;
     void setProxyModel(SeriesFilterSortProxyModel *proxyModel);
 
-    int getSelectedSeriesIdx() const;
-    void setSelectedSeriesIdx(int value);
+//    int getSelectedSeriesIdx() const;
+//    void setSelectedSeriesIdx(int value);
 
-    int getSelectedLibraryIdx() const;
-    void setSelectedLibraryIdx(int value);
+//    int getSelectedLibraryIdx() const;
+//    void setSelectedLibraryIdx(int value);
 
     int getSelectedBookIdx() const;
-    void setSelectedBookIdx(int value);
 
     NetworkInformer *getNetworkInformer() const;
     void setNetworkInformer(NetworkInformer *networkInformer);
@@ -81,30 +85,33 @@ public:
 
     void preloadBookPages(int bookId, int currentPage);
 
+    QString getDefaultLibraryName();
+
 signals:
-    void goSeriesView();
-    void goBooksView();
-    void goBookDetailView();
+    void goSeriesView(int seriesId);
+    void goBooksView(int seriesId);
+    void goBookDetailView(int bookId);
     void goBookReadView();
-    void currentBookChanged(Book* book);
-    void currentLibraryChanged(int id);
-    void currentLibraryNameChanged(QString name);
+//    void currentBookChanged(Book* book);
+//    void currentLibraryChanged(int id);
+//    void currentLibraryNameChanged(QString name);
     void defaultLibraryChanged();
-    void currentSeriesChanged(Series *series);
-    void firstBookPageReached();
-    void lastBookPageReached();
+//    void currentSeriesChanged(Series *series);
+//    void firstBookPageReached();
+//    void lastBookPageReached();
 
 public slots:
-    void nextSeriesPage();
-    void nextBooksPage();
-    void setSelectedLibrary(int selectedLibrary);
-    void setSelectedSeries(int selectedSeries);
-    void setSelectedBook(int selectedBook);
+    void nextSeriesPage(int currentLibraryId);
+    void nextBooksPage(int currentSeriesId);
+//    void setSelectedLibrary(int selectedLibrary);
+//    void setSelectedSeries(int selectedSeries);
+//    void setSelectedBook(int selectedBook);
+    void setSelectedBookIdx(int value);
     void refreshData();
-    QString getCurrentLibraryName() const;
+//    QString getCurrentLibraryName() const;
     void doSearch(const QString &searchTerm);
     void setSearchResult(int index);
-    void setCurrentBookPageReached(int pageNumber);
+    void setCurrentBookPageReached(int currentImageNumber);
 
 private:
     Library* defaultLibrary{nullptr};

@@ -8,6 +8,9 @@ import assets 1.0
 Item {
 
     property real lastNextPageCalledTime: 0
+    property real varInSeries: 1
+    property string currentLibraryName
+    property real currentLibraryId
     anchors.fill: parent
     anchors.leftMargin: 10
 
@@ -25,11 +28,13 @@ Item {
 
         Label {
             id: libraryText
-            text: controller.ui_currentLibraryName
+//            text: controller.ui_currentLibraryName
+            text: currentLibraryName
             font.pointSize: Style.mediumTextSize
             anchors.horizontalCenter: parent.horizontalCenter
             topPadding: 20
         }
+
         GridView {
             id: seriesList
             model: controller.ui_seriesModel
@@ -45,7 +50,7 @@ Item {
                 if (atYEnd) {
                     var curTime = new Date().getTime();
                     if (curTime - lastNextPageCalledTime > 500) {
-                        controller.nextSeriesPage()
+                        controller.nextSeriesPage(currentLibraryId)
                     }
                     lastNextPageCalledTime = curTime
                 }
@@ -64,8 +69,9 @@ Item {
                     progressVisible: false
                     onCardClicked: {
                         seriesList.currentIndex = index
-                        controller.setSelectedSeries(seriesList.currentIndex)
-                        controller.goBooksView()
+//                        controller.setSelectedSeries(seriesList.currentIndex)
+                        controller.goBooksView(seriesId)
+                        stack.push("qrc:/qml/booksview.qml", {currentSeriesId: seriesId, currentSeriesName: seriesName, currentSeriesBookCount: seriesBookCount, currentSeriesMetadataStatus: seriesMetadataStatus})
                     }
             }
         }

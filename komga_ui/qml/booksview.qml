@@ -6,6 +6,10 @@ import assets 1.0
 
 Item {
     property real lastNextPageCalledTime: 0
+    property real currentSeriesId
+    property string currentSeriesName
+    property real currentSeriesBookCount
+    property string currentSeriesMetadataStatus
     anchors.fill: parent
     anchors.leftMargin: 10
 
@@ -50,7 +54,8 @@ Item {
                 Layout.fillWidth: true
                 Image {
                     id: seriesDetailImage
-                    source: "image://async/series/" + controller.ui_currentSeries.ui_seriesId
+//                    source: "image://async/series/" + controller.ui_currentSeries.ui_seriesId
+                    source: "image://async/series/" + currentSeriesId
                     sourceSize.height: 270
                     sourceSize.width: -1
                     fillMode: Image.PreserveAspectCrop
@@ -63,12 +68,14 @@ Item {
 
                         Label {
                             id: seriesText
-                            text: qsTr(controller.ui_currentSeries.ui_seriesName)
+//                            text: qsTr(controller.ui_currentSeries.ui_seriesName)
+                            text: qsTr(currentSeriesName)
                             font.pointSize: Style.mediumTextSize
                         }
                         Label {
                             id: countBadge
-                            text: controller.ui_currentSeries.ui_seriesBooksCount
+//                            text: controller.ui_currentSeries.ui_seriesBooksCount
+                            text: currentSeriesBookCount
                             font.pointSize: Style.smallMediumTextSize
                             padding: 4
                             font.bold: true
@@ -80,7 +87,8 @@ Item {
                     }
                     Label {
                         id: seriesStatus
-                        text: qsTr("STATUS : " + controller.ui_currentSeries.ui_seriesMetadataStatus)
+//                        text: qsTr("STATUS : " + controller.ui_currentSeries.ui_seriesMetadataStatus)
+                        text: qsTr("STATUS : " + currentSeriesMetadataStatus)
                         font.pointSize: Style.smallMediumTextSize
                     }
                 }
@@ -104,7 +112,7 @@ Item {
                     if (atYEnd) {
                         var curTime = new Date().getTime();
                         if (curTime - lastNextPageCalledTime > 500) {
-                            controller.nextBooksPage()
+                            controller.nextBooksPage(currentSeriesId)
                         }
                         lastNextPageCalledTime = curTime
                     }
@@ -125,8 +133,23 @@ Item {
                     progressHeight: 10
                     onCardClicked: {
                         booksList.currentIndex = index
-                        controller.setSelectedBook(booksList.currentIndex)
-                        controller.goBookDetailView()
+                        controller.setSelectedBookIdx(booksList.currentIndex)
+                        controller.goBookDetailView(bookId)
+                        stack.push("qrc:/qml/bookdetailview.qml", {
+                                       currentBookId: bookId,
+                                       currentBookPageReached: bookPageReached,
+                                       currentBookPageCount: bookPageCount,
+                                       currentBookCompleted: bookCompleted,
+                                       currentBookMetadataTitle: bookTitle,
+                                       currentBookWriters: bookWriters,
+                                       currentBookPencillers: bookPencillers,
+                                       currentBookColorists: bookColorists,
+                                       currentBookPublisher : bookPublisher,
+                                       currentBookSummary: bookSummary,
+                                       currentBookSize: bookSize,
+                                       currentBookShortMediaType: bookMediaType,
+                                       currentBookUrl: bookUrl
+                                   })
                     }
                 }
             }

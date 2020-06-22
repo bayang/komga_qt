@@ -17,7 +17,7 @@ int BookModel::rowCount(const QModelIndex &parent) const {
     return m_books.count();
 }
 QVariant BookModel::data(const QModelIndex &index, int role) const {
-    Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid));
+//    Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid));
     if (! index.isValid()) {
         return QVariant();
     }
@@ -63,6 +63,12 @@ QVariant BookModel::data(const QModelIndex &index, int role) const {
         return book->pageReached();
     else if (role == CompletedRole)
         return book->completed();
+    else if (role == WritersRole)
+        return book->bookMetadata()->writersAsString();
+    else if (role == PencillersRole)
+        return book->bookMetadata()->pencillersAsString();
+    else if (role == ColoristsRole)
+        return book->bookMetadata()->coloristsAsString();
     return QVariant();
 }
 QHash<int, QByteArray> BookModel::roleNames() const {
@@ -86,10 +92,13 @@ QHash<int, QByteArray> BookModel::roleNames() const {
         roles[MediaTypeFullRole] = "bookMediaTypeFull";
         roles[PageReachedRole] = "bookPageReached";
         roles[CompletedRole] = "bookCompleted";
+        roles[WritersRole] = "bookWriters";
+        roles[PencillersRole] = "bookPencillers";
+        roles[ColoristsRole] = "bookColorists";
         return roles;
 }
-void BookModel::loadBooks(Series* series) {
-    m_api->getBooks(series->id());
+void BookModel::loadBooks(int seriesId) {
+    m_api->getBooks(seriesId);
     resetBooks();
 }
 Book* BookModel::parseBook(const QJsonValue &value, QObject* parent) {
@@ -184,10 +193,10 @@ QByteArray BookModel::getPage(int id, int pageNum) {
     QByteArray a = m_api->getPage(id, pageNum);
     return a;
 }
-void BookModel::nextBooksPage(Series *series) {
+void BookModel::nextBooksPage(int seriesId) {
     qDebug() << "curr p :" << m_currentPageNumber << " total p : " << m_totalPageNumber;
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
-        m_api->getBooks(series->id(), m_currentPageNumber + 1);
+        m_api->getBooks(seriesId, m_currentPageNumber + 1);
     }
 }
 void BookModel::resetBooks() {

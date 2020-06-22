@@ -7,6 +7,21 @@ import assets 1.0
 Item {
     id: bookDetailRoot
     property bool imageCurrentlyHovered: false
+    property real currentBookId
+    property real currentBookPageReached
+    property real currentBookPageCount
+    property bool currentBookCompleted
+    property string currentBookMetadataTitle
+    property string currentBookMetadataNumber
+    property string currentBookWriters
+    property string currentBookPencillers
+    property string currentBookColorists
+    property string currentBookPublisher
+    property string currentBookSummary
+    property string currentBookSize
+    property string currentBookShortMediaType
+    property string currentBookUrl
+
 
     ScrollView {
         clip: true
@@ -38,7 +53,8 @@ Item {
                     Layout.alignment: Qt.AlignTop
                     Image {
                         id: bookDetailImage
-                        source: "image://async/book/" + controller.ui_currentBook.ui_bookId
+//                        source: "image://async/book/" + controller.ui_currentBook.ui_bookId
+                        source: "image://async/book/" + currentBookId
                         sourceSize.height: 300
                         sourceSize.width: -1
                         fillMode: Image.PreserveAspectCrop
@@ -46,8 +62,9 @@ Item {
                             width: parent.width
                             anchors.bottom: parent.bottom
                             contentItem.implicitHeight: 10
-                            value: controller.ui_currentBook.ui_bookPageReached / controller.ui_currentBook.ui_bookPagesCount
-                            visible: controller.ui_currentBook.ui_bookPageReached > 0 && ! controller.ui_currentBook.ui_bookCompleted
+//                            value: controller.ui_currentBook.ui_bookPageReached / controller.ui_currentBook.ui_bookPagesCount
+                            value: currentBookPageReached / currentBookPageCount
+                            visible: currentBookPageReached > 0 && ! currentBookCompleted
                         }
                     }
                     Label {
@@ -83,34 +100,43 @@ Item {
                     Layout.alignment: Qt.AlignTop
                     Label {
                         id: curBookStatus
-                        text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataTitle)
+//                        text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataTitle)
+                        text: qsTr(currentBookMetadataTitle)
                         font.pointSize: Style.mediumTextSize
                     }
                     Label {
-                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataWriters ? "Writers :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataWriters) : ""
+//                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataWriters ? "Writers :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataWriters) : ""
+                        text: currentBookWriters ? "Writers :" + qsTr(currentBookWriters) : ""
                         font.pointSize: Style.smallMediumTextSize
                     }
                     Label {
-                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers ? "Pencillers :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers) : ""
+//                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers ? "Pencillers :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers) : ""
+                        text: currentBookPencillers ? "Pencillers :" + qsTr(currentBookPencillers) : ""
                         font.pointSize: Style.smallMediumTextSize
-                        visible: controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers
+//                        visible: controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers
+                        visible: currentBookPencillers
                     }
                     Label {
-                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists ? "Colorists :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists) : ""
+//                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists ? "Colorists :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists) : ""
+                        text: currentBookColorists ? "Colorists :" + qsTr(currentBookColorists) : ""
                         font.pointSize: Style.smallMediumTextSize
-                        visible: controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists
+//                        visible: controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists
+                        visible: currentBookColorists
                     }
                     Label {
-                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber ? "# " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber) : ""
+//                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber ? "# " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber) : ""
+                        text: currentBookMetadataNumber ? "# " + qsTr(currentBookMetadataNumber) : ""
                         font.pointSize: Style.smallMediumTextSize
-                        visible: controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber
+                        visible: currentBookMetadataNumber
                     }
                     Label {
-                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher ? "Publisher : " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher) : ""
+//                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher ? "Publisher : " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher) : ""
+                        text: currentBookPublisher ? "Publisher : " + qsTr(currentBookPublisher) : ""
                         font.pointSize: Style.smallMediumTextSize
                     }
                     Label {
-                        text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataSummary)
+//                        text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataSummary)
+                        text: qsTr(currentBookSummary)
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                         Layout.fillWidth: true
                         font.pointSize: Style.smallMediumTextSize
@@ -127,21 +153,25 @@ Item {
 
                 Label {
                     id : bookPagesCountLabel
-                    text: qsTr(controller.ui_currentBook.ui_bookPagesCount.toString()) + " pages"
+//                    text: qsTr(controller.ui_currentBook.ui_bookPagesCount.toString()) + " pages"
+                    text: qsTr(currentBookPageCount.toString()) + " pages"
                     font.pointSize: Style.smallTextSize
                 }
             }
 
             Label {
-                text: "SIZE : " + qsTr(controller.ui_currentBook.ui_bookSize)
+//                text: "SIZE : " + qsTr(controller.ui_currentBook.ui_bookSize)
+                text: "SIZE : " + qsTr(currentBookSize)
                 font.pointSize: Style.smallTextSize
             }
             Label {
-                text: "FORMAT : " + qsTr(controller.ui_currentBook.ui_bookShortMediaType)
+//                text: "FORMAT : " + qsTr(controller.ui_currentBook.ui_bookShortMediaType)
+                text: "FORMAT : " + qsTr(currentBookShortMediaType)
                 font.pointSize: Style.smallTextSize
             }
             Label {
-                text: "FILE : " + qsTr(controller.ui_currentBook.ui_bookUrl)
+//                text: "FILE : " + qsTr(controller.ui_currentBook.ui_bookUrl)
+                text: "FILE : " + qsTr(currentBookUrl)
                 font.pointSize: Style.smallTextSize
             }
 
@@ -172,6 +202,12 @@ Item {
         }
         BookReadView {
             anchors.fill: parent
+            bookId: currentBookId
+            pageReached: currentBookPageReached
+            pageCount: currentBookPageCount
+            onPageChanged: {
+                currentBookPageReached = pageNum
+            }
         }
     }
 }
