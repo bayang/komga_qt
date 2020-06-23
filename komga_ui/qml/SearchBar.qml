@@ -91,8 +91,36 @@ Item {
                             anchors.fill: parent
                             hoverEnabled: true
                             onClicked: {
-//                                console.log("clicked index " + index)
-                                controller.setSearchResult(index)
+                                dropDownList.currentIndex = index
+                                if (resultType === "Books") {
+                                    stack.push("qrc:/qml/bookdetailview.qml", {
+                                                   currentBookId: resultBook.ui_bookId,
+                                                   currentBookPageReached: resultBook.ui_bookPageReached,
+                                                   currentBookPageCount: resultBook.ui_bookPagesCount,
+                                                   currentBookCompleted: resultBook.ui_bookCompleted,
+                                                   currentBookMetadataTitle: resultBook.ui_bookMetadata.ui_metadataTitle,
+                                                   currentBookWriters: resultBook.ui_bookMetadata.ui_metadataWriters,
+                                                   currentBookPencillers: resultBook.ui_bookMetadata.ui_metadataPencillers,
+                                                   currentBookColorists: resultBook.ui_bookMetadata.ui_metadataColorists,
+                                                   currentBookPublisher : resultBook.ui_bookMetadata.ui_metadataPublisher,
+                                                   currentBookSummary: resultBook.ui_bookMetadata.ui_metadataSummary,
+                                                   currentBookSize: resultBook.ui_bookSize,
+                                                   currentBookShortMediaType: resultBook.ui_bookShortMediaType,
+                                                   currentBookUrl: resultBook.ui_bookUrl,
+                                                   standaloneView: true
+                                               })
+                                }
+                                else {
+                                    console.log("res id " + resultSeries.ui_seriesId)
+                                    controller.loadBooksView(resultSeries.ui_seriesId)
+                                    stack.push("qrc:/qml/booksview.qml", {
+                                                   currentSeriesId: resultSeries.ui_seriesId,
+                                                   currentSeriesName: resultSeries.ui_seriesName,
+                                                   currentSeriesBookCount: resultSeries.ui_seriesBooksCount,
+                                                   currentSeriesMetadataStatus: resultSeries.ui_seriesMetadataStatus
+                                               })
+                                }
+                                controller.resetSearch()
                                 dropDownPopup.close()
                                 searchText.text = ""
                             }
@@ -122,5 +150,3 @@ Item {
         return "series"
     }
 }
-
-

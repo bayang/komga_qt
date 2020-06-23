@@ -17,6 +17,8 @@ public:
         IdRole = Qt::UserRole + 1,
         ResultTypeRole = Qt::UserRole + 2,
         NameRole = Qt::UserRole + 3,
+        BookRole = Qt::UserRole + 4,
+        SeriesRole = Qt::UserRole + 5,
     };
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;

@@ -5,8 +5,8 @@ import assets 1.0
 
 Pane {
     Component.onCompleted: {
-        controller.setSelectedLibrary(controller.ui_defaultLibraryId)
         controller.refreshData()
+        stack.push("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_defaultLibraryName, currentLibraryId: controller.ui_defaultLibraryId})
     }
 
     Column   {
@@ -15,12 +15,10 @@ Pane {
 
         TextLink {
             onTextLinkClicked: {
-                controller.setSelectedLibrary(controller.ui_defaultLibraryId)
-                if (contentFrame.depth > 1) {
-                    controller.goSeriesView()
-                }
+                controller.loadSeriesView(controller.ui_defaultLibraryId)
+                stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_defaultLibraryName, currentLibraryId: controller.ui_defaultLibraryId})
             }
-            textLinkLabel: "All libraries"
+            textLinkLabel: controller.ui_defaultLibraryName
             textLinkLabelBold: true
             textLinkLabelSize: 20
         }
@@ -37,10 +35,8 @@ Pane {
                     TextLink {
                         onTextLinkClicked: {
                             librariesList.currentIndex = index
-                            controller.setSelectedLibrary(librariesList.currentIndex)
-                            if (contentFrame.depth > 1) {
-                                controller.goSeriesView()
-                            }
+                            controller.loadSeriesView(libraryId)
+                            stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: libraryName, currentLibraryId: libraryId})
                         }
                         textLinkLabel: libraryName
                 }
@@ -48,32 +44,26 @@ Pane {
         }
         TextLink {
             onTextLinkClicked: {
-                controller.setSelectedLibrary(controller.ui_newSeriesId)
-                if (contentFrame.depth > 1) {
-                    controller.goSeriesView()
-                }
+                controller.loadSeriesView(controller.ui_newSeriesId)
+                stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_newSeriesName, currentLibraryId: controller.ui_newSeriesId})
             }
-            textLinkLabel: "New Series"
+            textLinkLabel: controller.ui_newSeriesName
             textLinkLabelSize: Style.mediumTextSize
         }
         TextLink {
             onTextLinkClicked: {
-                controller.setSelectedLibrary(controller.ui_updatedSeriesId)
-                if (contentFrame.depth > 1) {
-                    controller.goSeriesView()
-                }
+                controller.loadSeriesView(controller.ui_updatedSeriesId)
+                stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_updatedSeriesName, currentLibraryId: controller.ui_updatedSeriesId})
             }
-            textLinkLabel: "Updated Series"
+            textLinkLabel: controller.ui_updatedSeriesName
             textLinkLabelSize: Style.mediumTextSize
         }
         TextLink {
             onTextLinkClicked: {
-                controller.setSelectedLibrary(controller.ui_latestSeriesId)
-                if (contentFrame.depth > 1) {
-                    controller.goSeriesView()
-                }
+                controller.loadSeriesView(controller.ui_latestSeriesId)
+                stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_latestSeriesName, currentLibraryId: controller.ui_latestSeriesId})
             }
-            textLinkLabel: "Latest Series"
+            textLinkLabel: controller.ui_latestSeriesName
             textLinkLabelSize: Style.mediumTextSize
         }
     }

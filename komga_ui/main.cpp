@@ -11,6 +11,7 @@
 #include "library.h"
 #include "book.h"
 #include "bookmetadata.h"
+#include "author.h"
 #include "bookpageprovider.h"
 #include "networkinformer.h"
 #include "asyncimageprovider.h"
@@ -90,6 +91,8 @@ int main(int argc, char *argv[])
     "BookMetadata");
     qmlRegisterType<SearchResult>("komga_api", 1, 0,
     "SearchResult");
+    qmlRegisterType<Author>("komga_api", 1, 0,
+    "Author");
 
     QQmlApplicationEngine engine;
 
