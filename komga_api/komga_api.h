@@ -23,7 +23,6 @@ public:
     void getLibraries();
     void getSeries(int libraryId, int page = 0);
     void getBooks(int seriesId, int page = 0);
-//    static const QString BASE_URL;
     static const QString URL_LIBRARIES;
     static const QString URL_SERIES;
     static const QString URL_SERIES_LATEST;

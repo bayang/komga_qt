@@ -48,7 +48,6 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
     Q_INVOKABLE void loadBooks(int seriesId);
-//    Q_INVOKABLE Book* get(int index);
     QByteArray getThumbnail(int id);
     QByteArray getPage(int id, int pageNum);
     void nextBooksPage(int seriesId);
@@ -56,7 +55,6 @@ public:
     void preloadPage(int id, int pageNum);
     QByteArray* getImageFromCache(const QString &key);
     bool hasImageInCache(int bookId, int currentPage);
-
     static Book *parseBook(const QJsonValue &value, QObject* parent);
     bool setData(const QModelIndex& index, const QVariant& value,
                  int role);

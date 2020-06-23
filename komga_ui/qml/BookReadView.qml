@@ -11,22 +11,8 @@ Item {
     property real bookId
     property real pageReached
     property real pageCount
+    property bool standaloneBook
     signal pageChanged(real pageNum);
-//    property bool infoVisibility: true
-
-//    Connections {
-//        target: controller
-//        onFirstBookPageReached: {
-//            firstPageLabel.text = "First page"
-//            firstPageLabel.visible = true
-//            firstPageTimer.restart()
-//        }
-//        onLastBookPageReached: {
-//            firstPageLabel.text = "Last page"
-//            firstPageLabel.visible = true
-//            firstPageTimer.restart()
-//        }
-//    }
 
     Flickable {
         id: flickArea
@@ -41,7 +27,6 @@ Item {
         contentY: contentHeight === readContainer.height ? 0 : bookReadPage.paintedHeight * imgScale / 2 - flickArea.height / 2
         Image {
             id: bookReadPage
-//            source: "image://page/" + controller.ui_currentBook.ui_bookId + "/" + controller.ui_currentBook.ui_bookPageReached
             source: "image://page/" + bookId + "/" + pageReached
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
@@ -140,7 +125,6 @@ Item {
         id: pageNumberWrapper
         anchors.horizontalCenter: parent.horizontalCenter
         y: readContainer.height - 50
-//        visible: infoVisibility
 
         YAnimator {
             id: pageNumberWrapperAnimator
@@ -161,11 +145,9 @@ Item {
         Label {
             id: pageNumberLabel
             anchors.centerIn: parent
-//            text: (controller.ui_currentBook.ui_bookPageReached + 1).toString() + "/" + controller.ui_currentBook.ui_bookPagesCount
             text: (pageReached + 1).toString() + "/" + pageCount
         }
     }
-
 
     Timer {
         id : visibilityTimer
@@ -201,7 +183,6 @@ Item {
         if (flickArea.atYEnd) {
             var curTime = new Date().getTime();
             if (curTime - lastSpacePressedTime < 2000) {
-//                controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPageReached + 1)
                 setCurrentReachedPage(pageReached + 1)
             }
             lastSpacePressedTime = curTime
@@ -233,22 +214,18 @@ Item {
             event.accepted = true
         }
         else if (event.key === Qt.Key_PageUp || event.key === Qt.Key_J) {
-//            controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPageReached - 1)
             setCurrentReachedPage(pageReached - 1)
             event.accepted = true
         }
         else if (event.key === Qt.Key_PageDown || event.key === Qt.Key_K) {
-//            controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPageReached + 1)
             setCurrentReachedPage(pageReached + 1)
             event.accepted = true
         }
         else if (event.key === Qt.Key_End || event.key === Qt.Key_M) {
-//            controller.setCurrentBookPageReached(controller.ui_currentBook.ui_bookPagesCount - 1)
             setCurrentReachedPage(pageCount - 1)
             event.accepted = true
         }
         else if (event.key === Qt.Key_Home || event.key === Qt.Key_L) {
-//            controller.setCurrentBookPageReached(0)
             setCurrentReachedPage(0)
             event.accepted = true
         }
@@ -277,7 +254,10 @@ Item {
         else {
             console.log("current image nb changed " + pageNumber);
             pageReached = pageNumber;
-            controller.setCurrentBookPageReached(pageNumber);
+            // update model so that parent views are updated
+            if (! standaloneBook) {
+                controller.setCurrentBookPageReached(pageNumber);
+            }
             readContainer.pageChanged(pageNumber);
         }
     }

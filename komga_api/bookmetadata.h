@@ -7,32 +7,6 @@
 #include "komga_api_global.h"
 #include "author.h"
 
-/**
- *
- * "metadata": {
-        "title": "Figurec",
-        "titleLock": false,
-        "summary": "",
-        "summaryLock": false,
-        "number": "1",
-        "numberLock": false,
-        "numberSort": 1,
-        "numberSortLock": false,
-        "readingDirection": "",
-        "readingDirectionLock": false,
-        "publisher": "",
-        "publisherLock": false,
-        "ageRating": null,
-        "ageRatingLock": false,
-        "releaseDate": null,
-        "releaseDateLock": false,
-        "authors": [],
-        "authorsLock": false
- *
- *
- */
-
-
 class KOMGA_API_EXPORT BookMetadata: public QObject
 {
     Q_OBJECT

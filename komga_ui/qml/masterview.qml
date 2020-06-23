@@ -32,8 +32,7 @@ ApplicationWindow {
                 Action {
                     text: qsTr("&Refresh...")
                     onTriggered: {
-//                        controller.setSelectedLibrary(controller.ui_defaultLibraryId)
-                        controller.goSeriesView(controller.ui_defaultLibraryId)
+                        controller.loadSeriesView(controller.ui_defaultLibraryId)
                         controller.refreshData()
                     }
                 }
@@ -44,21 +43,6 @@ ApplicationWindow {
                 }
             }
         }
-
-//    Connections {
-//        target: controller
-//        onGoSeriesView: contentFrame.replace("qrc:/qml/seriesview.qml")
-//    }
-
-//    Connections {
-//        target: controller
-//        onGoBooksView: contentFrame.push("qrc:/qml/booksview.qml")
-//    }
-
-//    Connections {
-//        target: controller
-//        onGoBookDetailView: contentFrame.push("qrc:/qml/bookdetailview.qml")
-//    }
 
     Connections {
         target: controller.ui_networkInformer
@@ -72,7 +56,6 @@ ApplicationWindow {
     SplitView {
         id: splitView
         anchors.fill: parent
-//        padding: 5
 
         LibraryView {
             id: navColumn

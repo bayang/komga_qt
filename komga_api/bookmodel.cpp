@@ -10,14 +10,12 @@ BookModel::BookModel(QObject *parent, Komga_api* api) :
             this, &BookModel::preloadImageDataReceived);
 }
 int BookModel::rowCount(const QModelIndex &parent) const {
-    Q_ASSERT(checkIndex(parent));
     if (parent.isValid()) {
         return 0;
     }
     return m_books.count();
 }
 QVariant BookModel::data(const QModelIndex &index, int role) const {
-//    Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid));
     if (! index.isValid()) {
         return QVariant();
     }
@@ -153,7 +151,6 @@ bool BookModel::setData(const QModelIndex &index, const QVariant &value, int rol
     }
     Book* b = m_books.at(index.row());
     b->setPageReached(value.toInt());
-    updateProgress(b->id(), value.toInt());
     emit dataChanged(index, index);
     return true;
 }

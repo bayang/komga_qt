@@ -21,7 +21,11 @@ Item {
     property string currentBookSize
     property string currentBookShortMediaType
     property string currentBookUrl
-
+    // can we go back to series view etc...
+    // or are we displaying a book alone (from search for example)
+    // used to know if we need to update models
+    // so that data is consistent when we pop the stack
+    property bool standaloneView
 
     ScrollView {
         clip: true
@@ -29,7 +33,6 @@ Item {
         anchors.leftMargin: 10
         anchors.bottomMargin: 10
         ColumnLayout {
-            width: parent.width
             Button {
                 onClicked: {
                     if (contentFrame.depth > 0) {
@@ -53,7 +56,6 @@ Item {
                     Layout.alignment: Qt.AlignTop
                     Image {
                         id: bookDetailImage
-//                        source: "image://async/book/" + controller.ui_currentBook.ui_bookId
                         source: "image://async/book/" + currentBookId
                         sourceSize.height: 300
                         sourceSize.width: -1
@@ -62,7 +64,6 @@ Item {
                             width: parent.width
                             anchors.bottom: parent.bottom
                             contentItem.implicitHeight: 10
-//                            value: controller.ui_currentBook.ui_bookPageReached / controller.ui_currentBook.ui_bookPagesCount
                             value: currentBookPageReached / currentBookPageCount
                             visible: currentBookPageReached > 0 && ! currentBookCompleted
                         }
@@ -100,42 +101,33 @@ Item {
                     Layout.alignment: Qt.AlignTop
                     Label {
                         id: curBookStatus
-//                        text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataTitle)
                         text: qsTr(currentBookMetadataTitle)
                         font.pointSize: Style.mediumTextSize
                     }
                     Label {
-//                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataWriters ? "Writers :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataWriters) : ""
                         text: currentBookWriters ? "Writers :" + qsTr(currentBookWriters) : ""
                         font.pointSize: Style.smallMediumTextSize
                     }
                     Label {
-//                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers ? "Pencillers :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers) : ""
                         text: currentBookPencillers ? "Pencillers :" + qsTr(currentBookPencillers) : ""
                         font.pointSize: Style.smallMediumTextSize
-//                        visible: controller.ui_currentBook.ui_bookMetadata.ui_metadataPencillers
                         visible: currentBookPencillers
                     }
                     Label {
-//                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists ? "Colorists :" + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists) : ""
                         text: currentBookColorists ? "Colorists :" + qsTr(currentBookColorists) : ""
                         font.pointSize: Style.smallMediumTextSize
-//                        visible: controller.ui_currentBook.ui_bookMetadata.ui_metadataColorists
                         visible: currentBookColorists
                     }
                     Label {
-//                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber ? "# " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataNumber) : ""
                         text: currentBookMetadataNumber ? "# " + qsTr(currentBookMetadataNumber) : ""
                         font.pointSize: Style.smallMediumTextSize
                         visible: currentBookMetadataNumber
                     }
                     Label {
-//                        text: controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher ? "Publisher : " + qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataPublisher) : ""
                         text: currentBookPublisher ? "Publisher : " + qsTr(currentBookPublisher) : ""
                         font.pointSize: Style.smallMediumTextSize
                     }
                     Label {
-//                        text: qsTr(controller.ui_currentBook.ui_bookMetadata.ui_metadataSummary)
                         text: qsTr(currentBookSummary)
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                         Layout.fillWidth: true
@@ -153,32 +145,25 @@ Item {
 
                 Label {
                     id : bookPagesCountLabel
-//                    text: qsTr(controller.ui_currentBook.ui_bookPagesCount.toString()) + " pages"
                     text: qsTr(currentBookPageCount.toString()) + " pages"
                     font.pointSize: Style.smallTextSize
                 }
             }
 
             Label {
-//                text: "SIZE : " + qsTr(controller.ui_currentBook.ui_bookSize)
                 text: "SIZE : " + qsTr(currentBookSize)
                 font.pointSize: Style.smallTextSize
             }
             Label {
-//                text: "FORMAT : " + qsTr(controller.ui_currentBook.ui_bookShortMediaType)
                 text: "FORMAT : " + qsTr(currentBookShortMediaType)
                 font.pointSize: Style.smallTextSize
             }
             Label {
-//                text: "FILE : " + qsTr(controller.ui_currentBook.ui_bookUrl)
                 text: "FILE : " + qsTr(currentBookUrl)
                 font.pointSize: Style.smallTextSize
             }
-
         }
-
     }
-
 
     Popup {
         id: readPopup
@@ -205,8 +190,11 @@ Item {
             bookId: currentBookId
             pageReached: currentBookPageReached
             pageCount: currentBookPageCount
+            standaloneBook: standaloneView
             onPageChanged: {
                 currentBookPageReached = pageNum
+                controller.preloadBookPages(currentBookId, currentBookPageReached, currentBookPageCount)
+                controller.updateprogress(currentBookId, currentBookPageReached)
             }
         }
     }

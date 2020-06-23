@@ -28,7 +28,6 @@ Item {
 
         Label {
             id: libraryText
-//            text: controller.ui_currentLibraryName
             text: currentLibraryName
             font.pointSize: Style.mediumTextSize
             anchors.horizontalCenter: parent.horizontalCenter
@@ -69,8 +68,7 @@ Item {
                     progressVisible: false
                     onCardClicked: {
                         seriesList.currentIndex = index
-//                        controller.setSelectedSeries(seriesList.currentIndex)
-                        controller.goBooksView(seriesId)
+                        controller.loadBooksView(seriesId)
                         stack.push("qrc:/qml/booksview.qml", {currentSeriesId: seriesId, currentSeriesName: seriesName, currentSeriesBookCount: seriesBookCount, currentSeriesMetadataStatus: seriesMetadataStatus})
                     }
             }

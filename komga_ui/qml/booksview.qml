@@ -54,7 +54,6 @@ Item {
                 Layout.fillWidth: true
                 Image {
                     id: seriesDetailImage
-//                    source: "image://async/series/" + controller.ui_currentSeries.ui_seriesId
                     source: "image://async/series/" + currentSeriesId
                     sourceSize.height: 270
                     sourceSize.width: -1
@@ -68,13 +67,11 @@ Item {
 
                         Label {
                             id: seriesText
-//                            text: qsTr(controller.ui_currentSeries.ui_seriesName)
                             text: qsTr(currentSeriesName)
                             font.pointSize: Style.mediumTextSize
                         }
                         Label {
                             id: countBadge
-//                            text: controller.ui_currentSeries.ui_seriesBooksCount
                             text: currentSeriesBookCount
                             font.pointSize: Style.smallMediumTextSize
                             padding: 4
@@ -87,7 +84,6 @@ Item {
                     }
                     Label {
                         id: seriesStatus
-//                        text: qsTr("STATUS : " + controller.ui_currentSeries.ui_seriesMetadataStatus)
                         text: qsTr("STATUS : " + currentSeriesMetadataStatus)
                         font.pointSize: Style.smallMediumTextSize
                     }
@@ -134,7 +130,6 @@ Item {
                     onCardClicked: {
                         booksList.currentIndex = index
                         controller.setSelectedBookIdx(booksList.currentIndex)
-                        controller.goBookDetailView(bookId)
                         stack.push("qrc:/qml/bookdetailview.qml", {
                                        currentBookId: bookId,
                                        currentBookPageReached: bookPageReached,
@@ -148,7 +143,8 @@ Item {
                                        currentBookSummary: bookSummary,
                                        currentBookSize: bookSize,
                                        currentBookShortMediaType: bookMediaType,
-                                       currentBookUrl: bookUrl
+                                       currentBookUrl: bookUrl,
+                                       standaloneView: false
                                    })
                     }
                 }
