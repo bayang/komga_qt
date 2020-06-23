@@ -86,7 +86,7 @@ void Komga_api::searchDataReceived(const QString &id) {
 
 void Komga_api::preloadImageReady(const QString &id) {
     QNetworkReply *reply = m_replies.take(id);
-    if (reply->error() == QNetworkReply::NoError) {
+    if (reply && reply->error() == QNetworkReply::NoError) {
         QPair<QString, QByteArray> res;
         res.first = id;
         res.second = reply->readAll();
@@ -155,6 +155,7 @@ void Komga_api::updateProgress(int bookId, int page, bool completed)
     r.setUrl(url);
     r.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "application/json; charset=utf8");
     QJsonDocument doc{obj};
+    qDebug() << doc.toJson(QJsonDocument::JsonFormat::Compact);
     manager->sendCustomRequest(r, "PATCH", doc.toJson(QJsonDocument::JsonFormat::Compact));
 }
 
@@ -236,7 +237,7 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
         int reason = reply->request().attribute(QNetworkRequest::Attribute::User).toInt();
         QByteArray response(reply->readAll());
         QJsonDocument doc = QJsonDocument::fromJson( response);
-        qDebug() << doc;
+//        qDebug() << doc;
         if (reason == RequestReason::Libraries) {
             emit libraryDataReady(doc);
         }

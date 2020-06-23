@@ -4,7 +4,6 @@
         <file>assets/qmldir</file>
         <file>assets/style.qml</file>
         <file>assets/Font Awesome 5 Free-Regular-400.otf</file>
-        <file>assets/Font Awesome 5 Free-Solid-900.otf</file>
         <file>assets/la-solid-900.ttf</file>
     </qresource>
 </RCC>

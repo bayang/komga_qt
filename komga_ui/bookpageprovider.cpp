@@ -1,7 +1,7 @@
 #include "bookpageprovider.h"
 
-BookPageProvider::BookPageProvider(BookModel* model) :
-    QQuickImageProvider(QQuickImageProvider::Image), bookModel(model)
+BookPageProvider::BookPageProvider(MasterController* controller) :
+    QQuickImageProvider(QQuickImageProvider::Image), m_controller(controller)
 {
 
 }
@@ -10,17 +10,14 @@ QImage BookPageProvider::requestImage(const QString &id, QSize *size, const QSiz
     QStringList parts = id.split("/");
     int idNb = parts.at(0).toInt();
     int pageNb = parts.at(1).toInt();
-
-    bookModel->preloadPage(idNb, pageNb + 1);
-    // test test
-    if (QByteArray* c = bookModel->getImageFromCache(id)) {
+    if (QByteArray* c = m_controller->getBookModel()->getImageFromCache(id)) {
         QImage pic;
         pic.loadFromData(*c);
         *size = QSize(pic.width(), pic.height());
         return pic;
     }
     else {
-        QByteArray a = bookModel->getPage(idNb, pageNb);
+        QByteArray a = m_controller->getBookModel()->getPage(idNb, pageNb);
         if (a.isNull() || a.isEmpty()) {
             QImage pix;
 

@@ -11,6 +11,7 @@
 #include "library.h"
 #include "book.h"
 #include "bookmetadata.h"
+#include "author.h"
 #include "bookpageprovider.h"
 #include "networkinformer.h"
 #include "asyncimageprovider.h"
@@ -90,6 +91,8 @@ int main(int argc, char *argv[])
     "BookMetadata");
     qmlRegisterType<SearchResult>("komga_api", 1, 0,
     "SearchResult");
+    qmlRegisterType<Author>("komga_api", 1, 0,
+    "Author");
 
     QQmlApplicationEngine engine;
 
@@ -98,7 +101,7 @@ int main(int argc, char *argv[])
     controller);
     engine.rootContext()->setContextProperty("APP_VERSION",
     PROJECT_VER);
-    engine.addImageProvider("page", new BookPageProvider(bookModel));
+    engine.addImageProvider("page", new BookPageProvider(controller));
     engine.addImageProvider("async", new AsyncImageProvider(api));
 
     const QUrl url(QStringLiteral("qrc:/qml/masterview.qml"));
