@@ -154,9 +154,14 @@ void Komga_api::updateProgress(int bookId, int page, bool completed)
     url.setUrl(getServerUrl() + URL_BOOKS + "/" + QString::number(bookId, 10) + "/" + URL_PROGRESS);
     r.setUrl(url);
     r.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "application/json; charset=utf8");
-    QJsonDocument doc{obj};
-    qDebug() << doc.toJson(QJsonDocument::JsonFormat::Compact);
-    manager->sendCustomRequest(r, "PATCH", doc.toJson(QJsonDocument::JsonFormat::Compact));
+    if (! completed && page == 0) {
+        manager->deleteResource(r);
+    }
+    else {
+        QJsonDocument doc{obj};
+        qDebug() << doc.toJson(QJsonDocument::JsonFormat::Compact);
+        manager->sendCustomRequest(r, "PATCH", doc.toJson(QJsonDocument::JsonFormat::Compact));
+    }
 }
 
 void Komga_api::onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
