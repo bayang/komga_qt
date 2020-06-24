@@ -44,6 +44,14 @@ Pane {
         }
         TextLink {
             onTextLinkClicked: {
+                controller.loadBooksView(controller.ui_readingBooksId)
+                stack.replace("qrc:/qml/BooksListView.qml", {currentViewName: controller.ui_readingBooksName})
+            }
+            textLinkLabel: controller.ui_readingBooksName
+            textLinkLabelSize: Style.mediumTextSize
+        }
+        TextLink {
+            onTextLinkClicked: {
                 controller.loadSeriesView(controller.ui_newSeriesId)
                 stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_newSeriesName, currentLibraryId: controller.ui_newSeriesId})
             }
@@ -64,6 +72,14 @@ Pane {
                 stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_latestSeriesName, currentLibraryId: controller.ui_latestSeriesId})
             }
             textLinkLabel: controller.ui_latestSeriesName
+            textLinkLabelSize: Style.mediumTextSize
+        }
+        TextLink {
+            onTextLinkClicked: {
+                controller.loadBooksView(controller.ui_latestBooksId)
+                stack.replace("qrc:/qml/BooksListView.qml", {currentViewName: controller.ui_latestBooksName})
+            }
+            textLinkLabel: controller.ui_latestBooksName
             textLinkLabelSize: Style.mediumTextSize
         }
     }

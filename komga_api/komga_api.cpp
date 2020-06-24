@@ -13,7 +13,7 @@
 
 const QString Komga_api::URL_LIBRARIES{"/libraries"};
 const QString Komga_api::URL_SERIES{"/series"};
-const QString Komga_api::URL_SERIES_LATEST{"/latest"};
+const QString Komga_api::URL_LATEST{"/latest"};
 const QString Komga_api::URL_SERIES_NEW{"/new"};
 const QString Komga_api::URL_SERIES_UPDATED{"/updated"};
 const QString Komga_api::URL_BOOKS{"/books"};
@@ -112,7 +112,7 @@ void Komga_api::getSeries(int libraryId, int page) {
         url.setUrl(getServerUrl() + URL_SERIES + URL_SERIES_NEW);
     }
     else if (libraryId == MasterController::SERIES_LATEST_ID) {
-        url.setUrl(getServerUrl() + URL_SERIES + URL_SERIES_LATEST);
+        url.setUrl(getServerUrl() + URL_SERIES + URL_LATEST);
     }
     else if (libraryId == MasterController::SERIES_UPDATED_ID) {
         url.setUrl(getServerUrl() + URL_SERIES + URL_SERIES_UPDATED);
@@ -154,9 +154,14 @@ void Komga_api::updateProgress(int bookId, int page, bool completed)
     url.setUrl(getServerUrl() + URL_BOOKS + "/" + QString::number(bookId, 10) + "/" + URL_PROGRESS);
     r.setUrl(url);
     r.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "application/json; charset=utf8");
-    QJsonDocument doc{obj};
-    qDebug() << doc.toJson(QJsonDocument::JsonFormat::Compact);
-    manager->sendCustomRequest(r, "PATCH", doc.toJson(QJsonDocument::JsonFormat::Compact));
+    if (! completed && page == 0) {
+        manager->deleteResource(r);
+    }
+    else {
+        QJsonDocument doc{obj};
+        qDebug() << doc.toJson(QJsonDocument::JsonFormat::Compact);
+        manager->sendCustomRequest(r, "PATCH", doc.toJson(QJsonDocument::JsonFormat::Compact));
+    }
 }
 
 void Komga_api::onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
@@ -220,9 +225,19 @@ void Komga_api::getBooks(int seriesId, int page) {
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Books));
     QUrl url;
-    url.setUrl(getServerUrl() + URL_SERIES + "/" + QString::number(seriesId, 10) + URL_BOOKS);
     QUrlQuery query;
-    query.addQueryItem("size", "20");
+    if (seriesId == MasterController::BOOKS_LATEST_ID) {
+        url.setUrl(getServerUrl() + URL_BOOKS + URL_LATEST);
+    }
+    else if (seriesId == MasterController::BOOKS_READING_ID) {
+        url.setUrl(getServerUrl() + URL_BOOKS);
+        query.addQueryItem("read_status", "IN_PROGRESS");
+        query.addQueryItem("sort", "readProgress.lastModified,desc");
+    }
+    else {
+        url.setUrl(getServerUrl() + URL_SERIES + "/" + QString::number(seriesId, 10) + URL_BOOKS);
+    }
+    query.addQueryItem("size", "30");
     if (page != 0) {
         query.addQueryItem("page", QString::number(page, 10));
     }

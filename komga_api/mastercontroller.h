@@ -30,6 +30,10 @@ class KOMGA_API_EXPORT MasterController : public QObject
     Q_PROPERTY( QString ui_latestSeriesName MEMBER SERIES_LATEST_NAME CONSTANT )
     Q_PROPERTY( QString ui_updatedSeriesName MEMBER SERIES_UPDATED_NAME CONSTANT )
     Q_PROPERTY( QString ui_defaultLibraryName MEMBER DEFAULT_LIBRARY_NAME CONSTANT )
+    Q_PROPERTY( QString ui_latestBooksName MEMBER BOOKS_LATEST_NAME CONSTANT )
+    Q_PROPERTY( int ui_latestBooksId MEMBER BOOKS_LATEST_ID CONSTANT )
+    Q_PROPERTY( QString ui_readingBooksName MEMBER BOOKS_READING_NAME CONSTANT )
+    Q_PROPERTY( int ui_readingBooksId MEMBER BOOKS_READING_ID CONSTANT )
     Q_PROPERTY( NetworkInformer* ui_networkInformer READ getNetworkInformer CONSTANT )
 
 public:
@@ -45,6 +49,11 @@ public:
     static const QString SERIES_UPDATED_NAME;
     static const QString SERIES_NEW_NAME;
     static const QString SERIES_LATEST_NAME;
+
+    static const int BOOKS_LATEST_ID{-1001};
+    static const QString BOOKS_LATEST_NAME;
+    static const int BOOKS_READING_ID{-1002};
+    static const QString BOOKS_READING_NAME;
 
     LibraryModel *getLibraryModel() const;
 
