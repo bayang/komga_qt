@@ -32,6 +32,7 @@ public:
     static const QString URL_THUMBNAILS;
     static const QString URL_PAGE;
     static const QString URL_PROGRESS;
+    static const QString URL_COLLECTIONS;
     static const QString SETTINGS_SECTION_SERVER;
     static const QString SETTINGS_KEY_SERVER_URL;
     static const QString SETTINGS_KEY_SERVER_USER;

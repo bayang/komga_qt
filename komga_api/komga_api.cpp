@@ -20,6 +20,7 @@ const QString Komga_api::URL_BOOKS{"/books"};
 const QString Komga_api::URL_THUMBNAILS{"/thumbnail"};
 const QString Komga_api::URL_PAGE{"/pages"};
 const QString Komga_api::URL_PROGRESS{"read-progress"};
+const QString Komga_api::URL_COLLECTIONS{"/collections"};
 const QString Komga_api::SETTINGS_SECTION_SERVER{"server"};
 const QString Komga_api::SETTINGS_KEY_SERVER_URL{"serverAdress"};
 const QString Komga_api::SETTINGS_KEY_SERVER_USER{"serverUsername"};
@@ -324,6 +325,9 @@ QNetworkRequest Komga_api::getThumbnailAsync(QString id) {
     }
     else if (type == "series") {
         url.setUrl(getServerUrl() + URL_SERIES + "/" + thumbId + URL_THUMBNAILS);
+    }
+    else if (type == "collection") {
+        url.setUrl(getServerUrl() + URL_COLLECTIONS + "/" + thumbId + URL_THUMBNAILS);
     }
     r.setUrl(url);
     return r;
