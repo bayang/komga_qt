@@ -25,7 +25,7 @@ public:
     void getBooks(int seriesId, int page = 0);
     static const QString URL_LIBRARIES;
     static const QString URL_SERIES;
-    static const QString URL_SERIES_LATEST;
+    static const QString URL_LATEST;
     static const QString URL_SERIES_NEW;
     static const QString URL_SERIES_UPDATED;
     static const QString URL_BOOKS;

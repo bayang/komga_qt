@@ -8,7 +8,6 @@ import assets 1.0
 Item {
 
     property real lastNextPageCalledTime: 0
-    property real varInSeries: 1
     property string currentLibraryName
     property real currentLibraryId
     anchors.fill: parent
