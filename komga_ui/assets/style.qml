@@ -16,6 +16,7 @@ Item {
     readonly property real defaultTextInputWidth: 400
 
     readonly property real mediumTextSize: 18
+    readonly property real intermediateTextSize: 15
     readonly property real smallMediumTextSize: 13
     readonly property real smallTextSize: 11
     readonly property real microTextSize: 8

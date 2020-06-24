@@ -20,7 +20,7 @@ Pane {
             }
             textLinkLabel: controller.ui_defaultLibraryName
             textLinkLabelBold: true
-            textLinkLabelSize: 20
+            textLinkLabelSize: Style.mediumTextSize
         }
 
         ScrollView {
@@ -48,7 +48,7 @@ Pane {
                 stack.replace("qrc:/qml/BooksListView.qml", {currentViewName: controller.ui_readingBooksName})
             }
             textLinkLabel: controller.ui_readingBooksName
-            textLinkLabelSize: Style.mediumTextSize
+            textLinkLabelSize: Style.intermediateTextSize
         }
         TextLink {
             onTextLinkClicked: {
@@ -56,7 +56,7 @@ Pane {
                 stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_newSeriesName, currentLibraryId: controller.ui_newSeriesId})
             }
             textLinkLabel: controller.ui_newSeriesName
-            textLinkLabelSize: Style.mediumTextSize
+            textLinkLabelSize: Style.intermediateTextSize
         }
         TextLink {
             onTextLinkClicked: {
@@ -64,7 +64,7 @@ Pane {
                 stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_updatedSeriesName, currentLibraryId: controller.ui_updatedSeriesId})
             }
             textLinkLabel: controller.ui_updatedSeriesName
-            textLinkLabelSize: Style.mediumTextSize
+            textLinkLabelSize: Style.intermediateTextSize
         }
         TextLink {
             onTextLinkClicked: {
@@ -72,7 +72,7 @@ Pane {
                 stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_latestSeriesName, currentLibraryId: controller.ui_latestSeriesId})
             }
             textLinkLabel: controller.ui_latestSeriesName
-            textLinkLabelSize: Style.mediumTextSize
+            textLinkLabelSize: Style.intermediateTextSize
         }
         TextLink {
             onTextLinkClicked: {
@@ -80,7 +80,7 @@ Pane {
                 stack.replace("qrc:/qml/BooksListView.qml", {currentViewName: controller.ui_latestBooksName})
             }
             textLinkLabel: controller.ui_latestBooksName
-            textLinkLabelSize: Style.mediumTextSize
+            textLinkLabelSize: Style.intermediateTextSize
         }
     }
 }
