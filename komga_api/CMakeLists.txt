@@ -47,6 +47,8 @@ add_library(komga-api
     searchresult.h
     author.h
     author.cpp
+    collection.cpp
+    collection.h
 )
 target_compile_definitions(komga-api PUBLIC "$<$<CONFIG:Release>:QT_NO_DEBUG_OUTPUT>")
 target_link_libraries(komga-api Qt5::Core)

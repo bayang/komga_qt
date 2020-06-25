@@ -10,6 +10,7 @@
 #include "mastercontroller.h"
 #include "library.h"
 #include "book.h"
+#include "collection.h"
 #include "bookmetadata.h"
 #include "author.h"
 #include "bookpageprovider.h"
@@ -93,6 +94,8 @@ int main(int argc, char *argv[])
     "SearchResult");
     qmlRegisterType<Author>("komga_api", 1, 0,
     "Author");
+    qmlRegisterType<Collection>("komga_api", 1, 0,
+    "Collection");
 
     QQmlApplicationEngine engine;
 
