@@ -104,6 +104,15 @@ void Komga_api::getLibraries() {
     manager->get(r);
 }
 
+void Komga_api::getCollections() {
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Collections));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_COLLECTIONS);
+    r.setUrl(url);
+    manager->get(r);
+}
+
 void Komga_api::getSeries(int libraryId, int page) {
     qDebug() << "fetching series for library " << libraryId;
     QNetworkRequest r;
@@ -264,6 +273,9 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
         else if (reason == RequestReason::Books) {
             QJsonObject page = doc.object();
             emit booksDataReady(page);
+        }
+        else if (reason == RequestReason::Collections) {
+            emit collectionsDataReady(doc);
         }
         else if (reason == RequestReason::Progress) {
 //            qDebug() << "progress response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();

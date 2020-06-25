@@ -55,6 +55,9 @@ public:
     static const int BOOKS_READING_ID{-1002};
     static const QString BOOKS_READING_NAME;
 
+    static const int COLLECTIONS_ID{-2002};
+    static const QString COLLECTIONS_NAME;
+
     LibraryModel *getLibraryModel() const;
 
     SeriesModel *getSeriesModel() const;
