@@ -9,7 +9,8 @@ Item {
 
     property real lastNextPageCalledTime: 0
     property string currentLibraryName
-    property real currentLibraryId
+    property real currentSourceId
+    property bool sourceIsLibrary: true;
     anchors.fill: parent
     anchors.leftMargin: 10
 
@@ -48,7 +49,12 @@ Item {
                 if (atYEnd) {
                     var curTime = new Date().getTime();
                     if (curTime - lastNextPageCalledTime > 500) {
-                        controller.nextSeriesPage(currentLibraryId)
+                        if (sourceIsLibrary) {
+                            controller.nextSeriesPage(currentSourceId)
+                        }
+                        else {
+                            controller.nextCollectionsSeriesPage(currentSourceId)
+                        }
                     }
                     lastNextPageCalledTime = curTime
                 }

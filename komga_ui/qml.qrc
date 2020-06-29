@@ -12,5 +12,6 @@
         <file>qml/TextLink.qml</file>
         <file>qml/SearchBar.qml</file>
         <file>qml/BooksListView.qml</file>
+        <file>qml/CollectionsView.qml</file>
     </qresource>
 </RCC>

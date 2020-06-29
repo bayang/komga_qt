@@ -37,6 +37,7 @@ Item {
             Layout.preferredWidth: parent.width
             cacheBuffer: cellHeight
             Layout.bottomMargin: 2
+            ScrollBar.vertical: ScrollBar { }
             delegate:
                 CardItem {
                 cardWidth: Style.thumbnailRequestedWidth

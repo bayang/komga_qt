@@ -68,8 +68,14 @@ QHash<int, QByteArray> SeriesModel::roleNames() const {
         return roles;
 }
 void SeriesModel::loadSeries(int library) {
-        m_api->getSeries(library);
-        resetSeries();
+    m_api->getSeries(library);
+    resetSeries();
+}
+
+void SeriesModel::loadCollectionSeries(int collectionId)
+{
+    m_api->getCollectionSeries(collectionId);
+    resetSeries();
 }
 void SeriesModel::resetSeries() {
     emit beginRemoveRows(QModelIndex(), 0, m_series.size() - 1);
@@ -135,6 +141,12 @@ void SeriesModel::nextSeriesPage(int libraryId) {
     qDebug() << "current p :" << m_currentPageNumber << " total p : " << m_totalPageNumber;
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
         m_api->getSeries(libraryId, m_currentPageNumber + 1);
+    }
+}
+void SeriesModel::nextCollectionsSeriesPage(int collectionId) {
+    qDebug() << "current p :" << m_currentPageNumber << " total p : " << m_totalPageNumber;
+    if (m_currentPageNumber + 1 < m_totalPageNumber) {
+        m_api->getCollectionSeries(collectionId, m_currentPageNumber + 1);
     }
 }
 Series* SeriesModel::find(int libraryId) {

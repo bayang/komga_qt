@@ -22,6 +22,7 @@ public:
     Komga_api(QObject *parent = nullptr);
     void getLibraries();
     void getSeries(int libraryId, int page = 0);
+    void getCollectionSeries(int collectionId, int page = 0);
     void getBooks(int seriesId, int page = 0);
     static const QString URL_LIBRARIES;
     static const QString URL_SERIES;
@@ -61,7 +62,7 @@ public:
     void doSearch(const QString &searchTerm, qint64 timestamp);
     void updateProgress(int bookId, int page, bool completed = false);
     void onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
-    void getCollections();
+    void getCollections(int page = 0);
 
 private:
     QNetworkAccessManager* manager = nullptr;
@@ -77,7 +78,7 @@ private:
 
 signals:
     void libraryDataReady(QJsonDocument libraries);
-    void collectionsDataReady(QJsonDocument collections);
+    void collectionsDataReady(QJsonObject page);
     void seriesDataReady(QJsonObject series);
     void booksDataReady(QJsonObject books);
     void netWorkAccessibleChanged(bool accessible);

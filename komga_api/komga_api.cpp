@@ -104,12 +104,18 @@ void Komga_api::getLibraries() {
     manager->get(r);
 }
 
-void Komga_api::getCollections() {
+void Komga_api::getCollections(int page) {
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Collections));
     QUrl url;
     url.setUrl(getServerUrl() + URL_COLLECTIONS);
     r.setUrl(url);
+    if (page != 0) {
+        QUrlQuery query;
+        query.addQueryItem("page", QString::number(page));
+        url.setQuery(query);
+    }
+    qDebug() << "api load collections " << url;
     manager->get(r);
 }
 
@@ -136,6 +142,23 @@ void Komga_api::getSeries(int libraryId, int page) {
     if (libraryId > MasterController::DEFAULT_LIBRARY_ID) {
         query.addQueryItem("library_id", QString::number(libraryId));
     }
+    if (page != 0) {
+        query.addQueryItem("page", QString::number(page));
+    }
+    url.setQuery(query);
+    r.setUrl(url);
+    manager->get(r);
+}
+
+void Komga_api::getCollectionSeries(int collectionId, int page)
+{
+    qDebug() << "fetching series for collection " << collectionId;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesReason));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_COLLECTIONS + "/" + QString::number(collectionId, 10) + URL_SERIES);
+    QUrlQuery query;
+    query.addQueryItem("size", "30");
     if (page != 0) {
         query.addQueryItem("page", QString::number(page));
     }
@@ -262,7 +285,7 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
         int reason = reply->request().attribute(QNetworkRequest::Attribute::User).toInt();
         QByteArray response(reply->readAll());
         QJsonDocument doc = QJsonDocument::fromJson( response);
-//        qDebug() << doc;
+        qDebug() << doc;
         if (reason == RequestReason::Libraries) {
             emit libraryDataReady(doc);
         }
@@ -275,7 +298,8 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
             emit booksDataReady(page);
         }
         else if (reason == RequestReason::Collections) {
-            emit collectionsDataReady(doc);
+            QJsonObject page = doc.object();
+            emit collectionsDataReady(page);
         }
         else if (reason == RequestReason::Progress) {
 //            qDebug() << "progress response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
