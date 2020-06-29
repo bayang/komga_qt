@@ -32,12 +32,13 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
     Q_INVOKABLE void loadSeries(int library);
+    Q_INVOKABLE void loadCollectionSeries(int collectionId);
     void nextSeriesPage(int libraryId);
     QByteArray getThumbnail(int id);
     Series* find(int libraryId);
     void resetSeries();
     Series *parseSeries(const QJsonValue &value);
-
+    void nextCollectionsSeriesPage(int collectionId);
 signals:
     void refresh();
 

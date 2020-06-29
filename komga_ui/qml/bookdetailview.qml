@@ -99,6 +99,7 @@ Item {
                 ColumnLayout {
                     Layout.preferredWidth: parent.width - imageBookWrapper.width - navColumn.width
                     Layout.alignment: Qt.AlignTop
+                    Layout.fillWidth: true
                     Label {
                         id: curBookStatus
                         text: qsTr(currentBookMetadataTitle)
@@ -194,7 +195,8 @@ Item {
             onPageChanged: {
                 currentBookPageReached = pageNum
                 controller.preloadBookPages(currentBookId, currentBookPageReached, currentBookPageCount)
-                controller.updateprogress(currentBookId, currentBookPageReached)
+                // page nb is not 0 based
+                controller.updateprogress(currentBookId, currentBookPageReached + 1)
             }
         }
     }

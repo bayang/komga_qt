@@ -22,6 +22,7 @@ public:
     Komga_api(QObject *parent = nullptr);
     void getLibraries();
     void getSeries(int libraryId, int page = 0);
+    void getCollectionSeries(int collectionId, int page = 0);
     void getBooks(int seriesId, int page = 0);
     static const QString URL_LIBRARIES;
     static const QString URL_SERIES;
@@ -32,6 +33,7 @@ public:
     static const QString URL_THUMBNAILS;
     static const QString URL_PAGE;
     static const QString URL_PROGRESS;
+    static const QString URL_COLLECTIONS;
     static const QString SETTINGS_SECTION_SERVER;
     static const QString SETTINGS_KEY_SERVER_URL;
     static const QString SETTINGS_KEY_SERVER_USER;
@@ -45,6 +47,7 @@ public:
         SeriesSearch = QNetworkRequest::Attribute::User + 5,
         BooksSearch = QNetworkRequest::Attribute::User + 6,
         Progress = QNetworkRequest::Attribute::User + 7,
+        Collections = QNetworkRequest::Attribute::User + 8,
     };
     enum ThumbnailType {
         SeriesThumbnail,
@@ -59,6 +62,7 @@ public:
     void doSearch(const QString &searchTerm, qint64 timestamp);
     void updateProgress(int bookId, int page, bool completed = false);
     void onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
+    void getCollections(int page = 0);
 
 private:
     QNetworkAccessManager* manager = nullptr;
@@ -74,6 +78,7 @@ private:
 
 signals:
     void libraryDataReady(QJsonDocument libraries);
+    void collectionsDataReady(QJsonObject page);
     void seriesDataReady(QJsonObject series);
     void booksDataReady(QJsonObject books);
     void netWorkAccessibleChanged(bool accessible);

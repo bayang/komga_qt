@@ -20,6 +20,7 @@ const QString Komga_api::URL_BOOKS{"/books"};
 const QString Komga_api::URL_THUMBNAILS{"/thumbnail"};
 const QString Komga_api::URL_PAGE{"/pages"};
 const QString Komga_api::URL_PROGRESS{"read-progress"};
+const QString Komga_api::URL_COLLECTIONS{"/collections"};
 const QString Komga_api::SETTINGS_SECTION_SERVER{"server"};
 const QString Komga_api::SETTINGS_KEY_SERVER_URL{"serverAdress"};
 const QString Komga_api::SETTINGS_KEY_SERVER_USER{"serverUsername"};
@@ -103,6 +104,21 @@ void Komga_api::getLibraries() {
     manager->get(r);
 }
 
+void Komga_api::getCollections(int page) {
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Collections));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_COLLECTIONS);
+    r.setUrl(url);
+    if (page != 0) {
+        QUrlQuery query;
+        query.addQueryItem("page", QString::number(page));
+        url.setQuery(query);
+    }
+    qDebug() << "api load collections " << url;
+    manager->get(r);
+}
+
 void Komga_api::getSeries(int libraryId, int page) {
     qDebug() << "fetching series for library " << libraryId;
     QNetworkRequest r;
@@ -126,6 +142,23 @@ void Komga_api::getSeries(int libraryId, int page) {
     if (libraryId > MasterController::DEFAULT_LIBRARY_ID) {
         query.addQueryItem("library_id", QString::number(libraryId));
     }
+    if (page != 0) {
+        query.addQueryItem("page", QString::number(page));
+    }
+    url.setQuery(query);
+    r.setUrl(url);
+    manager->get(r);
+}
+
+void Komga_api::getCollectionSeries(int collectionId, int page)
+{
+    qDebug() << "fetching series for collection " << collectionId;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesReason));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_COLLECTIONS + "/" + QString::number(collectionId, 10) + URL_SERIES);
+    QUrlQuery query;
+    query.addQueryItem("size", "30");
     if (page != 0) {
         query.addQueryItem("page", QString::number(page));
     }
@@ -252,7 +285,7 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
         int reason = reply->request().attribute(QNetworkRequest::Attribute::User).toInt();
         QByteArray response(reply->readAll());
         QJsonDocument doc = QJsonDocument::fromJson( response);
-//        qDebug() << doc;
+        qDebug() << doc;
         if (reason == RequestReason::Libraries) {
             emit libraryDataReady(doc);
         }
@@ -263,6 +296,10 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
         else if (reason == RequestReason::Books) {
             QJsonObject page = doc.object();
             emit booksDataReady(page);
+        }
+        else if (reason == RequestReason::Collections) {
+            QJsonObject page = doc.object();
+            emit collectionsDataReady(page);
         }
         else if (reason == RequestReason::Progress) {
 //            qDebug() << "progress response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -324,6 +361,9 @@ QNetworkRequest Komga_api::getThumbnailAsync(QString id) {
     }
     else if (type == "series") {
         url.setUrl(getServerUrl() + URL_SERIES + "/" + thumbId + URL_THUMBNAILS);
+    }
+    else if (type == "collection") {
+        url.setUrl(getServerUrl() + URL_COLLECTIONS + "/" + thumbId + URL_THUMBNAILS);
     }
     r.setUrl(url);
     return r;

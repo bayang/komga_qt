@@ -7,9 +7,11 @@
 #include "seriesmodel.h"
 #include "bookmodel.h"
 #include "searchmodel.h"
+#include "collectionmodel.h"
 #include "mastercontroller.h"
 #include "library.h"
 #include "book.h"
+#include "collection.h"
 #include "bookmetadata.h"
 #include "author.h"
 #include "bookpageprovider.h"
@@ -76,10 +78,12 @@ int main(int argc, char *argv[])
     SeriesModel *seriesmodel = new SeriesModel(&app, api);
     BookModel *bookModel = new BookModel(&app, api);
     SearchModel *searchModel = new SearchModel(&app, api);
+    CollectionModel *collectionModel = new CollectionModel (&app, api);
     NetworkInformer *informer = new NetworkInformer(&app, api);
-    MasterController* controller = new MasterController{seriesmodel, bookModel, informer, &app};
+    MasterController* controller = new MasterController{seriesmodel, bookModel, collectionModel, informer, &app};
     controller->setLibraryModel(lm);
     controller->setSearchModel(searchModel);
+//    controller->setCollectionModel(collectionModel);
 
     qmlRegisterType<Library>("komga_api", 1, 0,
     "Library");
@@ -93,6 +97,8 @@ int main(int argc, char *argv[])
     "SearchResult");
     qmlRegisterType<Author>("komga_api", 1, 0,
     "Author");
+    qmlRegisterType<Collection>("komga_api", 1, 0,
+    "Collection");
 
     QQmlApplicationEngine engine;
 

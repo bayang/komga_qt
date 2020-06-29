@@ -6,12 +6,15 @@ const QString MasterController::SERIES_UPDATED_NAME{"Updated series"};
 const QString MasterController::DEFAULT_LIBRARY_NAME{"All libraries"};
 const QString MasterController::BOOKS_LATEST_NAME{"Recently added books"};
 const QString MasterController::BOOKS_READING_NAME{"Keep reading"};
+const QString MasterController::COLLECTIONS_NAME{"Collections"};
 
-MasterController::MasterController(SeriesModel* seriesModel, BookModel* bookModel, NetworkInformer *informer, QObject *parent) :
-    m_seriesModel{seriesModel}, m_bookModel{bookModel}, m_networkInformer{informer}, QObject{parent}
+MasterController::MasterController(SeriesModel* seriesModel, BookModel* bookModel, CollectionModel* collectionModel, NetworkInformer *informer, QObject *parent) :
+    m_seriesModel{seriesModel}, m_bookModel{bookModel}, m_collectionModel{collectionModel}, m_networkInformer{informer}, QObject{parent}
 {
     connect(this, &MasterController::loadBooksView, m_bookModel, &BookModel::loadBooks);
     connect(this, &MasterController::loadSeriesView, m_seriesModel, &SeriesModel::loadSeries);
+    connect(this, &MasterController::loadCollectionSeriesView, m_seriesModel, &SeriesModel::loadCollectionSeries);
+    connect(this, &MasterController::loadCollectionsView, m_collectionModel, &CollectionModel::loadCollections);
 }
 
 BookModel *MasterController::getBookModel() const
@@ -37,8 +40,16 @@ void MasterController::nextSeriesPage(int currentLibraryId) {
         m_seriesModel->nextSeriesPage(currentLibraryId);
     }
 }
+void MasterController::nextCollectionsSeriesPage(int currentCollectionId) {
+    m_seriesModel->nextCollectionsSeriesPage(currentCollectionId);
+}
 void MasterController::nextBooksPage(int currentSeriesId) {
     m_bookModel->nextBooksPage(currentSeriesId);
+}
+
+void MasterController::nextCollectionsPage()
+{
+    m_collectionModel->nextCollectionsPage();
 }
 void MasterController::refreshData() {
     m_libraryModel->fetchData();
@@ -57,6 +68,16 @@ void MasterController::setSelectedBookIdx(int value)
 
 void MasterController::updateprogress(int bookId, int currentPage) {
     getBookModel()->updateProgress(bookId, currentPage);
+}
+
+CollectionModel *MasterController::getCollectionModel() const
+{
+    return m_collectionModel;
+}
+
+void MasterController::setCollectionModel(CollectionModel *collectionModel)
+{
+    m_collectionModel = collectionModel;
 }
 
 void MasterController::setSearchModel(SearchModel *searchModel)
