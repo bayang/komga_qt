@@ -6,6 +6,7 @@ const QString MasterController::SERIES_UPDATED_NAME{"Updated series"};
 const QString MasterController::DEFAULT_LIBRARY_NAME{"All libraries"};
 const QString MasterController::BOOKS_LATEST_NAME{"Recently added books"};
 const QString MasterController::BOOKS_READING_NAME{"Keep reading"};
+const QString MasterController::BOOKS_ON_DECK_NAME{"On deck"};
 const QString MasterController::COLLECTIONS_NAME{"Collections"};
 
 MasterController::MasterController(SeriesModel* seriesModel, BookModel* bookModel, CollectionModel* collectionModel, NetworkInformer *informer, QObject *parent) :

@@ -75,4 +75,10 @@ Item {
             }
         }
     }
+    Label {
+        text: "Nothing here !"
+        visible: booksList.count < 1
+        anchors.centerIn: parent
+        font.pointSize: Style.mediumTextSize
+    }
 }

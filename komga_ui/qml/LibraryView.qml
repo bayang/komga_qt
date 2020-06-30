@@ -84,6 +84,14 @@ Pane {
         }
         TextLink {
             onTextLinkClicked: {
+                controller.loadBooksView(controller.ui_ondeckBooksId)
+                stack.replace("qrc:/qml/BooksListView.qml", {currentViewName: controller.ui_ondeckBooksName})
+            }
+            textLinkLabel: controller.ui_ondeckBooksName
+            textLinkLabelSize: Style.mediumTextSize
+        }
+        TextLink {
+            onTextLinkClicked: {
                 controller.loadBooksView(controller.ui_latestBooksId)
                 stack.replace("qrc:/qml/BooksListView.qml", {currentViewName: controller.ui_latestBooksName})
             }

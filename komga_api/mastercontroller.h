@@ -34,6 +34,8 @@ class KOMGA_API_EXPORT MasterController : public QObject
     Q_PROPERTY( QString ui_defaultLibraryName MEMBER DEFAULT_LIBRARY_NAME CONSTANT )
     Q_PROPERTY( QString ui_latestBooksName MEMBER BOOKS_LATEST_NAME CONSTANT )
     Q_PROPERTY( int ui_latestBooksId MEMBER BOOKS_LATEST_ID CONSTANT )
+    Q_PROPERTY( QString ui_ondeckBooksName MEMBER BOOKS_ON_DECK_NAME CONSTANT )
+    Q_PROPERTY( int ui_ondeckBooksId MEMBER BOOKS_ON_DECK_ID CONSTANT )
     Q_PROPERTY( int ui_collectionsId MEMBER COLLECTIONS_ID CONSTANT )
     Q_PROPERTY( QString ui_collectionsName MEMBER COLLECTIONS_NAME CONSTANT )
     Q_PROPERTY( QString ui_readingBooksName MEMBER BOOKS_READING_NAME CONSTANT )
@@ -58,6 +60,8 @@ public:
     static const QString BOOKS_LATEST_NAME;
     static const int BOOKS_READING_ID{-1002};
     static const QString BOOKS_READING_NAME;
+    static const int BOOKS_ON_DECK_ID{-1003};
+    static const QString BOOKS_ON_DECK_NAME;
 
     static const int COLLECTIONS_ID{-2002};
     static const QString COLLECTIONS_NAME;
