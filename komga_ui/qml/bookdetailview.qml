@@ -28,11 +28,13 @@ Item {
     property bool standaloneView
 
     ScrollView {
+        id: scroll
         clip: true
         anchors.fill: parent
         anchors.leftMargin: 10
         anchors.bottomMargin: 10
         ColumnLayout {
+            id: parentLayout
             Button {
                 onClicked: {
                     if (contentFrame.depth > 0) {
@@ -45,14 +47,13 @@ Item {
                 }
                 text: "\uf060"
             }
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.minimumHeight: 330
-                Layout.alignment: Qt.AlignTop
-                spacing: 10
+            GridLayout {
+                id: grid
+                columnSpacing: 10
+                Layout.minimumHeight: bookDetailImage.sourceSize.height
                 Item {
                     id: imageBookWrapper
-                    Layout.minimumWidth: bookDetailImage.width
+                    Layout.preferredWidth: bookDetailImage.paintedWidth
                     Layout.alignment: Qt.AlignTop
                     Image {
                         id: bookDetailImage
@@ -97,25 +98,24 @@ Item {
                 }
 
                 ColumnLayout {
-                    Layout.preferredWidth: parent.width - imageBookWrapper.width - navColumn.width
+                    id: textColumn
                     Layout.alignment: Qt.AlignTop
-                    Layout.fillWidth: true
                     Label {
                         id: curBookStatus
                         text: qsTr(currentBookMetadataTitle)
                         font.pointSize: Style.mediumTextSize
                     }
                     Label {
-                        text: currentBookWriters ? "Writers :" + qsTr(currentBookWriters) : ""
+                        text: currentBookWriters ? "Writers : " + qsTr(currentBookWriters) : ""
                         font.pointSize: Style.smallMediumTextSize
                     }
                     Label {
-                        text: currentBookPencillers ? "Pencillers :" + qsTr(currentBookPencillers) : ""
+                        text: currentBookPencillers ? "Pencillers : " + qsTr(currentBookPencillers) : ""
                         font.pointSize: Style.smallMediumTextSize
                         visible: currentBookPencillers
                     }
                     Label {
-                        text: currentBookColorists ? "Colorists :" + qsTr(currentBookColorists) : ""
+                        text: currentBookColorists ? "Colorists : " + qsTr(currentBookColorists) : ""
                         font.pointSize: Style.smallMediumTextSize
                         visible: currentBookColorists
                     }
@@ -130,9 +130,10 @@ Item {
                     }
                     Label {
                         text: qsTr(currentBookSummary)
-                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        wrapMode: Text.Wrap
                         Layout.fillWidth: true
                         font.pointSize: Style.smallMediumTextSize
+                        Layout.maximumWidth: scroll.width - imageBookWrapper.width - 20
                     }
                 }
             }
@@ -189,7 +190,7 @@ Item {
         BookReadView {
             anchors.fill: parent
             bookId: currentBookId
-            pageReached: currentBookPageReached
+            pageReached: currentBookPageReached - 1
             pageCount: currentBookPageCount
             standaloneBook: standaloneView
             onPageChanged: {

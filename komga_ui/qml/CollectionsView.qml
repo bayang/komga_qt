@@ -1,41 +1,31 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
 import komga_api 1.0
 import assets 1.0
 
 Item {
+    id: root
     property real lastNextPageCalledTime: 0
-    ScrollView {
-        clip: true
-        anchors.fill: parent
 
-        ColumnLayout {
+        Column {
+            id: collectionsColumn
             anchors.fill: parent
 
             Label {
                 id: collectionsText
                 text: controller.ui_collectionsName
                 font.pointSize: Style.mediumTextSize
-//                anchors.horizontalCenter: parent.horizontalCenter
-                Layout.alignment: Qt.AlignHCenter
-                topPadding: 20
+                anchors.horizontalCenter: parent.horizontalCenter
             }
 
             GridView {
                 id: collectionsList
                 model: controller.ui_collectionModel
                 clip: true
-                Layout.fillHeight: true
-                Layout.fillWidth: true
                 cellWidth : Style.thumbnailRequestedWidth + 12
                 cellHeight: Style.thumbnailRequestedHeight + 80
-//                width: parent.width
-//                height: parent.height - collectionsText.height
-                Layout.preferredHeight: parent.height - collectionsText.height
-                Layout.preferredWidth: parent.width
-                Layout.minimumHeight: cellHeight
-                Layout.minimumWidth: 100
+                width: parent.width
+                height: parent.height - collectionsText.height
                 cacheBuffer: cellHeight
                 bottomMargin: 10
                 ScrollBar.vertical: ScrollBar { }
@@ -70,5 +60,4 @@ Item {
                 }
             }
         }
-    }
 }

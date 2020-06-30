@@ -11,7 +11,6 @@ Item {
     property string currentLibraryName
     property real currentSourceId
     property bool sourceIsLibrary: true;
-    anchors.fill: parent
     anchors.leftMargin: 10
 
     Column {

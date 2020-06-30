@@ -111,9 +111,9 @@ Item {
                                                })
                                 }
                                 else {
-                                    console.log("res id " + resultSeries.ui_seriesId)
+//                                    console.log("res id " + resultSeries.ui_seriesId)
                                     controller.loadBooksView(resultSeries.ui_seriesId)
-                                    stack.push("qrc:/qml/booksview.qml", {
+                                    stack.replace("qrc:/qml/booksview.qml", {
                                                    currentSeriesId: resultSeries.ui_seriesId,
                                                    currentSeriesName: resultSeries.ui_seriesName,
                                                    currentSeriesBookCount: resultSeries.ui_seriesBooksCount,

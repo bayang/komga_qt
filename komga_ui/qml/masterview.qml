@@ -12,6 +12,7 @@ ApplicationWindow {
     height: 760
     title: qsTr("Komga")
     property alias stack: contentFrame
+    property alias leftNav: navColumn
 
     Settings {
         id: settings
