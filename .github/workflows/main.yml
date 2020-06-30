@@ -38,7 +38,7 @@ jobs:
     # Runs a set of commands using the runners shell
     - name: build app
       run: |
-        git rev-list origin/master --count
+        git log --pretty=format:'' | wc -l
         chmod +x cmake_build.sh
         ./cmake_build.sh
         ls build/komga_ui
