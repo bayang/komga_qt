@@ -285,7 +285,7 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
         int reason = reply->request().attribute(QNetworkRequest::Attribute::User).toInt();
         QByteArray response(reply->readAll());
         QJsonDocument doc = QJsonDocument::fromJson( response);
-        qDebug() << doc;
+//        qDebug() << doc;
         if (reason == RequestReason::Libraries) {
             emit libraryDataReady(doc);
         }
@@ -349,7 +349,7 @@ QByteArray Komga_api::getThumbnail(int id, Komga_api::ThumbnailType type) {
     }
 }
 QNetworkRequest Komga_api::getThumbnailAsync(QString id) {
-    qDebug() << "fetch thumbnail async for id " << id;
+//    qDebug() << "fetch thumbnail async for id " << id;
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Thumbnail));
     QUrl url;

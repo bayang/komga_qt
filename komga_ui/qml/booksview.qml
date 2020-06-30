@@ -10,7 +10,7 @@ Item {
     property string currentSeriesName
     property real currentSeriesBookCount
     property string currentSeriesMetadataStatus
-    anchors.fill: parent
+//    anchors.fill: parent
     anchors.leftMargin: 10
 
     ScrollView {
@@ -100,7 +100,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.minimumHeight: cellHeight
                 Layout.minimumWidth: 100
-                Layout.preferredHeight: parent.height - firstRow.height - searchAndButtonRow.height
+                Layout.preferredHeight: cellHeight * 2
                 Layout.preferredWidth: parent.width
                 cacheBuffer: cellHeight
                 Layout.bottomMargin: 2
