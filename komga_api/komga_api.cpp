@@ -14,6 +14,7 @@
 const QString Komga_api::URL_LIBRARIES{"/libraries"};
 const QString Komga_api::URL_SERIES{"/series"};
 const QString Komga_api::URL_LATEST{"/latest"};
+const QString Komga_api::URL_ONDECK{"/ondeck"};
 const QString Komga_api::URL_SERIES_NEW{"/new"};
 const QString Komga_api::URL_SERIES_UPDATED{"/updated"};
 const QString Komga_api::URL_BOOKS{"/books"};
@@ -137,7 +138,7 @@ void Komga_api::getSeries(int libraryId, int page) {
         url.setUrl(getServerUrl() + URL_SERIES);
     }
     QUrlQuery query;
-    query.addQueryItem("size", "30");
+    query.addQueryItem("size", "40");
     // only works if library id is always positive, should check this
     if (libraryId > MasterController::DEFAULT_LIBRARY_ID) {
         query.addQueryItem("library_id", QString::number(libraryId));
@@ -158,7 +159,7 @@ void Komga_api::getCollectionSeries(int collectionId, int page)
     QUrl url;
     url.setUrl(getServerUrl() + URL_COLLECTIONS + "/" + QString::number(collectionId, 10) + URL_SERIES);
     QUrlQuery query;
-    query.addQueryItem("size", "30");
+    query.addQueryItem("size", "40");
     if (page != 0) {
         query.addQueryItem("page", QString::number(page));
     }
@@ -262,6 +263,9 @@ void Komga_api::getBooks(int seriesId, int page) {
     if (seriesId == MasterController::BOOKS_LATEST_ID) {
         url.setUrl(getServerUrl() + URL_BOOKS + URL_LATEST);
     }
+    else if (seriesId == MasterController::BOOKS_ON_DECK_ID) {
+        url.setUrl(getServerUrl() + URL_BOOKS + URL_ONDECK);
+    }
     else if (seriesId == MasterController::BOOKS_READING_ID) {
         url.setUrl(getServerUrl() + URL_BOOKS);
         query.addQueryItem("read_status", "IN_PROGRESS");
@@ -270,7 +274,7 @@ void Komga_api::getBooks(int seriesId, int page) {
     else {
         url.setUrl(getServerUrl() + URL_SERIES + "/" + QString::number(seriesId, 10) + URL_BOOKS);
     }
-    query.addQueryItem("size", "30");
+    query.addQueryItem("size", "40");
     if (page != 0) {
         query.addQueryItem("page", QString::number(page, 10));
     }

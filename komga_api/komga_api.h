@@ -27,6 +27,7 @@ public:
     static const QString URL_LIBRARIES;
     static const QString URL_SERIES;
     static const QString URL_LATEST;
+    static const QString URL_ONDECK;
     static const QString URL_SERIES_NEW;
     static const QString URL_SERIES_UPDATED;
     static const QString URL_BOOKS;
