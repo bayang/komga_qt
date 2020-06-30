@@ -8,7 +8,7 @@ message(STATUS ${CMAKE_SOURCE_DIR})
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/.git/)
     execute_process(
-            COMMAND git rev-list HEAD --count
+            COMMAND git rev-list origin/master --count
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 
             OUTPUT_VARIABLE VERSION_TWEAK
