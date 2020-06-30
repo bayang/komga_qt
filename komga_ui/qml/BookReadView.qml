@@ -101,24 +101,6 @@ Item {
         imgScale = readContainer.height / bookReadPage.paintedHeight
     }
 
-    MouseArea {
-        id : imageMouseArea
-        anchors.fill: parent
-        cursorShape: pressed || flickArea.dragging ? Qt.ClosedHandCursor : Qt.ArrowCursor;
-        onWheel: {
-            if (wheel.angleDelta.y > 0) {
-                scaleUp()
-            }
-            else {
-                scaleDown()
-            }
-        }
-        hoverEnabled: true
-        onPositionChanged: {
-            pageNumberWrapper.y  = readContainer.height - 50
-            visibilityTimer.restart()
-        }
-    }
 
 
     Item {
@@ -259,6 +241,26 @@ Item {
                 controller.setCurrentBookPageReached(pageNumber);
             }
             readContainer.pageChanged(pageNumber);
+        }
+    }
+    MouseArea {
+        id : imageMouseArea
+        anchors.fill: parent
+        cursorShape: pressed || flickArea.dragging ? Qt.ClosedHandCursor : Qt.ArrowCursor;
+        // let button press be catched by flickable only (for dragging)
+        acceptedButtons: Qt.NoButton
+        onWheel: {
+            if (wheel.angleDelta.y > 0) {
+                scaleUp()
+            }
+            else {
+                scaleDown()
+            }
+        }
+        hoverEnabled: true
+        onPositionChanged: {
+            pageNumberWrapper.y  = readContainer.height - 50
+            visibilityTimer.restart()
         }
     }
 }
