@@ -8,20 +8,20 @@ message(STATUS ${CMAKE_SOURCE_DIR})
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/.git/)
     execute_process(
-            COMMAND git rev-list origin/master --count
+            COMMAND git rev-parse --short HEAD
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 
-            OUTPUT_VARIABLE VERSION_TWEAK
+            OUTPUT_VARIABLE GIT_SHA
             OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-    if (VERSION_TWEAK STREQUAL "")
-        set(VERSION_TWEAK 0)
+    if (GIT_SHA STREQUAL "")
+        set(GIT_SHA 0)
     endif()
 else()
     set(VERSION_TWEAK 0)
 endif()
 
-project(komga-app VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}.${VERSION_TWEAK}")
+project(komga-app VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 
 message(STATUS "komga-app version ${PROJECT_VERSION}")
 

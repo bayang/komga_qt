@@ -54,7 +54,7 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 
 int main(int argc, char *argv[])
 {
-    qDebug() << PROJECT_NAME << " version: " << PROJECT_VER << endl;
+    qDebug() << PROJECT_NAME << " version: " << PROJECT_VER << ", sha " << PROJECT_GIT_SHA << endl;
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
@@ -107,6 +107,8 @@ int main(int argc, char *argv[])
     controller);
     engine.rootContext()->setContextProperty("APP_VERSION",
     PROJECT_VER);
+    engine.rootContext()->setContextProperty("APP_SHA",
+    PROJECT_GIT_SHA);
     engine.addImageProvider("page", new BookPageProvider(controller));
     engine.addImageProvider("async", new AsyncImageProvider(api));
 

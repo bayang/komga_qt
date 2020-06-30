@@ -20,7 +20,7 @@ Item {
 
     ColumnLayout {
         Label {
-            text: '<html><style type="text/css"></style><a href="https://github.com/bayang/komga_qt">Komga_qt Version: ' + APP_VERSION + '</a></html>'
+            text: '<html><style type="text/css"></style><a href="https://github.com/bayang/komga_qt">Komga_qt Version: ' + APP_VERSION + "-" + APP_SHA + '</a></html>'
             font.pointSize: Style.microTextSize
             Layout.alignment: Qt.AlignRight
             onLinkActivated: Qt.openUrlExternally(link)
