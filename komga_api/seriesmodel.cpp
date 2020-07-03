@@ -77,6 +77,11 @@ void SeriesModel::loadCollectionSeries(int collectionId)
     m_api->getCollectionSeries(collectionId);
     resetSeries();
 }
+
+void SeriesModel::loadSeriesCollections(int seriesId)
+{
+    m_api->getSeriesCollections(seriesId);
+}
 void SeriesModel::resetSeries() {
     emit beginRemoveRows(QModelIndex(), 0, m_series.size() - 1);
     qDeleteAll(m_series);

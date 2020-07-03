@@ -10,7 +10,6 @@ Item {
         Column {
             id: collectionsColumn
             anchors.fill: parent
-
             Label {
                 id: collectionsText
                 text: controller.ui_collectionsName

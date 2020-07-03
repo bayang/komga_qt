@@ -11,6 +11,7 @@ Item {
     property string currentLibraryName
     property real currentSourceId
     property bool sourceIsLibrary: true;
+    property bool backEnabled: false;
     anchors.leftMargin: 10
 
     Column {
@@ -73,6 +74,7 @@ Item {
                     onCardClicked: {
                         seriesList.currentIndex = index
                         controller.loadBooksView(seriesId)
+                        controller.loadSeriesCollections(seriesId)
                         stack.push("qrc:/qml/booksview.qml", {currentSeriesId: seriesId, currentSeriesName: seriesName, currentSeriesBookCount: seriesBookCount, currentSeriesMetadataStatus: seriesMetadataStatus})
                     }
             }

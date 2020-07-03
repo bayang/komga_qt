@@ -15,6 +15,7 @@ MasterController::MasterController(SeriesModel* seriesModel, BookModel* bookMode
     connect(this, &MasterController::loadBooksView, m_bookModel, &BookModel::loadBooks);
     connect(this, &MasterController::loadSeriesView, m_seriesModel, &SeriesModel::loadSeries);
     connect(this, &MasterController::loadCollectionSeriesView, m_seriesModel, &SeriesModel::loadCollectionSeries);
+    connect(this, &MasterController::loadSeriesCollections, m_seriesModel, &SeriesModel::loadSeriesCollections);
     connect(this, &MasterController::loadCollectionsView, m_collectionModel, &CollectionModel::loadCollections);
 }
 

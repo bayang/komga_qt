@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QJsonDocument>
+#include <QJsonArray>
 
 class KOMGA_API_EXPORT CollectionModel : public QAbstractListModel
 {
@@ -20,6 +21,7 @@ public:
         OrderedRole = Qt::UserRole + 3,
         FilteredRole = Qt::UserRole + 4,
         SeriesIdsRole = Qt::UserRole + 5,
+        SizeRole = Qt::UserRole + 6,
     };
     Q_INVOKABLE void loadCollections();
 
@@ -32,6 +34,7 @@ public:
 
 public slots:
     void apiDataReceived(QJsonObject page);
+    void seriesCollectionsReceived(QJsonArray list);
 
 private:
     Komga_api* m_api = nullptr;

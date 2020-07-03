@@ -168,6 +168,17 @@ void Komga_api::getCollectionSeries(int collectionId, int page)
     manager->get(r);
 }
 
+void Komga_api::getSeriesCollections(int seriesId)
+{
+    qDebug() << "fetching collections for series " << seriesId;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesCollections));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_SERIES + "/" + QString::number(seriesId, 10) + URL_COLLECTIONS);
+    r.setUrl(url);
+    manager->get(r);
+}
+
 void Komga_api::doSearch(const QString &searchTerm, qint64 timestamp) {
     searchSeries(searchTerm, timestamp);
     searchBooks(searchTerm, timestamp);
@@ -307,6 +318,10 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
         }
         else if (reason == RequestReason::Progress) {
 //            qDebug() << "progress response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        }
+        else if (reason == RequestReason::SeriesCollections) {
+            QJsonArray list = doc.array();
+            emit seriesCollectionsDataReady(list);
         }
     }
     // else emit an error event
