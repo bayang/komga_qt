@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>io.github.bayang.Komga_qt</id>
+  <launchable type="desktop-id">io.github.bayang.Komga_qt.desktop</launchable>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Komga_qt</name>
+  
+  <summary>Komga qt client</summary>
+  <description>
+    <p>
+      Komga_qt is a qt client for the Komga server
+    </p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <caption>komga logo</caption>
+      <image>https://komga.org/assets/media/logo.svg</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://github.com/bayang/komga_qt</url>
+</component>
