@@ -33,6 +33,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
     Q_INVOKABLE void loadSeries(int library);
     Q_INVOKABLE void loadCollectionSeries(int collectionId);
+    Q_INVOKABLE void loadSeriesCollections(int seriesId);
     void nextSeriesPage(int libraryId);
     QByteArray getThumbnail(int id);
     Series* find(int libraryId);

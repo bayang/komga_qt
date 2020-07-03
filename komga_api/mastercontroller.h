@@ -89,6 +89,7 @@ public:
 signals:
     void loadSeriesView(int seriesId);
     void loadCollectionSeriesView(int collectionId);
+    void loadSeriesCollections(int seriesId);
     void loadBooksView(int seriesId);
     void loadCollectionsView();
 

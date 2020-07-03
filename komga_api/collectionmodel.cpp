@@ -6,6 +6,8 @@ CollectionModel::CollectionModel(QObject *parent, Komga_api* api) :
 {
     connect(m_api, &Komga_api::collectionsDataReady,
             this, &CollectionModel::apiDataReceived);
+    connect(m_api, &Komga_api::seriesCollectionsDataReady,
+            this, &CollectionModel::seriesCollectionsReceived);
 }
 
 void CollectionModel::loadCollections()
@@ -46,6 +48,9 @@ QVariant CollectionModel::data(const QModelIndex &index, int role) const
     else if (role == SeriesIdsRole) {
         return QVariant::fromValue(collection->seriesIds());
     }
+    else if (role == SizeRole) {
+        return collection->seriesIds().count();
+    }
     return QVariant();
 }
 
@@ -57,6 +62,7 @@ QHash<int, QByteArray> CollectionModel::roleNames() const
         roles[SeriesIdsRole] = "collectionSeriesId";
         roles[FilteredRole] = "collectionFiltered";
         roles[OrderedRole] = "collectionOrdered";
+        roles[SizeRole] = "collectionSize";
         return roles;
 }
 
@@ -120,4 +126,29 @@ void CollectionModel::apiDataReceived(QJsonObject page)
         m_currentPageNumber = pageNum;
         m_totalPageNumber = totPages;
     }
+}
+
+void CollectionModel::seriesCollectionsReceived(QJsonArray list)
+{
+    emit beginResetModel();
+    qDeleteAll(m_collections);
+    m_collections.clear();
+    emit endResetModel();
+    emit layoutAboutToBeChanged();
+    foreach (const QJsonValue &value, list) {
+        Collection* c = new Collection(this);
+        QJsonObject jsob = value.toObject();
+        c->setId(jsob["id"].toInt());
+        c->setName(jsob["name"].toString());
+        c->setOrdered(jsob["ordered"].toBool());
+        c->setFiltered(jsob["filtered"].toBool());
+        QJsonArray seriesArray = jsob["seriesIds"].toArray();
+        QList<int> sIds{};
+        for (QJsonValue val : seriesArray) {
+            sIds.append(val.toInt());
+        }
+        c->setSeriesIds(sIds);
+        m_collections.append(std::move(c));
+    }
+    emit layoutChanged();
 }

@@ -15,6 +15,10 @@ Item {
     readonly property real backArrowIconSize: 18
     readonly property real defaultTextInputWidth: 400
 
+    readonly property real smallCardHeight: 200
+    readonly property real smallCardWidth: 100
+    readonly property real smallCardThumbnailHeight: 150
+
     readonly property real mediumTextSize: 18
     readonly property real intermediateTextSize: 15
     readonly property real smallMediumTextSize: 13

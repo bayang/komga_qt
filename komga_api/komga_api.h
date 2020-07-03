@@ -23,6 +23,7 @@ public:
     void getLibraries();
     void getSeries(int libraryId, int page = 0);
     void getCollectionSeries(int collectionId, int page = 0);
+    void getSeriesCollections(int seriesId);
     void getBooks(int seriesId, int page = 0);
     static const QString URL_LIBRARIES;
     static const QString URL_SERIES;
@@ -49,6 +50,7 @@ public:
         BooksSearch = QNetworkRequest::Attribute::User + 6,
         Progress = QNetworkRequest::Attribute::User + 7,
         Collections = QNetworkRequest::Attribute::User + 8,
+        SeriesCollections = QNetworkRequest::Attribute::User + 9,
     };
     enum ThumbnailType {
         SeriesThumbnail,
@@ -87,6 +89,7 @@ signals:
     void preloadImageDataReady(QPair<QString, QByteArray> res);
     void searchSeriesDataReady(QPair<QString, QJsonDocument> res);
     void searchBookDataReady(QPair<QString, QJsonDocument> res);
+    void seriesCollectionsDataReady(QJsonArray list);
 };
 
 #endif // KOMGA_API_H

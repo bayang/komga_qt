@@ -14,6 +14,7 @@ Item {
     anchors.leftMargin: 10
 
     ScrollView {
+        id: scroll
         clip: true
         anchors.fill: parent
 
@@ -28,6 +29,7 @@ Item {
                 Button {
                     id : booksViewBackButton
                     onClicked: {
+                        console.log("depth = " + stack.depth)
                         if (contentFrame.depth > 0) {
                             contentFrame.pop()
                         }
@@ -86,7 +88,47 @@ Item {
                         id: seriesStatus
                         text: qsTr("STATUS : " + currentSeriesMetadataStatus)
                         font.pointSize: Style.smallMediumTextSize
+                        Layout.bottomMargin: 15
                     }
+                    Label {
+                        id: collectionsLabel
+                        text: qsTr("Collections :")
+                        font.pointSize: Style.smallMediumTextSize
+                        visible: collectionsList.count > 0
+                    }
+                    ListView {
+                            id: collectionsList
+                            model: controller.ui_collectionModel
+                            clip: true
+                            visible: count > 0
+                            Layout.fillWidth: true
+                            Layout.minimumWidth: visible ? Style.smallCardWidth : 0;
+                            Layout.minimumHeight: visible ? Style.smallCardHeight : 0;
+                            orientation: ListView.Horizontal
+                            spacing : 10
+                            ScrollBar.horizontal: ScrollBar { }
+                            delegate:
+                                CardItem {
+                                    cardWidth: Style.smallCardWidth
+                                    cardHeight: Style.smallCardHeight
+                                    thumbnailHeight: Style.smallCardThumbnailHeight
+                                    imagePath: "image://async/collection/" + collectionId
+                                    cardLabel: collectionName
+                                    subLabel: ""
+                                    topCornerLabel: collectionSize
+                                    topCornerLabelFontSize: Style.smallTextSize
+                                    topCornerLabelVisible: true
+                                    progressVisible: false
+                                    onCardClicked: {
+                                        collectionsList.currentIndex = index
+                                        controller.loadCollectionSeriesView(collectionId)
+                                        stack.push("qrc:/qml/seriesview.qml", {currentLibraryName: collectionName,
+                                                       currentSourceId: collectionId,
+                                                       sourceIsLibrary: false,
+                                                       backEnabled: true})
+                                    }
+                            }
+                        }
                 }
             }
 

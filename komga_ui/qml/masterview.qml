@@ -68,7 +68,7 @@ ApplicationWindow {
        StackView {
            id: contentFrame
            clip: true
-           initialItem: "qrc:/qml/seriesview.qml"
+//           initialItem: "qrc:/qml/seriesview.qml"
            focus: true
        }
     }
