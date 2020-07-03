@@ -16,12 +16,34 @@
             "name": "komga_ui",
             "buildsystem": "simple",
             "build-commands": [
-                "install -D komga-ui /app/bin/komga-ui"
+                "install -D komga-ui /app/bin/komga-ui",
+                "install -D io.github.bayang.Komga_qt.desktop /app/share/applications/io.github.bayang.Komga_qt.desktop",
+                "install -D io.github.bayang.Komga_qt.appdata.xml /app/share/metainfo/io.github.bayang.Komga_qt.appdata.xml",
+                "install -D io.github.bayang.Komga_qt_128.png /app/share/icons/hicolor/128x128/apps/io.github.bayang.Komga_qt.png",
+                "install -D io.github.bayang.Komga_qt_64.png /app/share/icons/hicolor/64x64/apps/io.github.bayang.Komga_qt.png",
+                "install -D io.github.bayang.Komga_qt_128.png /app/share/icons/default/128x128/apps/io.github.bayang.Komga_qt.png",
+                "install -D io.github.bayang.Komga_qt_64.png /app/share/icons/default/64x64/apps/io.github.bayang.Komga_qt.png"
             ],
             "sources": [
                 {
                     "type": "file",
                     "path": "build/komga_ui/komga-ui"
+                },
+                {
+                    "type": "file",
+                    "path": "io.github.bayang.Komga_qt.desktop"
+                },
+                {
+                    "type": "file",
+                    "path": "io.github.bayang.Komga_qt.appdata.xml"
+                },
+                {
+                    "type": "file",
+                    "path": "icons/io.github.bayang.Komga_qt_128.png"
+                },
+                {
+                    "type": "file",
+                    "path": "icons/io.github.bayang.Komga_qt_64.png"
                 }
             ]
         }

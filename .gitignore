@@ -6,4 +6,4 @@ binaries/**
 .flatpak-builder/**
 CMakeLists.txt.user
 **.flatpak
-
+**.flatpak.bak**

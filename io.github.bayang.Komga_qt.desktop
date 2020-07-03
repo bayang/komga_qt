@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Komga_qt
+GenericName=Komga_qt
+Comment=client for Komga server written with Qt
+Exec=komga-ui
+Terminal=false
+Icon=io.github.bayang.Komga_qt
+Type=Application
+Categories=Qt;KDE;Graphics;Education
