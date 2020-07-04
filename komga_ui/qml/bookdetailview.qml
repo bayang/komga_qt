@@ -190,7 +190,7 @@ Item {
         BookReadView {
             anchors.fill: parent
             bookId: currentBookId
-            pageReached: currentBookPageReached - 1
+            pageReached: currentBookCompleted ? 0 : currentBookPageReached
             pageCount: currentBookPageCount
             standaloneBook: standaloneView
             onPageChanged: {
