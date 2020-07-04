@@ -35,7 +35,7 @@ Item {
                         }
                     }
                     font {
-                        family: Style.fontAwesome
+                        family: Style.fontAwesomeSolid
                         pointSize: Style.backArrowIconSize
                     }
                     text: "\uf060"
