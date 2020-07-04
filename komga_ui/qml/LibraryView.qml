@@ -56,7 +56,7 @@ Pane {
                 stack.replace("qrc:/qml/CollectionsView.qml")
             }
             textLinkLabel: controller.ui_collectionsName
-            textLinkLabelSize: Style.mediumTextSize
+            textLinkLabelSize: Style.intermediateTextSize
         }
         TextLink {
             onTextLinkClicked: {
@@ -88,7 +88,7 @@ Pane {
                 stack.replace("qrc:/qml/BooksListView.qml", {currentViewName: controller.ui_ondeckBooksName})
             }
             textLinkLabel: controller.ui_ondeckBooksName
-            textLinkLabelSize: Style.mediumTextSize
+            textLinkLabelSize: Style.intermediateTextSize
         }
         TextLink {
             onTextLinkClicked: {
