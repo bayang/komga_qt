@@ -4,7 +4,6 @@ import komga_api 1.0
 import assets 1.0
 
 Item {
-
     id: readContainer
     property real imgScale: 0
     property real lastSpacePressedTime: 0

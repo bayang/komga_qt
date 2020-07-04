@@ -176,6 +176,10 @@ Item {
 
         modal: true
         focus: true
+        background: Rectangle {
+            color: Style.black
+        }
+
         closePolicy: Popup.CloseOnEscape
         opacity: 1.0
         Overlay.modal: Rectangle {
