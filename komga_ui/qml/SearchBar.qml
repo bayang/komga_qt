@@ -110,6 +110,12 @@ Item {
                                                    standaloneView: true
                                                })
                                 }
+                                else if (resultType === "Collections") {
+                                    controller.loadCollectionSeriesView(resultCollection.ui_collectionId)
+                                    stack.push("qrc:/qml/seriesview.qml", {currentLibraryName: resultCollection.ui_collectionName,
+                                                   currentSourceId: resultCollection.ui_collectionId,
+                                                   sourceIsLibrary: false})
+                                }
                                 else {
 //                                    console.log("res id " + resultSeries.ui_seriesId)
                                     controller.loadBooksView(resultSeries.ui_seriesId)
@@ -145,6 +151,9 @@ Item {
     function getSourceType(type) {
         if (type === "Books") {
             return "book"
+        }
+        else if (type === "Collections") {
+            return "collection"
         }
         return "series"
     }

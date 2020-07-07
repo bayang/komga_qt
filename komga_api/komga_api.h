@@ -51,6 +51,7 @@ public:
         Progress = QNetworkRequest::Attribute::User + 7,
         Collections = QNetworkRequest::Attribute::User + 8,
         SeriesCollections = QNetworkRequest::Attribute::User + 9,
+        CollectionsSearch = QNetworkRequest::Attribute::User + 10,
     };
     enum ThumbnailType {
         SeriesThumbnail,
@@ -78,6 +79,7 @@ private:
     void searchDataReceived(const QString &id);
     void searchSeries(const QString &searchTerm, qint64 timestamp);
     void searchBooks(const QString &searchTerm, qint64 timestamp);
+    void searchCollections(const QString &searchTerm, qint64 timestamp);
 
 signals:
     void libraryDataReady(QJsonDocument libraries);
@@ -90,6 +92,7 @@ signals:
     void searchSeriesDataReady(QPair<QString, QJsonDocument> res);
     void searchBookDataReady(QPair<QString, QJsonDocument> res);
     void seriesCollectionsDataReady(QJsonArray list);
+    void searchCollectionsDataReady(QPair<QString, QJsonDocument> res);
 };
 
 #endif // KOMGA_API_H

@@ -55,3 +55,13 @@ void SearchResult::setSeries(Series *series)
 {
     m_series = series;
 }
+
+Collection *SearchResult::collection() const
+{
+    return m_collection;
+}
+
+void SearchResult::setCollection(Collection *collection)
+{
+    m_collection = collection;
+}

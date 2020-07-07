@@ -29,7 +29,6 @@ Item {
                 Button {
                     id : booksViewBackButton
                     onClicked: {
-                        console.log("depth = " + stack.depth)
                         if (contentFrame.depth > 0) {
                             contentFrame.pop()
                         }

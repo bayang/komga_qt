@@ -79,8 +79,11 @@ void Komga_api::searchDataReceived(const QString &id) {
         if (id.contains(URL_SERIES)) {
             emit searchSeriesDataReady(res);
         }
-        else {
+        else if (id.contains(URL_BOOKS)) {
             emit searchBookDataReady(res);
+        }
+        else if (id.contains(URL_COLLECTIONS)) {
+            emit searchCollectionsDataReady(res);
         }
     }
     reply->deleteLater();
@@ -182,6 +185,7 @@ void Komga_api::getSeriesCollections(int seriesId)
 void Komga_api::doSearch(const QString &searchTerm, qint64 timestamp) {
     searchSeries(searchTerm, timestamp);
     searchBooks(searchTerm, timestamp);
+    searchCollections(searchTerm, timestamp);
 }
 
 void Komga_api::updateProgress(int bookId, int page, bool completed)
@@ -240,6 +244,27 @@ void Komga_api::searchSeries(const QString &searchTerm, qint64 timestamp) {
         m_searchMapper->map(reply);
     });
     QString key = QString::number(timestamp) + URL_SERIES;
+    m_replies.insert(key, reply);
+    m_searchMapper->setMapping(reply, key);
+}
+
+void Komga_api::searchCollections(const QString &searchTerm, qint64 timestamp) {
+    qDebug() << "search collections for " << searchTerm;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::CollectionsSearch));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_COLLECTIONS);
+    QUrlQuery query;
+    query.addQueryItem("size", "10");
+    query.addQueryItem("search", searchTerm);
+    url.setQuery(query);
+    r.setUrl(url);
+
+    QNetworkReply* reply = thumbnailsManager->get(r);
+    connect(reply, &QNetworkReply::finished, [=](){
+        m_searchMapper->map(reply);
+    });
+    QString key = QString::number(timestamp) + URL_COLLECTIONS;
     m_replies.insert(key, reply);
     m_searchMapper->setMapping(reply, key);
 }

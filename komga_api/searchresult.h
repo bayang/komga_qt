@@ -5,6 +5,7 @@
 #include "komga_api_global.h"
 #include "book.h"
 #include "series.h"
+#include "collection.h"
 
 class KOMGA_API_EXPORT SearchResult : public QObject
 {
@@ -13,7 +14,8 @@ public:
     explicit SearchResult(QObject *parent = nullptr);
     enum ResultType {
         SeriesType,
-        BookType
+        BookType,
+        CollectionType
     };
     Q_ENUM(ResultType);
     int id() const;
@@ -31,12 +33,16 @@ public:
     Series *series() const;
     void setSeries(Series *series);
 
+    Collection *collection() const;
+    void setCollection(Collection *collection);
+
 private:
     int m_id {};
     QString m_name{};
     ResultType m_resultType{};
     Book *m_book{};
     Series* m_series{};
+    Collection* m_collection{};
 
 };
 

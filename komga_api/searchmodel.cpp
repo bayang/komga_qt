@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QMetaEnum>
 #include "bookmodel.h"
+#include "collection.h"
 
 SearchModel::SearchModel(QObject *parent, Komga_api* api) :
    QAbstractListModel{parent}, m_api{api}, m_results{}
@@ -11,7 +12,8 @@ SearchModel::SearchModel(QObject *parent, Komga_api* api) :
             this, &SearchModel::searchBookDataReceived);
     connect(m_api, &Komga_api::searchSeriesDataReady,
             this, &SearchModel::searchSeriesDataReceived);
-
+    connect(m_api, &Komga_api::searchCollectionsDataReady,
+            this, &SearchModel::searchCollectionsDataReceived);
 }
 int SearchModel::rowCount(const QModelIndex &parent) const {
     Q_ASSERT(checkIndex(parent));
@@ -37,6 +39,9 @@ QVariant SearchModel::data(const QModelIndex &index, int role) const {
         if (result->resultType() == SearchResult::ResultType::BookType) {
             return QString("Books");
         }
+        else if (result->resultType() == SearchResult::ResultType::CollectionType) {
+            return QString("Collections");
+        }
         return QString("Series");
     }
     else if (role == SeriesRole){
@@ -44,6 +49,9 @@ QVariant SearchModel::data(const QModelIndex &index, int role) const {
     }
     else if (role == BookRole){
         return QVariant::fromValue(result->book());
+    }
+    else if (role == CollectionRole){
+        return QVariant::fromValue(result->collection());
     }
     return QVariant();
 }
@@ -54,6 +62,7 @@ QHash<int, QByteArray> SearchModel::roleNames() const {
         roles[ResultTypeRole] = "resultType";
         roles[SeriesRole] = "resultSeries";
         roles[BookRole] = "resultBook";
+        roles[CollectionRole] = "resultCollection";
         return roles;
 }
 
@@ -81,13 +90,13 @@ void SearchModel::searchBookDataReceived(QPair<QString, QJsonDocument> res)
 {
     QJsonObject page = res.second.object();
     int nbElems = page["numberOfElements"].toInt();
+    qlonglong n = res.first.section('/', 0, 0).toLongLong();
+    // new search result, clear previous data
+    if (n > currentTimestamp()) {
+        resetModel();
+        setCurrentTimestamp(n);
+    }
     if (nbElems > 0) {
-        qlonglong n = res.first.section('/', 0, 0).toLongLong();
-        // new search result, clear previous data
-        if (n > currentTimestamp()) {
-            resetModel();
-            setCurrentTimestamp(n);
-        }
         emit beginInsertRows(QModelIndex(), m_results.size(), m_results.size() + nbElems - 1);
         QJsonArray content = page["content"].toArray();
         foreach (const QJsonValue &value, content) {
@@ -135,6 +144,42 @@ void SearchModel::searchSeriesDataReceived(QPair<QString, QJsonDocument> res)
             s->setMetadataTitle(metadata["title"].toString());
             s->setMetadataStatus(metadata["status"].toString());
             sr->setSeries(std::move(s));
+            m_results.append(std::move(sr));
+        }
+        emit endInsertRows();
+    }
+}
+
+void SearchModel::searchCollectionsDataReceived(QPair<QString, QJsonDocument> res)
+{
+    QJsonObject page = res.second.object();
+    int nbElems = page["numberOfElements"].toInt();
+    qlonglong n = res.first.section('/', 0, 0).toLongLong();
+    // new search result, clear previous data
+    if (n > currentTimestamp()) {
+        resetModel();
+        setCurrentTimestamp(n);
+    }
+    if (nbElems > 0) {
+        emit beginInsertRows(QModelIndex(), m_results.size(), m_results.size() + nbElems - 1);
+        QJsonArray content = page["content"].toArray();
+        foreach (const QJsonValue &value, content) {
+            QJsonObject jsob = value.toObject();
+            SearchResult* sr = new SearchResult(this);
+            Collection* c = new Collection(this);
+            c->setId(jsob["id"].toInt());
+            QString n = jsob["name"].toString();
+            c->setName(n);
+            c->setOrdered(jsob["ordered"].toBool());
+            c->setFiltered(jsob["filtered"].toBool());
+            QJsonArray seriesArray = jsob["seriesIds"].toArray();
+            foreach (const QJsonValue &val, seriesArray) {
+                c->seriesIds().append(val.toInt());
+            }
+            sr->setId(jsob["id"].toInt());
+            sr->setName(n);
+            sr->setResultType(SearchResult::ResultType::CollectionType);
+            sr->setCollection(std::move(c));
             m_results.append(std::move(sr));
         }
         emit endInsertRows();
