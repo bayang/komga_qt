@@ -134,10 +134,6 @@ Item {
                     topCornerLabelVisible: seriesBookUnreadCount > 0 || seriesBookInProgressCount > 0
                     progressVisible: false
                     selectHandleVisible: true
-//                    Component.onCompleted: {
-//                        console.warn("ism " + ism + " sel " + ism.hasSelection)
-//                        console.warn("t " + ism.hasSelection && ism.isRowSelected(index,ism.model.index(index, 0)))
-//                    }
 
                     itemSelected: ism.hasSelection && ism.isRowSelected(index,ism.model.index(-1,-1))
                     onCardClicked: {
@@ -150,7 +146,6 @@ Item {
                         ism.select(ism.model.index(index, 0), ItemSelectionModel.Toggle)
 //                        console.log(ism.selectedIndexes)
 //                        console.log(ism.hasSelection)
-//                        console.log(ism.selectedIndexes[0].row)
                     }
             }
         }
