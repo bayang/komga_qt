@@ -134,7 +134,12 @@ Item {
                     topCornerLabelVisible: seriesBookUnreadCount > 0 || seriesBookInProgressCount > 0
                     progressVisible: false
                     selectHandleVisible: true
-                    itemSelected: ism.hasSelection && ism.isRowSelected(index)
+//                    Component.onCompleted: {
+//                        console.warn("ism " + ism + " sel " + ism.hasSelection)
+//                        console.warn("t " + ism.hasSelection && ism.isRowSelected(index,ism.model.index(index, 0)))
+//                    }
+
+                    itemSelected: ism.hasSelection && ism.isRowSelected(index,ism.model.index(-1,-1))
                     onCardClicked: {
                         seriesList.currentIndex = index
                         controller.loadBooksView(seriesId)

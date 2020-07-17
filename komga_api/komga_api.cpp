@@ -340,7 +340,7 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
         int reason = reply->request().attribute(QNetworkRequest::Attribute::User).toInt();
         QByteArray response(reply->readAll());
         QJsonDocument doc = QJsonDocument::fromJson( response);
-        qDebug() << doc;
+//        qDebug() << doc;
         if (reason == RequestReason::Libraries) {
             emit libraryDataReady(doc);
         }
