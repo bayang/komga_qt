@@ -95,15 +95,15 @@ QHash<int, QByteArray> BookModel::roleNames() const {
         roles[ColoristsRole] = "bookColorists";
         return roles;
 }
-void BookModel::loadBooks(int seriesId) {
+void BookModel::loadBooks(QString seriesId) {
     m_api->getBooks(seriesId);
     resetBooks();
 }
 Book* BookModel::parseBook(const QJsonValue &value, QObject* parent) {
     Book* b = new Book(parent);
     QJsonObject jsob = value.toObject();
-    b->setId(jsob["id"].toInt());
-    b->setSeriesId(jsob["seriesId"].toInt());
+    b->setId(jsob["id"].toString());
+    b->setSeriesId(jsob["seriesId"].toString());
     b->setName(jsob["name"].toString());
     b->setUrl(jsob["url"].toString());
     b->setSizeBytes(jsob["sizeBytes"].toInt());
@@ -186,11 +186,11 @@ QByteArray BookModel::getThumbnail(int id) {
     QByteArray a = m_api->getThumbnail(id, Komga_api::ThumbnailType::BookThumbnail);
     return a;
 }
-QByteArray BookModel::getPage(int id, int pageNum) {
+QByteArray BookModel::getPage(QString id, int pageNum) {
     QByteArray a = m_api->getPage(id, pageNum);
     return a;
 }
-void BookModel::nextBooksPage(int seriesId) {
+void BookModel::nextBooksPage(QString seriesId) {
     qDebug() << "curr p :" << m_currentPageNumber << " total p : " << m_totalPageNumber;
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
         m_api->getBooks(seriesId, m_currentPageNumber + 1);
@@ -202,7 +202,7 @@ void BookModel::resetBooks() {
     m_books.clear();
     emit endRemoveRows();
 }
-void BookModel::preloadPage(int id, int pageNum) {
+void BookModel::preloadPage(QString id, int pageNum) {
     m_api->getPageAsync(id, pageNum);
 }
 void BookModel::preloadImageDataReceived(QPair<QString, QByteArray> res) {
@@ -211,7 +211,7 @@ void BookModel::preloadImageDataReceived(QPair<QString, QByteArray> res) {
     }
 }
 
-void BookModel::updateProgress(int bookId, int page, bool completed)
+void BookModel::updateProgress(QString bookId, int page, bool completed)
 {
     m_api->updateProgress(bookId, page, completed);
 }
@@ -219,7 +219,7 @@ QByteArray* BookModel::getImageFromCache(const QString &key) {
     return m_picturesCache[key];
 }
 
-bool BookModel::hasImageInCache(int bookId, int currentPage)
+bool BookModel::hasImageInCache(QString bookId, int currentPage)
 {
-    return m_picturesCache.contains(QString::number(bookId) + "/"+QString::number(currentPage));
+    return m_picturesCache.contains(bookId + "/"+QString::number(currentPage));
 }

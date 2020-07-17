@@ -18,7 +18,7 @@ void LibraryModel::apiDataReceived(QJsonDocument libraries) {
     foreach (const QJsonValue &value, array) {
         Library* l = new Library(this);
         QJsonObject jsob = value.toObject();
-        l->setId(jsob["id"].toInt());
+        l->setId(jsob["id"].toString());
         l->setName(jsob["name"].toString());
         l->setRoot(jsob["root"].toString());
         m_libraries.append(std::move(l));

@@ -87,13 +87,13 @@ void CollectionModel::apiDataReceived(QJsonObject page)
             foreach (const QJsonValue &value, content) {
                 Collection* c = new Collection(this);
                 QJsonObject jsob = value.toObject();
-                c->setId(jsob["id"].toInt());
+                c->setId(jsob["id"].toString());
                 c->setName(jsob["name"].toString());
                 c->setOrdered(jsob["ordered"].toBool());
                 c->setFiltered(jsob["filtered"].toBool());
                 QJsonArray seriesArray = jsob["seriesIds"].toArray();
                 foreach (const QJsonValue &val, seriesArray) {
-                    c->seriesIds().append(val.toInt());
+                    c->seriesIds().append(val.toString());
                 }
                 m_collections.append(std::move(c));
             }
@@ -109,14 +109,14 @@ void CollectionModel::apiDataReceived(QJsonObject page)
             foreach (const QJsonValue &value, content) {
                 Collection* c = new Collection(this);
                 QJsonObject jsob = value.toObject();
-                c->setId(jsob["id"].toInt());
+                c->setId(jsob["id"].toString());
                 c->setName(jsob["name"].toString());
                 c->setOrdered(jsob["ordered"].toBool());
                 c->setFiltered(jsob["filtered"].toBool());
                 QJsonArray seriesArray = jsob["seriesIds"].toArray();
-                QList<int> sIds{};
+                QList<QString> sIds{};
                 for (QJsonValue val : seriesArray) {
-                    sIds.append(val.toInt());
+                    sIds.append(val.toString());
                 }
                 c->setSeriesIds(sIds);
                 m_collections.append(std::move(c));
@@ -138,14 +138,14 @@ void CollectionModel::seriesCollectionsReceived(QJsonArray list)
     foreach (const QJsonValue &value, list) {
         Collection* c = new Collection(this);
         QJsonObject jsob = value.toObject();
-        c->setId(jsob["id"].toInt());
+        c->setId(jsob["id"].toString());
         c->setName(jsob["name"].toString());
         c->setOrdered(jsob["ordered"].toBool());
         c->setFiltered(jsob["filtered"].toBool());
         QJsonArray seriesArray = jsob["seriesIds"].toArray();
-        QList<int> sIds{};
+        QList<QString> sIds{};
         for (QJsonValue val : seriesArray) {
-            sIds.append(val.toInt());
+            sIds.append(val.toString());
         }
         c->setSeriesIds(sIds);
         m_collections.append(std::move(c));

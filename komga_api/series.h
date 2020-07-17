@@ -8,7 +8,7 @@
 class KOMGA_API_EXPORT Series: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( int ui_seriesId READ id NOTIFY idChanged )
+    Q_PROPERTY( QString ui_seriesId READ id NOTIFY idChanged )
     Q_PROPERTY( QString ui_seriesName READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY( int ui_seriesBooksCount READ booksCount WRITE setBooksCount NOTIFY booksCountChanged)
     Q_PROPERTY( int ui_seriesBooksReadCount READ booksReadCount WRITE setBooksReadCount NOTIFY booksReadCountChanged)
@@ -20,14 +20,14 @@ class KOMGA_API_EXPORT Series: public QObject
 public:
     Series(QObject *parent = nullptr);
     QString name() const;
-    int id() const;
-    int libraryId() const;
+    QString id() const;
+    QString libraryId() const;
     QString url() const;
     int booksCount() const;
     void setName(QString &name);
     void setUrl(QString &url);
-    void setId(int id);
-    void setLibraryId(int id);
+    void setId(QString id);
+    void setLibraryId(QString id);
     void setBooksCount(int count);
 
     QString metadataStatus() const;
@@ -55,8 +55,8 @@ signals:
     void booksInProgressCountChanged(int count);
 
 private:
-    int m_id{};
-    int m_libraryId{};
+    QString m_id{};
+    QString m_libraryId{};
     int m_booksCount{};
     int m_booksReadCount{};
     int m_booksUnreadCount{};

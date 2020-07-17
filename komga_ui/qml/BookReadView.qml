@@ -7,7 +7,7 @@ Item {
     id: readContainer
     property real imgScale: 0
     property real lastSpacePressedTime: 0
-    property real bookId
+    property string bookId
     property real pageReached
     property real pageCount
     property bool standaloneBook

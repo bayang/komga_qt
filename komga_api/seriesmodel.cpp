@@ -67,18 +67,18 @@ QHash<int, QByteArray> SeriesModel::roleNames() const {
         roles[MetadataStatusRole] = "seriesMetadataStatus";
         return roles;
 }
-void SeriesModel::loadSeries(int library) {
+void SeriesModel::loadSeries(QString library) {
     m_api->getSeries(library);
     resetSeries();
 }
 
-void SeriesModel::loadCollectionSeries(int collectionId)
+void SeriesModel::loadCollectionSeries(QString collectionId)
 {
     m_api->getCollectionSeries(collectionId);
     resetSeries();
 }
 
-void SeriesModel::loadSeriesCollections(int seriesId)
+void SeriesModel::loadSeriesCollections(QString seriesId)
 {
     m_api->getSeriesCollections(seriesId);
 }
@@ -92,14 +92,14 @@ void SeriesModel::resetSeries() {
 Series* SeriesModel::parseSeries(const QJsonValue &value) {
     Series* s = new Series(this);
     QJsonObject jsob = value.toObject();
-    s->setId(jsob["id"].toInt());
+    s->setId(jsob["id"].toString());
     QString n = jsob["name"].toString();
     s->setName(n);
     s->setBooksCount(jsob["booksCount"].toInt());
     s->setBooksReadCount(jsob["booksReadCount"].toInt());
     s->setBooksUnreadCount(jsob["booksUnreadCount"].toInt());
     s->setBooksInProgressCount(jsob["booksInProgressCount"].toInt());
-    s->setLibraryId(jsob["libraryId"].toInt());
+    s->setLibraryId(jsob["libraryId"].toString());
     QString u = jsob["url"].toString();
     s->setUrl(u);
     QJsonObject metadata = jsob["metadata"].toObject();
@@ -138,17 +138,22 @@ void SeriesModel::apiDataReceived(QJsonObject page) {
         m_totalPageNumber = totPages;
     }
 }
+
+void SeriesModel::updateProgress(QString seriesId, bool completed)
+{
+    m_api->updateSeriesProgress(seriesId, completed);
+}
 QByteArray SeriesModel::getThumbnail(int id) {
     QByteArray a = m_api->getThumbnail(id, Komga_api::ThumbnailType::SeriesThumbnail);
     return a;
 }
-void SeriesModel::nextSeriesPage(int libraryId) {
+void SeriesModel::nextSeriesPage(QString libraryId) {
     qDebug() << "current p :" << m_currentPageNumber << " total p : " << m_totalPageNumber;
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
         m_api->getSeries(libraryId, m_currentPageNumber + 1);
     }
 }
-void SeriesModel::nextCollectionsSeriesPage(int collectionId) {
+void SeriesModel::nextCollectionsSeriesPage(QString collectionId) {
     qDebug() << "current p :" << m_currentPageNumber << " total p : " << m_totalPageNumber;
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
         m_api->getCollectionSeries(collectionId, m_currentPageNumber + 1);

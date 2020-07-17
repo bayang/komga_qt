@@ -40,21 +40,21 @@ public:
 public slots:
     void apiDataReceived(QJsonObject books);
     void preloadImageDataReceived(QPair<QString, QByteArray> res);
-    void updateProgress(int bookId, int page, bool completed = false);
+    void updateProgress(QString bookId, int page, bool completed = false);
 
     // QAbstractItemModel interface
 public:
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
-    Q_INVOKABLE void loadBooks(int seriesId);
+    Q_INVOKABLE void loadBooks(QString seriesId);
     QByteArray getThumbnail(int id);
-    QByteArray getPage(int id, int pageNum);
-    void nextBooksPage(int seriesId);
+    QByteArray getPage(QString id, int pageNum);
+    void nextBooksPage(QString seriesId);
     void resetBooks();
-    void preloadPage(int id, int pageNum);
+    void preloadPage(QString id, int pageNum);
     QByteArray* getImageFromCache(const QString &key);
-    bool hasImageInCache(int bookId, int currentPage);
+    bool hasImageInCache(QString bookId, int currentPage);
     static Book *parseBook(const QJsonValue &value, QObject* parent);
     bool setData(const QModelIndex& index, const QVariant& value,
                  int role);

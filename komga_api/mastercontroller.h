@@ -24,31 +24,31 @@ class KOMGA_API_EXPORT MasterController : public QObject
     Q_PROPERTY( LibraryModel* ui_libraryModel READ getLibraryModel CONSTANT )
     Q_PROPERTY( SearchModel* ui_searchModel READ getSearchModel CONSTANT )
     Q_PROPERTY( CollectionModel* ui_collectionModel READ getCollectionModel CONSTANT )
-    Q_PROPERTY( int ui_defaultLibraryId MEMBER DEFAULT_LIBRARY_ID CONSTANT )
-    Q_PROPERTY( int ui_newSeriesId MEMBER SERIES_NEW_ID CONSTANT )
-    Q_PROPERTY( int ui_latestSeriesId MEMBER SERIES_LATEST_ID CONSTANT )
-    Q_PROPERTY( int ui_updatedSeriesId MEMBER SERIES_UPDATED_ID CONSTANT )
+    Q_PROPERTY( QString ui_defaultLibraryId MEMBER DEFAULT_LIBRARY_ID CONSTANT )
+    Q_PROPERTY( QString ui_newSeriesId MEMBER SERIES_NEW_ID CONSTANT )
+    Q_PROPERTY( QString ui_latestSeriesId MEMBER SERIES_LATEST_ID CONSTANT )
+    Q_PROPERTY( QString ui_updatedSeriesId MEMBER SERIES_UPDATED_ID CONSTANT )
     Q_PROPERTY( QString ui_newSeriesName MEMBER SERIES_NEW_NAME CONSTANT )
     Q_PROPERTY( QString ui_latestSeriesName MEMBER SERIES_LATEST_NAME CONSTANT )
     Q_PROPERTY( QString ui_updatedSeriesName MEMBER SERIES_UPDATED_NAME CONSTANT )
     Q_PROPERTY( QString ui_defaultLibraryName MEMBER DEFAULT_LIBRARY_NAME CONSTANT )
     Q_PROPERTY( QString ui_latestBooksName MEMBER BOOKS_LATEST_NAME CONSTANT )
-    Q_PROPERTY( int ui_latestBooksId MEMBER BOOKS_LATEST_ID CONSTANT )
+    Q_PROPERTY( QString ui_latestBooksId MEMBER BOOKS_LATEST_ID CONSTANT )
     Q_PROPERTY( QString ui_ondeckBooksName MEMBER BOOKS_ON_DECK_NAME CONSTANT )
-    Q_PROPERTY( int ui_ondeckBooksId MEMBER BOOKS_ON_DECK_ID CONSTANT )
-    Q_PROPERTY( int ui_collectionsId MEMBER COLLECTIONS_ID CONSTANT )
+    Q_PROPERTY( QString ui_ondeckBooksId MEMBER BOOKS_ON_DECK_ID CONSTANT )
+    Q_PROPERTY( QString ui_collectionsId MEMBER COLLECTIONS_ID CONSTANT )
     Q_PROPERTY( QString ui_collectionsName MEMBER COLLECTIONS_NAME CONSTANT )
     Q_PROPERTY( QString ui_readingBooksName MEMBER BOOKS_READING_NAME CONSTANT )
-    Q_PROPERTY( int ui_readingBooksId MEMBER BOOKS_READING_ID CONSTANT )
+    Q_PROPERTY( QString ui_readingBooksId MEMBER BOOKS_READING_ID CONSTANT )
     Q_PROPERTY( NetworkInformer* ui_networkInformer READ getNetworkInformer CONSTANT )
 
 public:
     explicit MasterController(SeriesModel *seriesModel, BookModel *bookModel, CollectionModel *collectionModel, NetworkInformer *informer, QObject *parent = nullptr);
 
-    static const int DEFAULT_LIBRARY_ID{-100};
-    static const int SERIES_NEW_ID{-101};
-    static const int SERIES_LATEST_ID{-102};
-    static const int SERIES_UPDATED_ID{-103};
+    static const QString DEFAULT_LIBRARY_ID;
+    static const QString SERIES_NEW_ID;
+    static const QString SERIES_LATEST_ID;
+    static const QString SERIES_UPDATED_ID;
 
     static const QString DEFAULT_LIBRARY_NAME;
 
@@ -56,14 +56,14 @@ public:
     static const QString SERIES_NEW_NAME;
     static const QString SERIES_LATEST_NAME;
 
-    static const int BOOKS_LATEST_ID{-1001};
+    static const QString BOOKS_LATEST_ID;
     static const QString BOOKS_LATEST_NAME;
-    static const int BOOKS_READING_ID{-1002};
+    static const QString BOOKS_READING_ID;
     static const QString BOOKS_READING_NAME;
-    static const int BOOKS_ON_DECK_ID{-1003};
+    static const QString BOOKS_ON_DECK_ID;
     static const QString BOOKS_ON_DECK_NAME;
 
-    static const int COLLECTIONS_ID{-2002};
+    static const QString COLLECTIONS_ID;
     static const QString COLLECTIONS_NAME;
 
     LibraryModel *getLibraryModel() const;
@@ -87,24 +87,25 @@ public:
     void setCollectionModel(CollectionModel *collectionModel);
 
 signals:
-    void loadSeriesView(int seriesId);
-    void loadCollectionSeriesView(int collectionId);
-    void loadSeriesCollections(int seriesId);
-    void loadBooksView(int seriesId);
+    void loadSeriesView(QString seriesId);
+    void loadCollectionSeriesView(QString collectionId);
+    void loadSeriesCollections(QString seriesId);
+    void loadBooksView(QString seriesId);
     void loadCollectionsView();
 
 public slots:
-    void nextSeriesPage(int currentLibraryId);
-    void nextBooksPage(int currentSeriesId);
+    void nextSeriesPage(QString currentLibraryId);
+    void nextBooksPage(QString currentSeriesId);
     void nextCollectionsPage();
-    void nextCollectionsSeriesPage(int currentCollectionId);
+    void nextCollectionsSeriesPage(QString currentCollectionId);
     void setSelectedBookIdx(int value);
     void refreshData();
     void doSearch(const QString &searchTerm);
     void resetSearch();
     void setCurrentBookPageReached(int currentImageNumber);
-    void preloadBookPages(int bookId, int currentPage, int pageCount);
-    void updateprogress(int bookId, int currentPage);
+    void preloadBookPages(QString bookId, int currentPage, int pageCount);
+    void updateprogress(QString bookId, int currentPage);
+    void markRead(QModelIndexList list, QString type);
 
 private:
     LibraryModel* m_libraryModel{nullptr};

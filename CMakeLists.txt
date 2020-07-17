@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.1.0)
 
 set(VERSION_MAJOR 0)
-set(VERSION_MINOR 0)
-set(VERSION_PATCH 1)
+set(VERSION_MINOR 1)
+set(VERSION_PATCH 0)
 
 message(STATUS ${CMAKE_SOURCE_DIR})
 

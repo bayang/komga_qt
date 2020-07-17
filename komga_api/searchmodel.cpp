@@ -131,13 +131,13 @@ void SearchModel::searchSeriesDataReceived(QPair<QString, QJsonDocument> res)
             SearchResult* sr = new SearchResult(this);
             Series* s = new Series(this);
             QString n = jsob["name"].toString();
-            sr->setId(jsob["id"].toInt());
+            sr->setId(jsob["id"].toString());
             sr->setName(n);
             sr->setResultType(SearchResult::ResultType::SeriesType);
-            s->setId(jsob["id"].toInt());
+            s->setId(jsob["id"].toString());
             s->setName(n);
             s->setBooksCount(jsob["booksCount"].toInt());
-            s->setLibraryId(jsob["libraryId"].toInt());
+            s->setLibraryId(jsob["libraryId"].toString());
             QString u = jsob["url"].toString();
             s->setUrl(u);
             QJsonObject metadata = jsob["metadata"].toObject();
@@ -167,16 +167,16 @@ void SearchModel::searchCollectionsDataReceived(QPair<QString, QJsonDocument> re
             QJsonObject jsob = value.toObject();
             SearchResult* sr = new SearchResult(this);
             Collection* c = new Collection(this);
-            c->setId(jsob["id"].toInt());
+            c->setId(jsob["id"].toString());
             QString n = jsob["name"].toString();
             c->setName(n);
             c->setOrdered(jsob["ordered"].toBool());
             c->setFiltered(jsob["filtered"].toBool());
             QJsonArray seriesArray = jsob["seriesIds"].toArray();
             foreach (const QJsonValue &val, seriesArray) {
-                c->seriesIds().append(val.toInt());
+                c->seriesIds().append(val.toString());
             }
-            sr->setId(jsob["id"].toInt());
+            sr->setId(jsob["id"].toString());
             sr->setName(n);
             sr->setResultType(SearchResult::ResultType::CollectionType);
             sr->setCollection(std::move(c));

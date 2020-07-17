@@ -9,7 +9,7 @@
 class KOMGA_API_EXPORT Book: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( int ui_bookId READ id CONSTANT )
+    Q_PROPERTY( QString ui_bookId READ id CONSTANT )
     Q_PROPERTY( QString ui_bookName READ name CONSTANT )
     Q_PROPERTY( QString ui_bookUrl READ url CONSTANT )
     Q_PROPERTY( int ui_bookNumber READ number CONSTANT )
@@ -24,11 +24,11 @@ class KOMGA_API_EXPORT Book: public QObject
 public:
     Book(QObject *parent = nullptr);
 
-    int id() const;
-    void setId(int id);
+    QString id() const;
+    void setId(QString id);
 
-    int seriesId() const;
-    void setSeriesId(int seriesId);
+    QString seriesId() const;
+    void setSeriesId(QString seriesId);
 
     QString name() const;
     void setName(const QString &name);
@@ -69,8 +69,8 @@ signals:
     void currentPageReachedChanged(int page);
 
 private:
-    int m_id {};
-    int m_seriesId {};
+    QString m_id {};
+    QString m_seriesId {};
     QString m_name{};
     QString m_url{};
     int m_number {};

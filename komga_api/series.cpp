@@ -9,10 +9,10 @@ Series::Series(QObject *parent):
 QString Series::name() const {
     return m_name;
 }
-int Series::id() const {
+QString Series::id() const {
     return m_id;
 }
-int Series::libraryId() const {
+QString Series::libraryId() const {
     return m_libraryId;
 }
 QString Series::url() const {
@@ -27,10 +27,10 @@ void Series::setName(QString &name) {
 void Series::setUrl(QString &url) {
     m_url = url;
 }
-void Series::setId(int id) {
+void Series::setId(QString id) {
     m_id = id;
 }
-void Series::setLibraryId(int id) {
+void Series::setLibraryId(QString id) {
     m_libraryId = id;
 }
 void Series::setBooksCount(int count) {

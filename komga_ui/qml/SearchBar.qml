@@ -8,6 +8,7 @@ Item {
     id: root
     signal searchTriggered(string searchTerm)
     onSearchTriggered: dropDownPopup.open()
+    property alias searchBottom: searchBar.bottom
 
     RowLayout {
         id: searchBar

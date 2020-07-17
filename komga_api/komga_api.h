@@ -15,16 +15,17 @@
 #include "book.h"
 #include "series.h"
 
+
 class KOMGA_API_EXPORT Komga_api: public QObject
 {
     Q_OBJECT
 public:
     Komga_api(QObject *parent = nullptr);
     void getLibraries();
-    void getSeries(int libraryId, int page = 0);
-    void getCollectionSeries(int collectionId, int page = 0);
-    void getSeriesCollections(int seriesId);
-    void getBooks(int seriesId, int page = 0);
+    void getSeries(QString libraryId, int page = 0);
+    void getCollectionSeries(QString collectionId, int page = 0);
+    void getSeriesCollections(QString seriesId);
+    void getBooks(QString seriesId, int page = 0);
     static const QString URL_LIBRARIES;
     static const QString URL_SERIES;
     static const QString URL_LATEST;
@@ -57,14 +58,20 @@ public:
         SeriesThumbnail,
         BookThumbnail
     };
+    enum ApiType {
+        Series,
+        Book
+    };
+    Q_ENUM(ApiType);
     QByteArray getThumbnail(int id, ThumbnailType type);
     QNetworkRequest getThumbnailAsync(QString id);
-    QByteArray getPage(int id, int pageNum);
-    void getPageAsync(int id, int pageNum);
+    QByteArray getPage(QString id, int pageNum);
+    void getPageAsync(QString id, int pageNum);
     QString getServerUrl();
     void authenticate(QNetworkReply *reply, QAuthenticator *authenticator);
     void doSearch(const QString &searchTerm, qint64 timestamp);
-    void updateProgress(int bookId, int page, bool completed = false);
+    void updateProgress(QString bookId, int page, bool completed = false);
+    void updateSeriesProgress(QString seriesId, bool completed = true);
     void onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
     void getCollections(int page = 0);
 

@@ -18,8 +18,8 @@ public:
         CollectionType
     };
     Q_ENUM(ResultType);
-    int id() const;
-    void setId(int id);
+    QString id() const;
+    void setId(QString id);
 
     QString name() const;
     void setName(const QString &name);
@@ -37,7 +37,7 @@ public:
     void setCollection(Collection *collection);
 
 private:
-    int m_id {};
+    QString m_id {};
     QString m_name{};
     ResultType m_resultType{};
     Book *m_book{};

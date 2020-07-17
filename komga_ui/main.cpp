@@ -83,7 +83,6 @@ int main(int argc, char *argv[])
     MasterController* controller = new MasterController{seriesmodel, bookModel, collectionModel, informer, &app};
     controller->setLibraryModel(lm);
     controller->setSearchModel(searchModel);
-//    controller->setCollectionModel(collectionModel);
 
     qmlRegisterType<Library>("komga_api", 1, 0,
     "Library");

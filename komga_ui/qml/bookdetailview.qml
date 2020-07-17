@@ -7,7 +7,7 @@ import assets 1.0
 Item {
     id: bookDetailRoot
     property bool imageCurrentlyHovered: false
-    property real currentBookId
+    property string currentBookId
     property real currentBookPageReached
     property real currentBookPageCount
     property bool currentBookCompleted

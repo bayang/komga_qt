@@ -12,7 +12,7 @@ QString Library::name() const {
 QString Library::root() const {
     return m_root;
 }
-int Library::id() const {
+QString Library::id() const {
     return m_id;
 }
 
@@ -24,6 +24,6 @@ void Library::setRoot(const QString &root) {
     m_root = root;
 }
 
-void Library::setId(int id) {
+void Library::setId(QString id) {
     m_id = id;
 }

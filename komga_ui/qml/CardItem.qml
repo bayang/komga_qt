@@ -17,15 +17,20 @@ Item {
     property alias topCornerLabelFontSize: nbBooksLabel.font.pointSize
     property alias topCornerLabelVisible: topCornerRectangle.visible
 
+    property bool selectHandleVisible
+
     property alias progressValue: progress.value
     property alias progressVisible: progress.visible
     property alias progressHeight: progress.thickness
 
     signal cardClicked
+    signal selectClicked
 
     width: cardWidth
     height: cardHeight - 10
     property bool cardCurrentlyHovered: false
+
+    property bool itemSelected: false
 
     Rectangle {
         id: seriesDelegateBackgound
@@ -135,6 +140,21 @@ Item {
             id: nbBooksLabel
             anchors.centerIn: parent
             font.bold: true
+        }
+    }
+    Rectangle {
+        id: topSelectHandle
+        anchors.top: seriesDelegateRect.top
+        anchors.left: seriesDelegateRect.left
+        height: 22
+        width: 22
+        color: itemSelected ? "orange" : Style.hoverBorderColor
+        radius: height / 2
+        visible: selectHandleVisible && (cardCurrentlyHovered || itemSelected)
+        MouseArea {
+            anchors.fill: parent
+            propagateComposedEvents: false
+            onClicked: root.selectClicked()
         }
     }
 }

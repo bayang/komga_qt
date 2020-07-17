@@ -9,6 +9,17 @@ const QString MasterController::BOOKS_READING_NAME{"Keep reading"};
 const QString MasterController::BOOKS_ON_DECK_NAME{"On deck"};
 const QString MasterController::COLLECTIONS_NAME{"Collections"};
 
+const QString MasterController::DEFAULT_LIBRARY_ID{"-100"};
+const QString MasterController::SERIES_NEW_ID{"-101"};
+const QString MasterController::SERIES_LATEST_ID{"-102"};
+const QString MasterController::SERIES_UPDATED_ID{"-103"};
+
+const QString MasterController::BOOKS_LATEST_ID{"-1001"};
+const QString MasterController::BOOKS_READING_ID{"-1002"};
+const QString MasterController::BOOKS_ON_DECK_ID{"-1003"};
+
+const QString MasterController::COLLECTIONS_ID{"-2002"};
+
 MasterController::MasterController(SeriesModel* seriesModel, BookModel* bookModel, CollectionModel* collectionModel, NetworkInformer *informer, QObject *parent) :
     m_seriesModel{seriesModel}, m_bookModel{bookModel}, m_collectionModel{collectionModel}, m_networkInformer{informer}, QObject{parent}
 {
@@ -34,7 +45,7 @@ LibraryModel *MasterController::getLibraryModel() const
     return m_libraryModel;
 }
 
-void MasterController::nextSeriesPage(int currentLibraryId) {
+void MasterController::nextSeriesPage(QString currentLibraryId) {
     if (currentLibraryId == MasterController::DEFAULT_LIBRARY_ID) {
         m_seriesModel->nextSeriesPage(MasterController::DEFAULT_LIBRARY_ID);
     }
@@ -42,10 +53,10 @@ void MasterController::nextSeriesPage(int currentLibraryId) {
         m_seriesModel->nextSeriesPage(currentLibraryId);
     }
 }
-void MasterController::nextCollectionsSeriesPage(int currentCollectionId) {
+void MasterController::nextCollectionsSeriesPage(QString currentCollectionId) {
     m_seriesModel->nextCollectionsSeriesPage(currentCollectionId);
 }
-void MasterController::nextBooksPage(int currentSeriesId) {
+void MasterController::nextBooksPage(QString currentSeriesId) {
     m_bookModel->nextBooksPage(currentSeriesId);
 }
 
@@ -68,8 +79,13 @@ void MasterController::setSelectedBookIdx(int value)
     selectedBookIdx = value;
 }
 
-void MasterController::updateprogress(int bookId, int currentPage) {
+void MasterController::updateprogress(QString bookId, int currentPage) {
     getBookModel()->updateProgress(bookId, currentPage);
+}
+
+void MasterController::markRead(QModelIndexList list, QString type)
+{
+    qDebug() << "received type list " << type << " , " << list;
 }
 
 CollectionModel *MasterController::getCollectionModel() const
@@ -103,7 +119,7 @@ SearchModel *MasterController::getSearchModel() const
     return m_searchModel;
 }
 
-void MasterController::preloadBookPages(int bookId, int currentPage, int pageCount)
+void MasterController::preloadBookPages(QString bookId, int currentPage, int pageCount)
 {
     for (int i = 1; i <= 5; i++) {
         if ((currentPage + i < pageCount) && (! getBookModel()->hasImageInCache(bookId, currentPage + i))) {

@@ -26,20 +26,23 @@ public:
 private slots:
     void apiDataReceived(QJsonObject series);
 
+public slots:
+    void updateProgress(QString seriesId, bool completed = true);
+
     // QAbstractItemModel interface
 public:
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
-    Q_INVOKABLE void loadSeries(int library);
-    Q_INVOKABLE void loadCollectionSeries(int collectionId);
-    Q_INVOKABLE void loadSeriesCollections(int seriesId);
-    void nextSeriesPage(int libraryId);
+    Q_INVOKABLE void loadSeries(QString library);
+    Q_INVOKABLE void loadCollectionSeries(QString collectionId);
+    Q_INVOKABLE void loadSeriesCollections(QString seriesId);
+    void nextSeriesPage(QString libraryId);
     QByteArray getThumbnail(int id);
     Series* find(int libraryId);
     void resetSeries();
     Series *parseSeries(const QJsonValue &value);
-    void nextCollectionsSeriesPage(int collectionId);
+    void nextCollectionsSeriesPage(QString collectionId);
 signals:
     void refresh();
 

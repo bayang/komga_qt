@@ -5,12 +5,12 @@ SearchResult::SearchResult(QObject *parent) :
 {
 
 }
-int SearchResult::id() const
+QString SearchResult::id() const
 {
     return m_id;
 }
 
-void SearchResult::setId(int id)
+void SearchResult::setId(QString id)
 {
     m_id = id;
 }

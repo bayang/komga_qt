@@ -6,7 +6,7 @@ import assets 1.0
 
 Item {
     property real lastNextPageCalledTime: 0
-    property real currentSeriesId
+    property string currentSeriesId
     property string currentSeriesName
     property real currentSeriesBookCount
     property string currentSeriesMetadataStatus

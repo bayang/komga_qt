@@ -5,12 +5,12 @@ Collection::Collection(QObject *parent) : QObject(parent)
 
 }
 
-int Collection::id() const
+QString Collection::id() const
 {
     return m_id;
 }
 
-void Collection::setId(int id)
+void Collection::setId(QString id)
 {
     m_id = id;
 }
@@ -45,12 +45,12 @@ void Collection::setFiltered(bool filtered)
     m_filtered = filtered;
 }
 
-QList<int> Collection::seriesIds() const
+QList<QString> Collection::seriesIds() const
 {
     return m_seriesIds;
 }
 
-void Collection::setSeriesIds(const QList<int> &seriesIds)
+void Collection::setSeriesIds(const QList<QString> &seriesIds)
 {
     m_seriesIds = seriesIds;
 }

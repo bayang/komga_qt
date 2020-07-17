@@ -8,7 +8,7 @@ BookPageProvider::BookPageProvider(MasterController* controller) :
 QImage BookPageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize) {
     Q_UNUSED(requestedSize);
     QStringList parts = id.split("/");
-    int idNb = parts.at(0).toInt();
+    QString idNb = parts.at(0);
     int pageNb = parts.at(1).toInt();
     if (QByteArray* c = m_controller->getBookModel()->getImageFromCache(id)) {
         QImage pic;

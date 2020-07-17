@@ -7,22 +7,22 @@ Book::Book(QObject *parent):
     m_bookMetadata = new BookMetadata(this);
 }
 
-int Book::id() const
+QString Book::id() const
 {
     return m_id;
 }
 
-void Book::setId(int id)
+void Book::setId(QString id)
 {
     m_id = id;
 }
 
-int Book::seriesId() const
+QString Book::seriesId() const
 {
     return m_seriesId;
 }
 
-void Book::setSeriesId(int seriesId)
+void Book::setSeriesId(QString seriesId)
 {
     m_seriesId = seriesId;
 }

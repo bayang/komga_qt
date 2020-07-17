@@ -123,7 +123,7 @@ void Komga_api::getCollections(int page) {
     manager->get(r);
 }
 
-void Komga_api::getSeries(int libraryId, int page) {
+void Komga_api::getSeries(QString libraryId, int page) {
     qDebug() << "fetching series for library " << libraryId;
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesReason));
@@ -144,7 +144,7 @@ void Komga_api::getSeries(int libraryId, int page) {
     query.addQueryItem("size", "40");
     // only works if library id is always positive, should check this
     if (libraryId > MasterController::DEFAULT_LIBRARY_ID) {
-        query.addQueryItem("library_id", QString::number(libraryId));
+        query.addQueryItem("library_id", libraryId);
     }
     if (page != 0) {
         query.addQueryItem("page", QString::number(page));
@@ -154,13 +154,13 @@ void Komga_api::getSeries(int libraryId, int page) {
     manager->get(r);
 }
 
-void Komga_api::getCollectionSeries(int collectionId, int page)
+void Komga_api::getCollectionSeries(QString collectionId, int page)
 {
     qDebug() << "fetching series for collection " << collectionId;
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesReason));
     QUrl url;
-    url.setUrl(getServerUrl() + URL_COLLECTIONS + "/" + QString::number(collectionId, 10) + URL_SERIES);
+    url.setUrl(getServerUrl() + URL_COLLECTIONS + "/" + collectionId + URL_SERIES);
     QUrlQuery query;
     query.addQueryItem("size", "40");
     if (page != 0) {
@@ -171,13 +171,13 @@ void Komga_api::getCollectionSeries(int collectionId, int page)
     manager->get(r);
 }
 
-void Komga_api::getSeriesCollections(int seriesId)
+void Komga_api::getSeriesCollections(QString seriesId)
 {
     qDebug() << "fetching collections for series " << seriesId;
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesCollections));
     QUrl url;
-    url.setUrl(getServerUrl() + URL_SERIES + "/" + QString::number(seriesId, 10) + URL_COLLECTIONS);
+    url.setUrl(getServerUrl() + URL_SERIES + "/" + seriesId + URL_COLLECTIONS);
     r.setUrl(url);
     manager->get(r);
 }
@@ -188,7 +188,7 @@ void Komga_api::doSearch(const QString &searchTerm, qint64 timestamp) {
     searchCollections(searchTerm, timestamp);
 }
 
-void Komga_api::updateProgress(int bookId, int page, bool completed)
+void Komga_api::updateProgress(QString bookId, int page, bool completed)
 {
     QJsonObject obj;
     if (completed) {
@@ -200,7 +200,7 @@ void Komga_api::updateProgress(int bookId, int page, bool completed)
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Progress));
     QUrl url;
-    url.setUrl(getServerUrl() + URL_BOOKS + "/" + QString::number(bookId, 10) + "/" + URL_PROGRESS);
+    url.setUrl(getServerUrl() + URL_BOOKS + "/" + bookId + "/" + URL_PROGRESS);
     r.setUrl(url);
     r.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "application/json; charset=utf8");
     if (! completed && page == 0) {
@@ -210,6 +210,21 @@ void Komga_api::updateProgress(int bookId, int page, bool completed)
         QJsonDocument doc{obj};
         qDebug() << doc.toJson(QJsonDocument::JsonFormat::Compact);
         manager->sendCustomRequest(r, "PATCH", doc.toJson(QJsonDocument::JsonFormat::Compact));
+    }
+}
+
+void Komga_api::updateSeriesProgress(QString seriesId, bool completed)
+{
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Progress));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_SERIES + "/" + seriesId + "/" + URL_PROGRESS);
+    r.setUrl(url);
+    if (completed) {
+        manager->post(r, QByteArray{});
+    }
+    else {
+        manager->deleteResource(r);
     }
 }
 
@@ -290,7 +305,7 @@ void Komga_api::searchBooks(const QString &searchTerm, qint64 timestamp) {
     m_searchMapper->setMapping(reply, key);
 }
 
-void Komga_api::getBooks(int seriesId, int page) {
+void Komga_api::getBooks(QString seriesId, int page) {
     qDebug() << "fetch books for series " << seriesId;
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Books));
@@ -308,7 +323,7 @@ void Komga_api::getBooks(int seriesId, int page) {
         query.addQueryItem("sort", "readProgress.lastModified,desc");
     }
     else {
-        url.setUrl(getServerUrl() + URL_SERIES + "/" + QString::number(seriesId, 10) + URL_BOOKS);
+        url.setUrl(getServerUrl() + URL_SERIES + "/" + seriesId + URL_BOOKS);
     }
     query.addQueryItem("size", "40");
     if (page != 0) {
@@ -325,7 +340,7 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
         int reason = reply->request().attribute(QNetworkRequest::Attribute::User).toInt();
         QByteArray response(reply->readAll());
         QJsonDocument doc = QJsonDocument::fromJson( response);
-//        qDebug() << doc;
+        qDebug() << doc;
         if (reason == RequestReason::Libraries) {
             emit libraryDataReady(doc);
         }
@@ -342,7 +357,7 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
             emit collectionsDataReady(page);
         }
         else if (reason == RequestReason::Progress) {
-//            qDebug() << "progress response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+            qDebug() << "progress response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         }
         else if (reason == RequestReason::SeriesCollections) {
             QJsonArray list = doc.array();
@@ -412,11 +427,11 @@ QNetworkRequest Komga_api::getThumbnailAsync(QString id) {
     r.setUrl(url);
     return r;
 }
-QByteArray Komga_api::getPage(int id, int pageNum) {
+QByteArray Komga_api::getPage(QString id, int pageNum) {
     qDebug() << "fetch page num for id " << pageNum << "  " <<  id;
     QNetworkRequest r;
     QUrl url;
-    url.setUrl(getServerUrl() + URL_BOOKS + "/" + QString::number(id, 10) + URL_PAGE + "/" + QString::number(pageNum, 10));
+    url.setUrl(getServerUrl() + URL_BOOKS + "/" + id + URL_PAGE + "/" + QString::number(pageNum, 10));
     QUrlQuery query;
     query.addQueryItem("zero_based", "true");
     url.setQuery(query);
@@ -435,11 +450,11 @@ QByteArray Komga_api::getPage(int id, int pageNum) {
         return QByteArray();
     }
 }
-void Komga_api::getPageAsync(int id, int pageNum) {
+void Komga_api::getPageAsync(QString id, int pageNum) {
     qDebug() << "fetch page async num for id " << pageNum << "  " <<  id;
     QNetworkRequest r;
     QUrl url;
-    url.setUrl(getServerUrl() + URL_BOOKS + "/" + QString::number(id, 10) + URL_PAGE + "/" + QString::number(pageNum, 10));
+    url.setUrl(getServerUrl() + URL_BOOKS + "/" + id + URL_PAGE + "/" + QString::number(pageNum, 10));
     QUrlQuery query;
     query.addQueryItem("zero_based", "true");
     url.setQuery(query);
@@ -449,7 +464,7 @@ void Komga_api::getPageAsync(int id, int pageNum) {
     connect(reply, &QNetworkReply::finished, [=](){
         m_mapper->map(reply);
     });
-    QString key = QString::number(id) + "/" + QString::number(pageNum);
+    QString key = id + "/" + QString::number(pageNum);
     m_replies.insert(key, reply);
     m_mapper->setMapping(reply, key);
 }
