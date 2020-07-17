@@ -105,7 +105,7 @@ public slots:
     void setCurrentBookPageReached(int currentImageNumber);
     void preloadBookPages(QString bookId, int currentPage, int pageCount);
     void updateprogress(QString bookId, int currentPage);
-    void markRead(QModelIndexList list, QString type);
+    void markRead(QModelIndexList list, QString type, bool completed = true);
 
 private:
     LibraryModel* m_libraryModel{nullptr};

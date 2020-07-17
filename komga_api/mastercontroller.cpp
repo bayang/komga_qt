@@ -83,9 +83,15 @@ void MasterController::updateprogress(QString bookId, int currentPage) {
     getBookModel()->updateProgress(bookId, currentPage);
 }
 
-void MasterController::markRead(QModelIndexList list, QString type)
+void MasterController::markRead(QModelIndexList list, QString type, bool completed)
 {
     qDebug() << "received type list " << type << " , " << list;
+    for (QModelIndex id : list) {
+        if (id.isValid()) {
+            QString seriesId = getSeriesModel()->data(getSeriesModel()->index(id.row(), 0), SeriesModel::IdRole).toString();
+            getSeriesModel()->updateProgress(seriesId, completed);
+        }
+    }
 }
 
 CollectionModel *MasterController::getCollectionModel() const

@@ -12,9 +12,7 @@ Item {
 
     RowLayout {
         id: searchBar
-        width: parent.width
-        height: parent.height
-        Layout.alignment: Qt.AlignVCenter
+        anchors.fill: parent
         TextField {
             id: searchText
             placeholderText: qsTr("Search...")
@@ -118,7 +116,6 @@ Item {
                                                    sourceIsLibrary: false})
                                 }
                                 else {
-//                                    console.log("res id " + resultSeries.ui_seriesId)
                                     controller.loadBooksView(resultSeries.ui_seriesId)
                                     stack.replace("qrc:/qml/booksview.qml", {
                                                    currentSeriesId: resultSeries.ui_seriesId,
@@ -139,7 +136,7 @@ Item {
                 }
             }
         }
-        Button {
+        RoundButton {
             id: searchButton
             onClicked: root.searchTriggered(searchText.text)
             font {

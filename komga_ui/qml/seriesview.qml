@@ -26,29 +26,66 @@ Item {
                 id: searchBar
                 width: parent.width > 600 ? 600 : parent.width
                 height: 20
-//                anchors.centerIn: parent
+                anchors.centerIn: parent
                 onSearchTriggered: {
                     controller.doSearch(searchTerm)
                 }
             }
-            Button {
-                id: readButton
-                visible: ism.hasSelection
-//                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                onClicked: controller.markRead(ism.selectedIndexes, "Series")
-                text: "Mark read"
-            }
-            Button {
-                id: deselectButton
-                visible: ism.hasSelection
-//                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                onClicked: {
-                    ism.clearSelection()
+            Row {
+                anchors.right: parent.right
+                RoundButton {
+                    id: readButton
+                    visible: ism.hasSelection
+                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: controller.markRead(ism.selectedIndexes, "Series")
+                    font {
+                        family: Style.fontAwesomeSolid
+                        pointSize: Style.backArrowIconSize
+                    }
+                    text: "\uf06e";
+                    ToolTip.delay: 1000
+                    ToolTip.timeout: 3000
+                    ToolTip.visible: hovered
+                    hoverEnabled: true
+                    ToolTip.text: qsTr("Mark read")
                 }
-                text: "Deselect"
+                RoundButton {
+                    id: unreadButton
+                    visible: ism.hasSelection
+                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: controller.markRead(ism.selectedIndexes, "Series", false)
+                    font {
+                        family: Style.fontAwesomeSolid
+                        pointSize: Style.backArrowIconSize
+                    }
+                    text: "\uf070";
+                    ToolTip.delay: 1000
+                    ToolTip.timeout: 3000
+                    ToolTip.visible: hovered
+                    hoverEnabled: true
+                    ToolTip.text: qsTr("Mark unread")
+                }
+                RoundButton {
+                    id: deselectButton
+                    visible: ism.hasSelection
+                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: {
+                        ism.clearSelection()
+                    }
+                    font {
+                        family: Style.fontAwesomeSolid
+                        pointSize: Style.backArrowIconSize
+                    }
+                    text: "\uf05e";
+                    ToolTip.delay: 1000
+                    ToolTip.timeout: 3000
+                    ToolTip.visible: hovered
+                    hoverEnabled: true
+                    ToolTip.text: qsTr("Deselect")
+                }
+
             }
+
         }
 
         Label {

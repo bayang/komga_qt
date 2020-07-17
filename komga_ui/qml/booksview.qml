@@ -29,10 +29,12 @@ Item {
                 Button {
                     id : booksViewBackButton
                     onClicked: {
-                        if (contentFrame.depth > 0) {
+                        console.log("depth : " + contentFrame.depth)
+                        if (contentFrame.depth > 1) {
                             contentFrame.pop()
                         }
                     }
+                    visible: contentFrame.depth > 1
                     font {
                         family: Style.fontAwesomeSolid
                         pointSize: Style.backArrowIconSize
