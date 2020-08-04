@@ -37,7 +37,10 @@ Item {
                     id: readButton
                     visible: ism.hasSelection
                     anchors.verticalCenter: parent.verticalCenter
-                    onClicked: controller.markRead(ism.selectedIndexes, "Series")
+                    onClicked: {
+                        controller.markRead(ism.selectedIndexes, "Series")
+                        ism.clearSelection()
+                    }
                     font {
                         family: Style.fontAwesomeSolid
                         pointSize: Style.backArrowIconSize
@@ -53,7 +56,10 @@ Item {
                     id: unreadButton
                     visible: ism.hasSelection
                     anchors.verticalCenter: parent.verticalCenter
-                    onClicked: controller.markRead(ism.selectedIndexes, "Series", false)
+                    onClicked: {
+                        controller.markRead(ism.selectedIndexes, "Series", false)
+                        ism.clearSelection()
+                    }
                     font {
                         family: Style.fontAwesomeSolid
                         pointSize: Style.backArrowIconSize
