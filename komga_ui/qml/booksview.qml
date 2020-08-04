@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
+import QtQml.Models 2.14
 import komga_api 1.0
 import assets 1.0
 
@@ -45,9 +46,67 @@ Item {
                     id: searchBar
                     Layout.preferredHeight: 20
                     Layout.preferredWidth: 600
+                    Layout.alignment: Qt.AlignTop
                     onSearchTriggered: {
                         controller.doSearch(searchTerm)
                     }
+                }
+                RoundButton {
+                    id: readButton
+                    visible: ism.hasSelection
+                    Layout.alignment: Qt.AlignBottom
+//                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: {
+                        controller.markRead(ism.selectedIndexes, "Book")
+                        ism.clearSelection()
+                    }
+                    font {
+                        family: Style.fontAwesomeSolid
+                        pointSize: Style.backArrowIconSize
+                    }
+                    text: "\uf06e";
+                    ToolTip.delay: 1000
+                    ToolTip.timeout: 3000
+                    ToolTip.visible: hovered
+                    hoverEnabled: true
+                    ToolTip.text: qsTr("Mark read")
+                }
+                RoundButton {
+                    id: unreadButton
+                    visible: ism.hasSelection
+//                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: {
+                        controller.markRead(ism.selectedIndexes, "Book", false)
+                        ism.clearSelection()
+                    }
+                    font {
+                        family: Style.fontAwesomeSolid
+                        pointSize: Style.backArrowIconSize
+                    }
+                    text: "\uf070";
+                    ToolTip.delay: 1000
+                    ToolTip.timeout: 3000
+                    ToolTip.visible: hovered
+                    hoverEnabled: true
+                    ToolTip.text: qsTr("Mark unread")
+                }
+                RoundButton {
+                    id: deselectButton
+                    visible: ism.hasSelection
+//                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: {
+                        ism.clearSelection()
+                    }
+                    font {
+                        family: Style.fontAwesomeSolid
+                        pointSize: Style.backArrowIconSize
+                    }
+                    text: "\uf05e";
+                    ToolTip.delay: 1000
+                    ToolTip.timeout: 3000
+                    ToolTip.visible: hovered
+                    hoverEnabled: true
+                    ToolTip.text: qsTr("Deselect")
                 }
             }
 
@@ -170,6 +229,9 @@ Item {
                     progressVisible: bookPageReached > 0 && ! bookCompleted
                     progressValue: bookPageReached/bookPageCount
                     progressHeight: 10
+                    selectHandleVisible: true
+
+                    itemSelected: ism.hasSelection && ism.isRowSelected(index,ism.model.index(-1,-1))
                     onCardClicked: {
                         booksList.currentIndex = index
                         controller.setSelectedBookIdx(booksList.currentIndex)
@@ -190,7 +252,16 @@ Item {
                                        standaloneView: false
                                    })
                     }
+                    onSelectClicked: {
+                        ism.select(ism.model.index(index, 0), ItemSelectionModel.Toggle)
+//                        console.log(ism.selectedIndexes)
+//                        console.log(ism.hasSelection)
+                    }
                 }
+            }
+            ItemSelectionModel {
+                id: ism
+                model: controller.ui_bookModel
             }
         }
     }

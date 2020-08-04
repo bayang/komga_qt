@@ -146,11 +146,16 @@ Book* BookModel::parseBook(const QJsonValue &value, QObject* parent) {
 
 bool BookModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (! index.isValid() || role != PageReachedRole) {
+    if (! index.isValid()) {
         return false;
     }
     Book* b = m_books.at(index.row());
-    b->setPageReached(value.toInt());
+    if (role == PageReachedRole) {
+        b->setPageReached(value.toInt());
+    }
+    else if (role == CompletedRole) {
+        b->setCompleted(value.toBool());
+    }
     emit dataChanged(index, index);
     return true;
 }

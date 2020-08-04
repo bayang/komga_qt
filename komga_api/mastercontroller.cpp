@@ -86,10 +86,21 @@ void MasterController::updateprogress(QString bookId, int currentPage) {
 void MasterController::markRead(QModelIndexList list, QString type, bool completed)
 {
     qDebug() << "received type list " << type << " , " << list;
-    for (QModelIndex id : list) {
-        if (id.isValid()) {
-            QString seriesId = getSeriesModel()->data(getSeriesModel()->index(id.row(), 0), SeriesModel::IdRole).toString();
-            getSeriesModel()->updateProgress(seriesId, completed);
+    if (type == "Series") {
+        for (QModelIndex id : list) {
+            if (id.isValid()) {
+                QString seriesId = getSeriesModel()->data(getSeriesModel()->index(id.row(), 0), SeriesModel::IdRole).toString();
+                getSeriesModel()->updateProgress(seriesId, completed);
+            }
+        }
+    }
+    else if (type == "Book") {
+        for (QModelIndex id : list) {
+            if (id.isValid()) {
+                QString bookId = getBookModel()->data(getBookModel()->index(id.row(), 0), BookModel::IdRole).toString();
+                getBookModel()->updateProgress(bookId, 0, completed);
+                getBookModel()->setData(getBookModel()->index(id.row(), 0), QVariant{completed}, BookModel::CompletedRole);
+            }
         }
     }
 }

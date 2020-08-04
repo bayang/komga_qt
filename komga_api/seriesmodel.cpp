@@ -159,6 +159,15 @@ void SeriesModel::nextCollectionsSeriesPage(QString collectionId) {
         m_api->getCollectionSeries(collectionId, m_currentPageNumber + 1);
     }
 }
+
+bool SeriesModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (! index.isValid()) {
+        return false;
+    }
+    Series* s = m_series.at(index.row());
+
+}
 Series* SeriesModel::find(int libraryId) {
     auto itr = std::find_if(m_series.begin(), m_series.end(), [libraryId](Series* series) { return series->libraryId() == libraryId; });
     if(itr != m_series.end()) {

@@ -27,6 +27,7 @@ Item {
                 width: parent.width > 600 ? 600 : parent.width
                 height: 20
                 anchors.centerIn: parent
+                anchors.verticalCenter: parent.verticalCenter
                 onSearchTriggered: {
                     controller.doSearch(searchTerm)
                 }

@@ -43,6 +43,8 @@ public:
     void resetSeries();
     Series *parseSeries(const QJsonValue &value);
     void nextCollectionsSeriesPage(QString collectionId);
+    bool setData(const QModelIndex& index, const QVariant& value,
+                 int role);
 signals:
     void refresh();
 
