@@ -11,7 +11,11 @@ Item {
     property real pageReached
     property real pageCount
     property bool standaloneBook
+    property bool bookEnd: false
+    property bool hasNextBook
     signal pageChanged(real pageNum);
+    signal nextBook();
+    signal previousBook();
 
     Flickable {
         id: flickArea
@@ -164,7 +168,14 @@ Item {
         if (flickArea.atYEnd) {
             var curTime = new Date().getTime();
             if (curTime - lastSpacePressedTime < 2000) {
-                setCurrentReachedPage(pageReached + 1)
+                if (bookEnd) {
+                    readContainer.nextBook()
+                    bookEnd = false
+                    pageReached = 0
+                }
+                else {
+                    setCurrentReachedPage(pageReached + 1)
+                }
             }
             lastSpacePressedTime = curTime
         }
@@ -227,7 +238,13 @@ Item {
             return;
         }
         else if (pageNumber >= pageCount) {
-            firstPageLabel.text = "Last page"
+            if (hasNextBook) {
+                firstPageLabel.text = "Last page, press space again for the next book"
+                bookEnd = true
+            }
+            else {
+                firstPageLabel.text = "Last page"
+            }
             firstPageLabel.visible = true
             firstPageTimer.restart()
             return;

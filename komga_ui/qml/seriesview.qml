@@ -147,7 +147,13 @@ Item {
                         seriesList.currentIndex = index
                         controller.loadBooksView(seriesId)
                         controller.loadSeriesCollections(seriesId)
-                        stack.push("qrc:/qml/booksview.qml", {currentSeriesId: seriesId, currentSeriesName: seriesName, currentSeriesBookCount: seriesBookCount, currentSeriesMetadataStatus: seriesMetadataStatus})
+                        stack.push("qrc:/qml/booksview.qml", {
+                                       currentSeriesId: seriesId,
+                                       currentSeriesName: seriesName,
+                                       currentSeriesBookCount: seriesBookCount,
+                                       currentSeriesMetadataStatus: seriesMetadataStatus
+                                   }
+                               )
                     }
                     onSelectClicked: {
                         ism.select(ism.model.index(index, 0), ItemSelectionModel.Toggle)

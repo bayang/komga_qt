@@ -8,6 +8,10 @@ BookModel::BookModel(QObject *parent, Komga_api* api) :
             this, &BookModel::apiDataReceived);
     connect(m_api, &Komga_api::preloadImageDataReady,
             this, &BookModel::preloadImageDataReceived);
+    connect(m_api, &Komga_api::nextBookReady,
+            this, &BookModel::nextBookReceived);
+    connect(m_api, &Komga_api::previousBookReady,
+            this, &BookModel::previousBookReceived);
 }
 int BookModel::rowCount(const QModelIndex &parent) const {
     if (parent.isValid()) {
@@ -100,20 +104,23 @@ void BookModel::loadBooks(QString seriesId) {
     resetBooks();
 }
 Book* BookModel::parseBook(const QJsonValue &value, QObject* parent) {
+    return parseBook(value.toObject(), parent);
+}
+Book* BookModel::parseBook(const QJsonObject &object, QObject* parent) {
     Book* b = new Book(parent);
-    QJsonObject jsob = value.toObject();
-    b->setId(jsob["id"].toString());
-    b->setSeriesId(jsob["seriesId"].toString());
-    b->setName(jsob["name"].toString());
-    b->setUrl(jsob["url"].toString());
-    b->setSizeBytes(jsob["sizeBytes"].toInt());
-    b->setSize(jsob["size"].toString());
-    QJsonObject media = jsob["media"].toObject();
+//    QJsonObject jsob = value.toObject();
+    b->setId(object["id"].toString());
+    b->setSeriesId(object["seriesId"].toString());
+    b->setName(object["name"].toString());
+    b->setUrl(object["url"].toString());
+    b->setSizeBytes(object["sizeBytes"].toInt());
+    b->setSize(object["size"].toString());
+    QJsonObject media = object["media"].toObject();
     b->setMediaStatus(media["status"].toString());
     b->setPagesCount(media["pagesCount"].toInt());
     b->setMediaType(media["mediaType"].toString());
     BookMetadata* meta = new BookMetadata(b);
-    QJsonObject metadata = jsob["metadata"].toObject();
+    QJsonObject metadata = object["metadata"].toObject();
     meta->setTitle(metadata["title"].toString());
     meta->setSummary(metadata["summary"].toString());
     meta->setNumber(metadata["number"].toString());
@@ -131,8 +138,8 @@ Book* BookModel::parseBook(const QJsonValue &value, QObject* parent) {
         aut.append(std::move(au));
     }
     meta->setAuthors(aut);
-    if (jsob.contains("readProgress")) {
-        QJsonObject progress = jsob["readProgress"].toObject();
+    if (object.contains("readProgress")) {
+        QJsonObject progress = object["readProgress"].toObject();
         if (progress.contains("page")) {
             b->setPageReached(progress["page"].toInt());
         }
@@ -152,12 +159,25 @@ bool BookModel::setData(const QModelIndex &index, const QVariant &value, int rol
     Book* b = m_books.at(index.row());
     if (role == PageReachedRole) {
         b->setPageReached(value.toInt());
+        if (b->pageReached() + 1 == b->pagesCount()) {
+            b->setCompleted(true);
+        }
     }
     else if (role == CompletedRole) {
         b->setCompleted(value.toBool());
     }
     emit dataChanged(index, index);
     return true;
+}
+
+void BookModel::previousBook(QString bookId)
+{
+    m_api->previousBook(bookId);
+}
+
+void BookModel::nextBook(QString bookId)
+{
+    m_api->nextBook(bookId);
 }
 void BookModel::apiDataReceived(QJsonObject books) {
     int pageNum = books["number"].toInt();
@@ -219,6 +239,16 @@ void BookModel::preloadImageDataReceived(QPair<QString, QByteArray> res) {
 void BookModel::updateProgress(QString bookId, int page, bool completed)
 {
     m_api->updateProgress(bookId, page, completed);
+}
+
+void BookModel::nextBookReceived(QJsonObject book)
+{
+    emit nextBookReady(std::move(parseBook(book, this)));
+}
+
+void BookModel::previousBookReceived(QJsonObject book)
+{
+    emit previousBookReady(std::move(parseBook(book, this)));
 }
 QByteArray* BookModel::getImageFromCache(const QString &key) {
     return m_picturesCache[key];

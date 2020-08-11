@@ -41,6 +41,8 @@ public slots:
     void apiDataReceived(QJsonObject books);
     void preloadImageDataReceived(QPair<QString, QByteArray> res);
     void updateProgress(QString bookId, int page, bool completed = false);
+    void nextBookReceived(QJsonObject book);
+    void previousBookReceived(QJsonObject book);
 
     // QAbstractItemModel interface
 public:
@@ -56,11 +58,16 @@ public:
     QByteArray* getImageFromCache(const QString &key);
     bool hasImageInCache(QString bookId, int currentPage);
     static Book *parseBook(const QJsonValue &value, QObject* parent);
+    static Book *parseBook(const QJsonObject &object, QObject *parent);
     bool setData(const QModelIndex& index, const QVariant& value,
                  int role);
+    void previousBook(QString bookId);
+    void nextBook(QString bookId);
 
 signals:
     void refresh();
+    void nextBookReady(Book *book);
+    void previousBookReady(Book *book);
 
 private:
     Komga_api* m_api = nullptr;

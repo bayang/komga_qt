@@ -37,6 +37,8 @@ public:
     static const QString URL_PAGE;
     static const QString URL_PROGRESS;
     static const QString URL_COLLECTIONS;
+    static const QString URL_NEXT;
+    static const QString URL_PREVIOUS;
     static const QString SETTINGS_SECTION_SERVER;
     static const QString SETTINGS_KEY_SERVER_URL;
     static const QString SETTINGS_KEY_SERVER_USER;
@@ -53,6 +55,8 @@ public:
         Collections = QNetworkRequest::Attribute::User + 8,
         SeriesCollections = QNetworkRequest::Attribute::User + 9,
         CollectionsSearch = QNetworkRequest::Attribute::User + 10,
+        NextBook = QNetworkRequest::Attribute::User + 11,
+        PreviousBook = QNetworkRequest::Attribute::User + 12,
     };
     enum ThumbnailType {
         SeriesThumbnail,
@@ -74,6 +78,8 @@ public:
     void updateSeriesProgress(QString seriesId, bool completed = true);
     void onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
     void getCollections(int page = 0);
+    void previousBook(QString bookId);
+    void nextBook(QString bookId);
 
 private:
     QNetworkAccessManager* manager = nullptr;
@@ -100,6 +106,8 @@ signals:
     void searchBookDataReady(QPair<QString, QJsonDocument> res);
     void seriesCollectionsDataReady(QJsonArray list);
     void searchCollectionsDataReady(QPair<QString, QJsonDocument> res);
+    void nextBookReady(QJsonObject book);
+    void previousBookReady(QJsonObject book);
 };
 
 #endif // KOMGA_API_H

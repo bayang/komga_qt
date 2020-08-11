@@ -26,6 +26,77 @@ Item {
     // used to know if we need to update models
     // so that data is consistent when we pop the stack
     property bool standaloneView
+    property bool hasPrevious
+    property bool hasNext
+    property bool currentlyReading: false
+
+    Connections {
+        target: controller.ui_bookModel
+        onNextBookReady: {
+            console.log("book " + book)
+            controller.updateSelectedBookIdx(1)
+            if (currentlyReading) {
+                currentBookId= book.ui_bookId
+                currentBookPageReached= book.ui_bookPageReached
+                currentBookPageCount= book.ui_bookPagesCount
+                currentBookCompleted= book.ui_bookCompleted
+                standaloneView= false
+                hasNext= controller.hasNextBook()
+                hasPrevious= controller.hasPreviousBook()
+                currentBookMetadataTitle= book.ui_bookMetadata.ui_metadataTitle
+                currentBookWriters= book.ui_bookMetadata.ui_metadataWriters
+                currentBookPencillers= book.ui_bookMetadata.ui_metadataPencillers
+                currentBookColorists= book.ui_bookMetadata.ui_metadataColorists
+                currentBookPublisher = book.ui_bookMetadata.ui_metadataPublisher
+                currentBookSummary= book.ui_bookMetadata.ui_metadataSummary
+                currentBookSize= book.ui_bookSize
+                currentBookShortMediaType= book.ui_bookShortMediaType
+                currentBookUrl= book.ui_bookUrl
+            }
+            else {
+                stack.replace("qrc:/qml/bookdetailview.qml", {
+                               currentBookId: book.ui_bookId,
+                               currentBookPageReached: book.ui_bookPageReached,
+                               currentBookPageCount: book.ui_bookPagesCount,
+                               currentBookCompleted: book.ui_bookCompleted,
+                               currentBookMetadataTitle: book.ui_bookMetadata.ui_metadataTitle,
+                               currentBookWriters: book.ui_bookMetadata.ui_metadataWriters,
+                               currentBookPencillers: book.ui_bookMetadata.ui_metadataPencillers,
+                               currentBookColorists: book.ui_bookMetadata.ui_metadataColorists,
+                               currentBookPublisher : book.ui_bookMetadata.ui_metadataPublisher,
+                               currentBookSummary: book.ui_bookMetadata.ui_metadataSummary,
+                               currentBookSize: book.ui_bookSize,
+                               currentBookShortMediaType: book.ui_bookShortMediaType,
+                               currentBookUrl: book.ui_bookUrl,
+                               standaloneView: false,
+                               hasPrevious: controller.hasPreviousBook(),
+                               hasNext: controller.hasNextBook()
+                           })
+            }
+        }
+        onPreviousBookReady: {
+            console.log("book " + book)
+            controller.updateSelectedBookIdx(-1)
+            stack.replace("qrc:/qml/bookdetailview.qml", {
+                           currentBookId: book.ui_bookId,
+                           currentBookPageReached: book.ui_bookPageReached,
+                           currentBookPageCount: book.ui_bookPagesCount,
+                           currentBookCompleted: book.ui_bookCompleted,
+                           currentBookMetadataTitle: book.ui_bookMetadata.ui_metadataTitle,
+                           currentBookWriters: book.ui_bookMetadata.ui_metadataWriters,
+                           currentBookPencillers: book.ui_bookMetadata.ui_metadataPencillers,
+                           currentBookColorists: book.ui_bookMetadata.ui_metadataColorists,
+                           currentBookPublisher : book.ui_bookMetadata.ui_metadataPublisher,
+                           currentBookSummary: book.ui_bookMetadata.ui_metadataSummary,
+                           currentBookSize: book.ui_bookSize,
+                           currentBookShortMediaType: book.ui_bookShortMediaType,
+                           currentBookUrl: book.ui_bookUrl,
+                           standaloneView: false,
+                           hasPrevious: controller.hasPreviousBook(),
+                           hasNext: controller.hasNextBook()
+                       })
+        }
+    }
 
     ScrollView {
         id: scroll
@@ -35,18 +106,61 @@ Item {
         anchors.bottomMargin: 10
         ColumnLayout {
             id: parentLayout
-            Button {
-                onClicked: {
-                    if (contentFrame.depth > 0) {
-                        contentFrame.pop()
+            RowLayout {
+                Button {
+                    onClicked: {
+                        if (contentFrame.depth > 0) {
+                            contentFrame.pop()
+                        }
                     }
+                    font {
+                        family: Style.fontAwesomeSolid
+                        pointSize: Style.backArrowIconSize
+                    }
+                    text: "\uf060"
+                    ToolTip.delay: 1000
+                    ToolTip.timeout: 3000
+                    ToolTip.visible: hovered
+                    hoverEnabled: true
+                    ToolTip.text: qsTr("Back")
                 }
-                font {
-                    family: Style.fontAwesomeSolid
-                    pointSize: Style.backArrowIconSize
+                RoundButton {
+                    id: previousButton
+                    visible: hasPrevious
+                    onClicked: {
+                        controller.previousBook(currentBookId)
+                    }
+                    font {
+                        family: Style.fontAwesomeSolid
+                        pointSize: Style.backArrowIconSize
+                    }
+                    text: "\uf191";
+                    ToolTip.delay: 1000
+                    ToolTip.timeout: 3000
+                    ToolTip.visible: hovered
+                    hoverEnabled: true
+                    ToolTip.text: qsTr("Previous book")
                 }
-                text: "\uf060"
+                RoundButton {
+                    id: nextButton
+                    visible: hasNext
+                    onClicked: {
+                        controller.nextBook(currentBookId)
+                    }
+                    font {
+                        family: Style.fontAwesomeSolid
+                        pointSize: Style.backArrowIconSize
+                    }
+                    text: "\uf152";
+                    ToolTip.delay: 1000
+                    ToolTip.timeout: 3000
+                    ToolTip.visible: hovered
+                    hoverEnabled: true
+                    ToolTip.text: qsTr("Next book")
+                }
+
             }
+
             GridLayout {
                 id: grid
                 columnSpacing: 10
@@ -191,17 +305,26 @@ Item {
         exit: Transition {
             NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 300 }
         }
+        onAboutToHide: {
+
+        }
+
         BookReadView {
             anchors.fill: parent
             bookId: currentBookId
             pageReached: currentBookCompleted ? 0 : currentBookPageReached
             pageCount: currentBookPageCount
             standaloneBook: standaloneView
+            hasNextBook: hasNext
             onPageChanged: {
                 currentBookPageReached = pageNum
                 controller.preloadBookPages(currentBookId, currentBookPageReached, currentBookPageCount)
                 // page nb is not 0 based
                 controller.updateprogress(currentBookId, currentBookPageReached + 1)
+            }
+            onNextBook: {
+                currentlyReading = true
+                controller.nextBook(currentBookId)
             }
         }
     }

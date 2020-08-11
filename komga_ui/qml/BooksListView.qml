@@ -69,7 +69,9 @@ Item {
                                    currentBookSize: bookSize,
                                    currentBookShortMediaType: bookMediaType,
                                    currentBookUrl: bookUrl,
-                                   standaloneView: false
+                                   standaloneView: false,
+                                   hasPrevious: false,
+                                   hasNext: false
                                })
                 }
             }

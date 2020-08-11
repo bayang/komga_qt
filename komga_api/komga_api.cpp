@@ -22,6 +22,8 @@ const QString Komga_api::URL_THUMBNAILS{"/thumbnail"};
 const QString Komga_api::URL_PAGE{"/pages"};
 const QString Komga_api::URL_PROGRESS{"read-progress"};
 const QString Komga_api::URL_COLLECTIONS{"/collections"};
+const QString Komga_api::URL_NEXT{"/next"};
+const QString Komga_api::URL_PREVIOUS{"/previous"};
 const QString Komga_api::SETTINGS_SECTION_SERVER{"server"};
 const QString Komga_api::SETTINGS_KEY_SERVER_URL{"serverAdress"};
 const QString Komga_api::SETTINGS_KEY_SERVER_USER{"serverUsername"};
@@ -120,6 +122,28 @@ void Komga_api::getCollections(int page) {
         url.setQuery(query);
     }
     qDebug() << "api load collections " << url;
+    manager->get(r);
+}
+
+void Komga_api::previousBook(QString bookId)
+{
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::PreviousBook));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_BOOKS + "/" + bookId + URL_PREVIOUS);
+    r.setUrl(url);
+    qDebug() << "api previous book " << url << " " << bookId;
+    manager->get(r);
+}
+
+void Komga_api::nextBook(QString bookId)
+{
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::NextBook));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_BOOKS + "/" + bookId + URL_NEXT);
+    r.setUrl(url);
+    qDebug() << "api next book " << url << " " << bookId;
     manager->get(r);
 }
 
@@ -362,6 +386,14 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
         else if (reason == RequestReason::SeriesCollections) {
             QJsonArray list = doc.array();
             emit seriesCollectionsDataReady(list);
+        }
+        else if (reason == RequestReason::PreviousBook) {
+            QJsonObject book = doc.object();
+            emit previousBookReady(book);
+        }
+        else if (reason == RequestReason::NextBook) {
+            QJsonObject book = doc.object();
+            emit nextBookReady(book);
         }
     }
     // else emit an error event

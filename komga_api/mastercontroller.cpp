@@ -105,6 +105,31 @@ void MasterController::markRead(QModelIndexList list, QString type, bool complet
     }
 }
 
+void MasterController::previousBook(QString bookId)
+{
+    getBookModel()->previousBook(bookId);
+}
+
+void MasterController::nextBook(QString bookId)
+{
+    getBookModel()->nextBook(bookId);
+}
+
+void MasterController::updateSelectedBookIdx(int difference)
+{
+    setSelectedBookIdx(getSelectedBookIdx() + difference);
+}
+
+bool MasterController::hasNextBook()
+{
+    return getSelectedBookIdx() < getBookModel()->rowCount(QModelIndex()) - 1;
+}
+
+bool MasterController::hasPreviousBook()
+{
+    return getSelectedBookIdx() > 0;
+}
+
 CollectionModel *MasterController::getCollectionModel() const
 {
     return m_collectionModel;

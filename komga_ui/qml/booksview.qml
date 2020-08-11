@@ -249,7 +249,9 @@ Item {
                                        currentBookSize: bookSize,
                                        currentBookShortMediaType: bookMediaType,
                                        currentBookUrl: bookUrl,
-                                       standaloneView: false
+                                       standaloneView: false,
+                                       hasPrevious: index > 0,
+                                       hasNext: index < booksList.count - 1
                                    })
                     }
                     onSelectClicked: {
