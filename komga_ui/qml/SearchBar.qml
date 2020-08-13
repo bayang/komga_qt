@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
+import komga_api 1.0
 import assets 1.0
 
 Item {
@@ -51,6 +52,16 @@ Item {
                     leftMargin: 15
                     width: parent.width - 20
                     focus: true
+                    highlight: Rectangle {
+                        color: "transparent"
+                        border.width: 3
+                        border.color: Style.accentColor
+                    }
+                    Keys.onReturnPressed: {
+                        if (dropDownList.activeFocus) {
+                            currentItem.mouseA.clicked(null)
+                        }
+                    }
                     section.property: "resultType"
                     section.criteria: ViewSection.FullString
                     section.delegate:  Component {
@@ -67,6 +78,7 @@ Item {
                         id: searchResultDelegate
                         width: dropDownList.width
                         height: searchResultImage.implicitHeight
+                        property alias mouseA: resultMouseArea
                         RowLayout {
                             anchors.fill: parent
                             Image {
@@ -87,6 +99,7 @@ Item {
                             }
                         }
                         MouseArea {
+                            id: resultMouseArea
                             anchors.fill: parent
                             hoverEnabled: true
                             onClicked: {
@@ -146,6 +159,7 @@ Item {
             text : "\uf002"
         }
     }
+
     function getSourceType(type) {
         if (type === "Books") {
             return "book"

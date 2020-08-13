@@ -10,6 +10,7 @@
 class KOMGA_API_EXPORT SearchResult : public QObject
 {
     Q_OBJECT
+
 public:
     explicit SearchResult(QObject *parent = nullptr);
     enum ResultType {
