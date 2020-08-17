@@ -8,6 +8,7 @@ Item {
     property real imgScale: 0
     property real lastSpacePressedTime: 0
     property string bookId
+    property string nextBookId
     property real pageReached
     property real pageCount
     property bool standaloneBook
@@ -16,6 +17,18 @@ Item {
     signal pageChanged(real pageNum);
     signal nextBook();
     signal previousBook();
+
+    // temporarily disable source binding while we change
+    // bookId and pageReached, otherwise it is too fast
+    // and ask for wrong images (eg : good id and wrong page number)
+    function disableSource() {
+        bookReadPage.source = ""
+    }
+
+    function restoreSource() {
+        console.log("restore source " + readContainer.bookId + "/" + readContainer.pageReached)
+        bookReadPage.source = Qt.binding(function (){return "image://page/" + readContainer.bookId + "/" + readContainer.pageReached})
+    }
 
     Flickable {
         id: flickArea
@@ -169,9 +182,8 @@ Item {
             var curTime = new Date().getTime();
             if (curTime - lastSpacePressedTime < 2000) {
                 if (bookEnd) {
-                    readContainer.nextBook()
                     bookEnd = false
-                    pageReached = 0
+                    readContainer.nextBook()
                 }
                 else {
                     setCurrentReachedPage(pageReached + 1)

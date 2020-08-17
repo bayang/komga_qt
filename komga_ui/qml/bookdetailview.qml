@@ -29,73 +29,105 @@ Item {
     property bool hasPrevious
     property bool hasNext
     property bool currentlyReading: false
+    property Book nextBook
+    property Book previousBook
 
     Connections {
         target: controller.ui_bookModel
         onNextBookReady: {
-            console.log("book " + book)
+            console.log("next book received " + book.ui_bookId)
+            nextBook = book
+            if (nextBook.ui_bookId != "-1") {
+                hasNext = true
+            }
+            else {
+                hasNext = false
+            }
+            readPopup.readView.nextBookId = nextBook.ui_bookId
+            readPopup.readView.hasNextBook = hasNext
+        }
+        onPreviousBookReady: {
+            console.log("previous book received " + book.ui_bookId)
+            previousBook = book
+            if (previousBook.ui_bookId != "-1") {
+                hasPrevious = true
+            }
+            else {
+                hasPrevious = false
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        preloadBooks()
+    }
+
+    function preloadBooks() {
+        controller.nextBook(currentBookId)
+        controller.previousBook(currentBookId)
+    }
+
+    function goToPreviousBook() {
+        controller.updateSelectedBookIdx(-1)
+        stack.replace("qrc:/qml/bookdetailview.qml", {
+                          currentBookId: previousBook.ui_bookId,
+                          currentBookPageReached: previousBook.ui_bookPageReached,
+                          currentBookPageCount: previousBook.ui_bookPagesCount,
+                          currentBookCompleted: previousBook.ui_bookCompleted,
+                          currentBookMetadataTitle: previousBook.ui_bookMetadata.ui_metadataTitle,
+                          currentBookWriters: previousBook.ui_bookMetadata.ui_metadataWriters,
+                          currentBookPencillers: previousBook.ui_bookMetadata.ui_metadataPencillers,
+                          currentBookColorists: previousBook.ui_bookMetadata.ui_metadataColorists,
+                          currentBookPublisher : previousBook.ui_bookMetadata.ui_metadataPublisher,
+                          currentBookSummary: previousBook.ui_bookMetadata.ui_metadataSummary,
+                          currentBookSize: previousBook.ui_bookSize,
+                          currentBookShortMediaType: previousBook.ui_bookShortMediaType,
+                          currentBookUrl: previousBook.ui_bookUrl,
+                          standaloneView: false,
+                      })
+    }
+
+    function goToNextBook() {
             controller.updateSelectedBookIdx(1)
             if (currentlyReading) {
-                currentBookId= book.ui_bookId
-                currentBookPageReached= book.ui_bookPageReached
-                currentBookPageCount= book.ui_bookPagesCount
-                currentBookCompleted= book.ui_bookCompleted
-                standaloneView= false
-                hasNext= controller.hasNextBook()
-                hasPrevious= controller.hasPreviousBook()
-                currentBookMetadataTitle= book.ui_bookMetadata.ui_metadataTitle
-                currentBookWriters= book.ui_bookMetadata.ui_metadataWriters
-                currentBookPencillers= book.ui_bookMetadata.ui_metadataPencillers
-                currentBookColorists= book.ui_bookMetadata.ui_metadataColorists
-                currentBookPublisher = book.ui_bookMetadata.ui_metadataPublisher
-                currentBookSummary= book.ui_bookMetadata.ui_metadataSummary
-                currentBookSize= book.ui_bookSize
-                currentBookShortMediaType= book.ui_bookShortMediaType
-                currentBookUrl= book.ui_bookUrl
+                readPopup.readView.disableSource()
+                readPopup.readView.pageReached = 0
+                currentBookPageReached = nextBook.ui_bookPageReached
+                currentBookId = nextBook.ui_bookId
+                currentBookPageCount = nextBook.ui_bookPagesCount
+                currentBookCompleted = nextBook.ui_bookCompleted
+                standaloneView = false
+                currentBookMetadataTitle = nextBook.ui_bookMetadata.ui_metadataTitle
+                currentBookWriters = nextBook.ui_bookMetadata.ui_metadataWriters
+                currentBookPencillers = nextBook.ui_bookMetadata.ui_metadataPencillers
+                currentBookColorists = nextBook.ui_bookMetadata.ui_metadataColorists
+                currentBookPublisher = nextBook.ui_bookMetadata.ui_metadataPublisher
+                currentBookSummary = nextBook.ui_bookMetadata.ui_metadataSummary
+                currentBookSize = nextBook.ui_bookSize
+                currentBookShortMediaType = nextBook.ui_bookShortMediaType
+                currentBookUrl = nextBook.ui_bookUrl
+                readPopup.readView.restoreSource()
+                preloadBooks()
             }
             else {
                 stack.replace("qrc:/qml/bookdetailview.qml", {
-                               currentBookId: book.ui_bookId,
-                               currentBookPageReached: book.ui_bookPageReached,
-                               currentBookPageCount: book.ui_bookPagesCount,
-                               currentBookCompleted: book.ui_bookCompleted,
-                               currentBookMetadataTitle: book.ui_bookMetadata.ui_metadataTitle,
-                               currentBookWriters: book.ui_bookMetadata.ui_metadataWriters,
-                               currentBookPencillers: book.ui_bookMetadata.ui_metadataPencillers,
-                               currentBookColorists: book.ui_bookMetadata.ui_metadataColorists,
-                               currentBookPublisher : book.ui_bookMetadata.ui_metadataPublisher,
-                               currentBookSummary: book.ui_bookMetadata.ui_metadataSummary,
-                               currentBookSize: book.ui_bookSize,
-                               currentBookShortMediaType: book.ui_bookShortMediaType,
-                               currentBookUrl: book.ui_bookUrl,
+                               currentBookId: nextBook.ui_bookId,
+                               currentBookPageReached: nextBook.ui_bookPageReached,
+                               currentBookPageCount: nextBook.ui_bookPagesCount,
+                               currentBookCompleted: nextBook.ui_bookCompleted,
+                               currentBookMetadataTitle: nextBook.ui_bookMetadata.ui_metadataTitle,
+                               currentBookWriters: nextBook.ui_bookMetadata.ui_metadataWriters,
+                               currentBookPencillers: nextBook.ui_bookMetadata.ui_metadataPencillers,
+                               currentBookColorists: nextBook.ui_bookMetadata.ui_metadataColorists,
+                               currentBookPublisher : nextBook.ui_bookMetadata.ui_metadataPublisher,
+                               currentBookSummary: nextBook.ui_bookMetadata.ui_metadataSummary,
+                               currentBookSize: nextBook.ui_bookSize,
+                               currentBookShortMediaType: nextBook.ui_bookShortMediaType,
+                               currentBookUrl: nextBook.ui_bookUrl,
                                standaloneView: false,
-                               hasPrevious: controller.hasPreviousBook(),
-                               hasNext: controller.hasNextBook()
                            })
             }
-        }
-        onPreviousBookReady: {
-            console.log("book " + book)
-            controller.updateSelectedBookIdx(-1)
-            stack.replace("qrc:/qml/bookdetailview.qml", {
-                           currentBookId: book.ui_bookId,
-                           currentBookPageReached: book.ui_bookPageReached,
-                           currentBookPageCount: book.ui_bookPagesCount,
-                           currentBookCompleted: book.ui_bookCompleted,
-                           currentBookMetadataTitle: book.ui_bookMetadata.ui_metadataTitle,
-                           currentBookWriters: book.ui_bookMetadata.ui_metadataWriters,
-                           currentBookPencillers: book.ui_bookMetadata.ui_metadataPencillers,
-                           currentBookColorists: book.ui_bookMetadata.ui_metadataColorists,
-                           currentBookPublisher : book.ui_bookMetadata.ui_metadataPublisher,
-                           currentBookSummary: book.ui_bookMetadata.ui_metadataSummary,
-                           currentBookSize: book.ui_bookSize,
-                           currentBookShortMediaType: book.ui_bookShortMediaType,
-                           currentBookUrl: book.ui_bookUrl,
-                           standaloneView: false,
-                           hasPrevious: controller.hasPreviousBook(),
-                           hasNext: controller.hasNextBook()
-                       })
-        }
+
     }
 
     ScrollView {
@@ -126,9 +158,9 @@ Item {
                 }
                 RoundButton {
                     id: previousButton
-                    visible: hasPrevious
+                    enabled: hasPrevious
                     onClicked: {
-                        controller.previousBook(currentBookId)
+                        goToPreviousBook()
                     }
                     font {
                         family: Style.fontAwesomeSolid
@@ -143,9 +175,9 @@ Item {
                 }
                 RoundButton {
                     id: nextButton
-                    visible: hasNext
+                    enabled: hasNext
                     onClicked: {
-                        controller.nextBook(currentBookId)
+                        goToNextBook()
                     }
                     font {
                         family: Style.fontAwesomeSolid
@@ -179,7 +211,7 @@ Item {
                             width: parent.width
                             anchors.bottom: parent.bottom
                             contentItem.implicitHeight: 10
-                            value: currentBookPageReached / currentBookPageCount
+                            value: currentBookPageReached / (currentBookPageCount - 1)
                             visible: currentBookPageReached > 0 && ! currentBookCompleted
                         }
                     }
@@ -283,6 +315,9 @@ Item {
 
     Popup {
         id: readPopup
+
+        property alias readView: readView
+
         parent: Overlay.overlay
 
         contentWidth: ApplicationWindow.window.width
@@ -310,6 +345,7 @@ Item {
         }
 
         BookReadView {
+            id: readView
             anchors.fill: parent
             bookId: currentBookId
             pageReached: currentBookCompleted ? 0 : currentBookPageReached
@@ -319,12 +355,16 @@ Item {
             onPageChanged: {
                 currentBookPageReached = pageNum
                 controller.preloadBookPages(currentBookId, currentBookPageReached, currentBookPageCount)
+                if (hasNext && (currentBookPageCount - currentBookPageReached < 5)) {
+                    console.log("remaining " + (currentBookPageCount - currentBookPageReached) + " nextId " + bookDetailRoot.nextBook.ui_bookId + " nextCount " + bookDetailRoot.nextBook.ui_bookPagesCount)
+                    controller.preloadBookPages(bookDetailRoot.nextBook.ui_bookId, -1, bookDetailRoot.nextBook.ui_bookPagesCount)
+                }
                 // page nb is not 0 based
                 controller.updateprogress(currentBookId, currentBookPageReached + 1)
             }
             onNextBook: {
                 currentlyReading = true
-                controller.nextBook(currentBookId)
+                goToNextBook()
             }
         }
     }

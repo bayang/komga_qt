@@ -108,6 +108,10 @@ Book* BookModel::parseBook(const QJsonValue &value, QObject* parent) {
 }
 Book* BookModel::parseBook(const QJsonObject &object, QObject* parent) {
     Book* b = new Book(parent);
+    if (object.empty()) {
+        b->setId("-1");
+        return b;
+    }
 //    QJsonObject jsob = value.toObject();
     b->setId(object["id"].toString());
     b->setSeriesId(object["seriesId"].toString());
@@ -198,6 +202,7 @@ void BookModel::apiDataReceived(QJsonObject books) {
             foreach (const QJsonValue &value, content) {
                 booksList.append(std::move(parseBook(value, this)));
             }
+
             emit layoutAboutToBeChanged();
             m_books = booksList;
             changePersistentIndex(index(0), QModelIndex());

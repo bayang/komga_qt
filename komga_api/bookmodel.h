@@ -74,7 +74,7 @@ private:
     QList<Book*> m_books{};
     int m_currentPageNumber{};
     int m_totalPageNumber{};
-    QCache<QString, QByteArray> m_picturesCache{50};
+    QCache<QString, QByteArray> m_picturesCache{100};
 };
 
 #endif // BOOKMODEL_H

@@ -70,8 +70,6 @@ Item {
                                    currentBookShortMediaType: bookMediaType,
                                    currentBookUrl: bookUrl,
                                    standaloneView: false,
-                                   hasPrevious: false,
-                                   hasNext: false
                                })
                 }
             }

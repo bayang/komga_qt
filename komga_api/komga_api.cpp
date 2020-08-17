@@ -399,7 +399,17 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
     // else emit an error event
     else {
         qWarning() << "[net] ERROR " << reply->errorString() << " code " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        emit networkErrorHappened("[net] ERROR " + reply->errorString());
+        int reason = reply->request().attribute(QNetworkRequest::Attribute::User).toInt();
+        int code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        if (reason == RequestReason::NextBook && code == 404) {
+            emit nextBookReady(QJsonObject{});
+        }
+        else if (reason == RequestReason::PreviousBook && code == 404) {
+            emit previousBookReady(QJsonObject{});
+        }
+        else {
+            emit networkErrorHappened("[net] ERROR " + reply->errorString());
+        }
     }
 }
 
