@@ -13,5 +13,6 @@
         <file>qml/SearchBar.qml</file>
         <file>qml/BooksListView.qml</file>
         <file>qml/CollectionsView.qml</file>
+        <file>qml/ReadListsView.qml</file>
     </qresource>
 </RCC>

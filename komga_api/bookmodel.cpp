@@ -103,6 +103,10 @@ void BookModel::loadBooks(QString seriesId) {
     m_api->getBooks(seriesId);
     resetBooks();
 }
+void BookModel::loadReadListBooks(QString readListId) {
+    m_api->getReadListBooks(readListId);
+    resetBooks();
+}
 Book* BookModel::parseBook(const QJsonValue &value, QObject* parent) {
     return parseBook(value.toObject(), parent);
 }

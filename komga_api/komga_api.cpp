@@ -22,6 +22,7 @@ const QString Komga_api::URL_THUMBNAILS{"/thumbnail"};
 const QString Komga_api::URL_PAGE{"/pages"};
 const QString Komga_api::URL_PROGRESS{"read-progress"};
 const QString Komga_api::URL_COLLECTIONS{"/collections"};
+const QString Komga_api::URL_READLISTS{"/readlists"};
 const QString Komga_api::URL_NEXT{"/next"};
 const QString Komga_api::URL_PREVIOUS{"/previous"};
 const QString Komga_api::SETTINGS_SECTION_SERVER{"server"};
@@ -87,6 +88,9 @@ void Komga_api::searchDataReceived(const QString &id) {
         else if (id.contains(URL_COLLECTIONS)) {
             emit searchCollectionsDataReady(res);
         }
+        else if (id.contains(URL_READLISTS)) {
+            emit searchReadListsDataReady(res);
+        }
     }
     reply->deleteLater();
 }
@@ -122,6 +126,21 @@ void Komga_api::getCollections(int page) {
         url.setQuery(query);
     }
     qDebug() << "api load collections " << url;
+    manager->get(r);
+}
+
+void Komga_api::getReadLists(int page) {
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::ReadLists));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_READLISTS);
+    r.setUrl(url);
+    if (page != 0) {
+        QUrlQuery query;
+        query.addQueryItem("page", QString::number(page));
+        url.setQuery(query);
+    }
+    qDebug() << "api load readlists " << url;
     manager->get(r);
 }
 
@@ -210,6 +229,7 @@ void Komga_api::doSearch(const QString &searchTerm, qint64 timestamp) {
     searchSeries(searchTerm, timestamp);
     searchBooks(searchTerm, timestamp);
     searchCollections(searchTerm, timestamp);
+    searchReadLists(searchTerm, timestamp);
 }
 
 void Komga_api::updateProgress(QString bookId, int page, bool completed)
@@ -308,6 +328,27 @@ void Komga_api::searchCollections(const QString &searchTerm, qint64 timestamp) {
     m_searchMapper->setMapping(reply, key);
 }
 
+void Komga_api::searchReadLists(const QString &searchTerm, qint64 timestamp) {
+    qDebug() << "search read lists for " << searchTerm;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::ReadListsSearch));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_READLISTS);
+    QUrlQuery query;
+    query.addQueryItem("size", "10");
+    query.addQueryItem("search", searchTerm);
+    url.setQuery(query);
+    r.setUrl(url);
+
+    QNetworkReply* reply = thumbnailsManager->get(r);
+    connect(reply, &QNetworkReply::finished, [=](){
+        m_searchMapper->map(reply);
+    });
+    QString key = QString::number(timestamp) + URL_READLISTS;
+    m_replies.insert(key, reply);
+    m_searchMapper->setMapping(reply, key);
+}
+
 void Komga_api::searchBooks(const QString &searchTerm, qint64 timestamp) {
     qDebug() << "search books for " << searchTerm;
     QNetworkRequest r;
@@ -358,12 +399,28 @@ void Komga_api::getBooks(QString seriesId, int page) {
     manager->get(r);
 }
 
+void Komga_api::getReadListBooks(QString readListId, int page) {
+    qDebug() << "fetch books for read list " << readListId;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Books));
+    QUrl url;
+    QUrlQuery query;
+    url.setUrl(getServerUrl() + URL_READLISTS + "/" + readListId + URL_BOOKS);
+    query.addQueryItem("size", "40");
+    if (page != 0) {
+        query.addQueryItem("page", QString::number(page, 10));
+    }
+    url.setQuery(query);
+    r.setUrl(url);
+    manager->get(r);
+}
+
 void Komga_api::apiReplyFinished(QNetworkReply *reply) {
     reply->deleteLater();
     if (reply->error() == QNetworkReply::NoError) {
         int reason = reply->request().attribute(QNetworkRequest::Attribute::User).toInt();
         QByteArray response(reply->readAll());
-        QJsonDocument doc = QJsonDocument::fromJson( response);
+        QJsonDocument doc = QJsonDocument::fromJson(response);
 //        qDebug() << doc;
         if (reason == RequestReason::Libraries) {
             emit libraryDataReady(doc);
@@ -394,6 +451,10 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
         else if (reason == RequestReason::NextBook) {
             QJsonObject book = doc.object();
             emit nextBookReady(book);
+        }
+        else if (reason == RequestReason::ReadLists) {
+            QJsonObject page = doc.object();
+            emit readListsDataReady(page);
         }
     }
     // else emit an error event
@@ -465,6 +526,9 @@ QNetworkRequest Komga_api::getThumbnailAsync(QString id) {
     }
     else if (type == "collection") {
         url.setUrl(getServerUrl() + URL_COLLECTIONS + "/" + thumbId + URL_THUMBNAILS);
+    }
+    else if (type == "readlist") {
+        url.setUrl(getServerUrl() + URL_READLISTS + "/" + thumbId + URL_THUMBNAILS);
     }
     r.setUrl(url);
     return r;

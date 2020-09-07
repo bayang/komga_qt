@@ -60,6 +60,14 @@ Pane {
         }
         TextLink {
             onTextLinkClicked: {
+                controller.loadReadListsView()
+                stack.replace("qrc:/qml/ReadListsView.qml")
+            }
+            textLinkLabel: controller.ui_readListsName
+            textLinkLabelSize: Style.intermediateTextSize
+        }
+        TextLink {
+            onTextLinkClicked: {
                 controller.loadSeriesView(controller.ui_newSeriesId)
                 stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_newSeriesName, currentSourceId: controller.ui_newSeriesId})
             }

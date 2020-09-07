@@ -51,6 +51,10 @@ add_library(komga-api
     collection.cpp
     collectionmodel.h
     collectionmodel.cpp
+    readlist.h
+    readlist.cpp
+    readlistmodel.h
+    readlistmodel.cpp
 )
 target_compile_definitions(komga-api PUBLIC "$<$<CONFIG:Release>:QT_NO_DEBUG_OUTPUT>")
 target_link_libraries(komga-api Qt5::Core)

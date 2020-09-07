@@ -14,6 +14,7 @@
 #include "seriesmodel.h"
 #include "searchmodel.h"
 #include "collectionmodel.h"
+#include "readlistmodel.h"
 #include "networkinformer.h"
 
 class KOMGA_API_EXPORT MasterController : public QObject
@@ -24,6 +25,7 @@ class KOMGA_API_EXPORT MasterController : public QObject
     Q_PROPERTY( LibraryModel* ui_libraryModel READ getLibraryModel CONSTANT )
     Q_PROPERTY( SearchModel* ui_searchModel READ getSearchModel CONSTANT )
     Q_PROPERTY( CollectionModel* ui_collectionModel READ getCollectionModel CONSTANT )
+    Q_PROPERTY( ReadListModel* ui_readListsModel READ getReadListModel CONSTANT )
     Q_PROPERTY( QString ui_defaultLibraryId MEMBER DEFAULT_LIBRARY_ID CONSTANT )
     Q_PROPERTY( QString ui_newSeriesId MEMBER SERIES_NEW_ID CONSTANT )
     Q_PROPERTY( QString ui_latestSeriesId MEMBER SERIES_LATEST_ID CONSTANT )
@@ -38,12 +40,13 @@ class KOMGA_API_EXPORT MasterController : public QObject
     Q_PROPERTY( QString ui_ondeckBooksId MEMBER BOOKS_ON_DECK_ID CONSTANT )
     Q_PROPERTY( QString ui_collectionsId MEMBER COLLECTIONS_ID CONSTANT )
     Q_PROPERTY( QString ui_collectionsName MEMBER COLLECTIONS_NAME CONSTANT )
+    Q_PROPERTY( QString ui_readListsName MEMBER READLISTS_NAME CONSTANT )
     Q_PROPERTY( QString ui_readingBooksName MEMBER BOOKS_READING_NAME CONSTANT )
     Q_PROPERTY( QString ui_readingBooksId MEMBER BOOKS_READING_ID CONSTANT )
     Q_PROPERTY( NetworkInformer* ui_networkInformer READ getNetworkInformer CONSTANT )
 
 public:
-    explicit MasterController(SeriesModel *seriesModel, BookModel *bookModel, CollectionModel *collectionModel, NetworkInformer *informer, QObject *parent = nullptr);
+    explicit MasterController(SeriesModel *seriesModel, BookModel *bookModel, CollectionModel *collectionModel, ReadListModel *readListModel, NetworkInformer *informer, QObject *parent = nullptr);
 
     static const QString DEFAULT_LIBRARY_ID;
     static const QString SERIES_NEW_ID;
@@ -66,6 +69,8 @@ public:
     static const QString COLLECTIONS_ID;
     static const QString COLLECTIONS_NAME;
 
+    static const QString READLISTS_NAME;
+
     LibraryModel *getLibraryModel() const;
 
     SeriesModel *getSeriesModel() const;
@@ -86,17 +91,23 @@ public:
     CollectionModel *getCollectionModel() const;
     void setCollectionModel(CollectionModel *collectionModel);
 
+    ReadListModel *getReadListModel() const;
+    void setReadListModel(ReadListModel *readListModel);
+
 signals:
     void loadSeriesView(QString seriesId);
     void loadCollectionSeriesView(QString collectionId);
     void loadSeriesCollections(QString seriesId);
     void loadBooksView(QString seriesId);
+    void loadReadListBooksView(QString readListId);
     void loadCollectionsView();
+    void loadReadListsView();
 
 public slots:
     void nextSeriesPage(QString currentLibraryId);
     void nextBooksPage(QString currentSeriesId);
     void nextCollectionsPage();
+    void nextReadListsPage();
     void nextCollectionsSeriesPage(QString currentCollectionId);
     void setSelectedBookIdx(int value);
     void refreshData();
@@ -118,6 +129,7 @@ private:
     BookModel* m_bookModel{nullptr};
     SearchModel* m_searchModel{nullptr};
     CollectionModel* m_collectionModel{nullptr};
+    ReadListModel* m_readListModel{nullptr};
     int m_currentImageNumber{0};
     int selectedBookIdx{-1};
     NetworkInformer* m_networkInformer{nullptr};

@@ -26,6 +26,7 @@ public:
     void getCollectionSeries(QString collectionId, int page = 0);
     void getSeriesCollections(QString seriesId);
     void getBooks(QString seriesId, int page = 0);
+    void getReadListBooks(QString readListId, int page = 0);
     static const QString URL_LIBRARIES;
     static const QString URL_SERIES;
     static const QString URL_LATEST;
@@ -39,6 +40,7 @@ public:
     static const QString URL_COLLECTIONS;
     static const QString URL_NEXT;
     static const QString URL_PREVIOUS;
+    static const QString URL_READLISTS;
     static const QString SETTINGS_SECTION_SERVER;
     static const QString SETTINGS_KEY_SERVER_URL;
     static const QString SETTINGS_KEY_SERVER_USER;
@@ -57,6 +59,8 @@ public:
         CollectionsSearch = QNetworkRequest::Attribute::User + 10,
         NextBook = QNetworkRequest::Attribute::User + 11,
         PreviousBook = QNetworkRequest::Attribute::User + 12,
+        ReadLists = QNetworkRequest::Attribute::User + 13,
+        ReadListsSearch = QNetworkRequest::Attribute::User + 14,
     };
     enum ThumbnailType {
         SeriesThumbnail,
@@ -78,6 +82,7 @@ public:
     void updateSeriesProgress(QString seriesId, bool completed = true);
     void onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
     void getCollections(int page = 0);
+    void getReadLists(int page = 0);
     void previousBook(QString bookId);
     void nextBook(QString bookId);
 
@@ -93,10 +98,12 @@ private:
     void searchSeries(const QString &searchTerm, qint64 timestamp);
     void searchBooks(const QString &searchTerm, qint64 timestamp);
     void searchCollections(const QString &searchTerm, qint64 timestamp);
+    void searchReadLists(const QString &searchTerm, qint64 timestamp);
 
 signals:
     void libraryDataReady(QJsonDocument libraries);
     void collectionsDataReady(QJsonObject page);
+    void readListsDataReady(QJsonObject page);
     void seriesDataReady(QJsonObject series);
     void booksDataReady(QJsonObject books);
     void netWorkAccessibleChanged(bool accessible);
@@ -108,6 +115,7 @@ signals:
     void searchCollectionsDataReady(QPair<QString, QJsonDocument> res);
     void nextBookReady(QJsonObject book);
     void previousBookReady(QJsonObject book);
+    void searchReadListsDataReady(QPair<QString, QJsonDocument> res);
 };
 
 #endif // KOMGA_API_H

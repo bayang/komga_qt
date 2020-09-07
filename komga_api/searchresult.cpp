@@ -65,3 +65,13 @@ void SearchResult::setCollection(Collection *collection)
 {
     m_collection = collection;
 }
+
+ReadList *SearchResult::readList() const
+{
+    return m_readList;
+}
+
+void SearchResult::setReadList(ReadList *readList)
+{
+    m_readList = readList;
+}

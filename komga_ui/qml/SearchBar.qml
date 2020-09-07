@@ -128,6 +128,18 @@ Item {
                                                    currentSourceId: resultCollection.ui_collectionId,
                                                    sourceIsLibrary: false})
                                 }
+                                else if (resultType === "Readlist") {
+                                    controller.loadReadListBooksView(resultReadList.ui_readListId)
+                                    console.log("read list size " + resultReadList.ui_readListBooksSize)
+                                    stack.push("qrc:/qml/booksview.qml", {
+                                                   currentSeriesId: resultReadList.ui_readListId,
+                                                   currentSeriesName: resultReadList.ui_readListName,
+                                                   currentSeriesBookCount: resultReadList.ui_readListBooksSize,
+                                                   currentSeriesMetadataStatus: "",
+                                                   parentType: "ReadList"
+                                               }
+                                           )
+                                }
                                 else {
                                     controller.loadBooksView(resultSeries.ui_seriesId)
                                     stack.replace("qrc:/qml/booksview.qml", {
@@ -166,6 +178,9 @@ Item {
         }
         else if (type === "Collections") {
             return "collection"
+        }
+        else if (type === "Readlist") {
+            return "readlist"
         }
         return "series"
     }

@@ -50,6 +50,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
     Q_INVOKABLE void loadBooks(QString seriesId);
+    Q_INVOKABLE void loadReadListBooks(QString readListId);
     QByteArray getThumbnail(int id);
     QByteArray getPage(QString id, int pageNum);
     void nextBooksPage(QString seriesId);

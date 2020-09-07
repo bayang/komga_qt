@@ -20,6 +20,7 @@ public:
         BookRole = Qt::UserRole + 4,
         SeriesRole = Qt::UserRole + 5,
         CollectionRole = Qt::UserRole + 6,
+        ReadListRole = Qt::UserRole + 7,
     };
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
@@ -40,6 +41,7 @@ public slots:
     void searchBookDataReceived(QPair<QString, QJsonDocument> res);
     void searchSeriesDataReceived(QPair<QString, QJsonDocument> res);
     void searchCollectionsDataReceived(QPair<QString, QJsonDocument> res);
+    void searchReadListsDataReceived(QPair<QString, QJsonDocument> res);
 };
 
 #endif // SEARCHMODEL_H

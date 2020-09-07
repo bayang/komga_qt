@@ -8,6 +8,7 @@ const QString MasterController::BOOKS_LATEST_NAME{"Recently added books"};
 const QString MasterController::BOOKS_READING_NAME{"Keep reading"};
 const QString MasterController::BOOKS_ON_DECK_NAME{"On deck"};
 const QString MasterController::COLLECTIONS_NAME{"Collections"};
+const QString MasterController::READLISTS_NAME{"Reading Lists"};
 
 const QString MasterController::DEFAULT_LIBRARY_ID{"-100"};
 const QString MasterController::SERIES_NEW_ID{"-101"};
@@ -20,14 +21,16 @@ const QString MasterController::BOOKS_ON_DECK_ID{"-1003"};
 
 const QString MasterController::COLLECTIONS_ID{"-2002"};
 
-MasterController::MasterController(SeriesModel* seriesModel, BookModel* bookModel, CollectionModel* collectionModel, NetworkInformer *informer, QObject *parent) :
-    m_seriesModel{seriesModel}, m_bookModel{bookModel}, m_collectionModel{collectionModel}, m_networkInformer{informer}, QObject{parent}
+MasterController::MasterController(SeriesModel* seriesModel, BookModel* bookModel, CollectionModel* collectionModel, ReadListModel *readListModel, NetworkInformer *informer, QObject *parent) :
+    m_seriesModel{seriesModel}, m_bookModel{bookModel}, m_collectionModel{collectionModel}, m_readListModel{readListModel}, m_networkInformer{informer}, QObject{parent}
 {
     connect(this, &MasterController::loadBooksView, m_bookModel, &BookModel::loadBooks);
+    connect(this, &MasterController::loadReadListBooksView, m_bookModel, &BookModel::loadReadListBooks);
     connect(this, &MasterController::loadSeriesView, m_seriesModel, &SeriesModel::loadSeries);
     connect(this, &MasterController::loadCollectionSeriesView, m_seriesModel, &SeriesModel::loadCollectionSeries);
     connect(this, &MasterController::loadSeriesCollections, m_seriesModel, &SeriesModel::loadSeriesCollections);
     connect(this, &MasterController::loadCollectionsView, m_collectionModel, &CollectionModel::loadCollections);
+    connect(this, &MasterController::loadReadListsView, m_readListModel, &ReadListModel::loadReadLists);
 }
 
 BookModel *MasterController::getBookModel() const
@@ -63,6 +66,10 @@ void MasterController::nextBooksPage(QString currentSeriesId) {
 void MasterController::nextCollectionsPage()
 {
     m_collectionModel->nextCollectionsPage();
+}
+void MasterController::nextReadListsPage()
+{
+    m_readListModel->nextReadListsPage();
 }
 void MasterController::refreshData() {
     m_libraryModel->fetchData();
@@ -128,6 +135,16 @@ bool MasterController::hasNextBook()
 bool MasterController::hasPreviousBook()
 {
     return getSelectedBookIdx() > 0;
+}
+
+ReadListModel *MasterController::getReadListModel() const
+{
+    return m_readListModel;
+}
+
+void MasterController::setReadListModel(ReadListModel *readListModel)
+{
+    m_readListModel = readListModel;
 }
 
 CollectionModel *MasterController::getCollectionModel() const

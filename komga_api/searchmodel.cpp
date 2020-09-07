@@ -4,6 +4,7 @@
 #include <QMetaEnum>
 #include "bookmodel.h"
 #include "collection.h"
+#include "readlist.h"
 
 SearchModel::SearchModel(QObject *parent, Komga_api* api) :
    QAbstractListModel{parent}, m_api{api}, m_results{}
@@ -14,6 +15,8 @@ SearchModel::SearchModel(QObject *parent, Komga_api* api) :
             this, &SearchModel::searchSeriesDataReceived);
     connect(m_api, &Komga_api::searchCollectionsDataReady,
             this, &SearchModel::searchCollectionsDataReceived);
+    connect(m_api, &Komga_api::searchReadListsDataReady,
+            this, &SearchModel::searchReadListsDataReceived);
 }
 int SearchModel::rowCount(const QModelIndex &parent) const {
     Q_ASSERT(checkIndex(parent));
@@ -42,6 +45,9 @@ QVariant SearchModel::data(const QModelIndex &index, int role) const {
         else if (result->resultType() == SearchResult::ResultType::CollectionType) {
             return QString("Collections");
         }
+        else if (result->resultType() == SearchResult::ResultType::ReadListType) {
+            return QString("Readlist");
+        }
         return QString("Series");
     }
     else if (role == SeriesRole){
@@ -53,6 +59,9 @@ QVariant SearchModel::data(const QModelIndex &index, int role) const {
     else if (role == CollectionRole){
         return QVariant::fromValue(result->collection());
     }
+    else if (role == ReadListRole){
+        return QVariant::fromValue(result->readList());
+    }
     return QVariant();
 }
 QHash<int, QByteArray> SearchModel::roleNames() const {
@@ -63,6 +72,7 @@ QHash<int, QByteArray> SearchModel::roleNames() const {
         roles[SeriesRole] = "resultSeries";
         roles[BookRole] = "resultBook";
         roles[CollectionRole] = "resultCollection";
+        roles[ReadListRole] = "resultReadList";
         return roles;
 }
 
@@ -173,13 +183,51 @@ void SearchModel::searchCollectionsDataReceived(QPair<QString, QJsonDocument> re
             c->setOrdered(jsob["ordered"].toBool());
             c->setFiltered(jsob["filtered"].toBool());
             QJsonArray seriesArray = jsob["seriesIds"].toArray();
+            QList<QString> seriesIds;
             foreach (const QJsonValue &val, seriesArray) {
-                c->seriesIds().append(val.toString());
+                seriesIds.append(val.toString());
             }
+            c->setSeriesIds(seriesIds);
             sr->setId(jsob["id"].toString());
             sr->setName(n);
             sr->setResultType(SearchResult::ResultType::CollectionType);
             sr->setCollection(std::move(c));
+            m_results.append(std::move(sr));
+        }
+        emit endInsertRows();
+    }
+}
+
+void SearchModel::searchReadListsDataReceived(QPair<QString, QJsonDocument> res)
+{
+    QJsonObject page = res.second.object();
+    int nbElems = page["numberOfElements"].toInt();
+    qlonglong n = res.first.section('/', 0, 0).toLongLong();
+    // new search result, clear previous data
+    if (n > currentTimestamp()) {
+        resetModel();
+        setCurrentTimestamp(n);
+    }
+    if (nbElems > 0) {
+        emit beginInsertRows(QModelIndex(), m_results.size(), m_results.size() + nbElems - 1);
+        QJsonArray content = page["content"].toArray();
+        foreach (const QJsonValue &value, content) {
+            QJsonObject jsob = value.toObject();
+            SearchResult* sr = new SearchResult(this);
+            ReadList* r = new ReadList(this);
+            r->setId(jsob["id"].toString());
+            r->setName(jsob["name"].toString());
+            r->setFiltered(jsob["filtered"].toBool());
+            QJsonArray booksArray = jsob["bookIds"].toArray();
+            QList<QString> booksIds;
+            foreach (const QJsonValue &val, booksArray) {
+                booksIds.append(val.toString());
+            }
+            r->setBooksIds(booksIds);
+            sr->setId(jsob["id"].toString());
+            sr->setName(jsob["name"].toString());
+            sr->setResultType(SearchResult::ResultType::ReadListType);
+            sr->setReadList(std::move(r));
             m_results.append(std::move(sr));
         }
         emit endInsertRows();

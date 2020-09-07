@@ -6,6 +6,7 @@
 #include "book.h"
 #include "series.h"
 #include "collection.h"
+#include "readlist.h"
 
 class KOMGA_API_EXPORT SearchResult : public QObject
 {
@@ -16,7 +17,8 @@ public:
     enum ResultType {
         SeriesType,
         BookType,
-        CollectionType
+        CollectionType,
+        ReadListType
     };
     Q_ENUM(ResultType);
     QString id() const;
@@ -37,6 +39,9 @@ public:
     Collection *collection() const;
     void setCollection(Collection *collection);
 
+    ReadList *readList() const;
+    void setReadList(ReadList *readList);
+
 private:
     QString m_id {};
     QString m_name{};
@@ -44,6 +49,7 @@ private:
     Book *m_book{};
     Series* m_series{};
     Collection* m_collection{};
+    ReadList* m_readList{};
 
 };
 

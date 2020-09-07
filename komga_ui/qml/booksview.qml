@@ -11,6 +11,7 @@ Item {
     property string currentSeriesName
     property real currentSeriesBookCount
     property string currentSeriesMetadataStatus
+    property string parentType
 //    anchors.fill: parent
     anchors.leftMargin: 10
 
@@ -116,7 +117,7 @@ Item {
                 Layout.fillWidth: true
                 Image {
                     id: seriesDetailImage
-                    source: "image://async/series/" + currentSeriesId
+                    source: "image://async/" + getSourceType(parentType) + "/" + currentSeriesId
                     sourceSize.height: 270
                     sourceSize.width: -1
                     fillMode: Image.PreserveAspectCrop
@@ -149,6 +150,7 @@ Item {
                         text: qsTr("STATUS : " + currentSeriesMetadataStatus)
                         font.pointSize: Style.smallMediumTextSize
                         Layout.bottomMargin: 15
+                        visible: currentSeriesMetadataStatus != ''
                     }
                     Label {
                         id: collectionsLabel
@@ -264,5 +266,12 @@ Item {
                 model: controller.ui_bookModel
             }
         }
+    }
+
+    function getSourceType(type) {
+        if (type === "ReadList") {
+            return "readlist"
+        }
+        return "series"
     }
 }
