@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QMetaEnum>
 #include "bookmodel.h"
+#include "seriesmodel.h"
 #include "collection.h"
 #include "readlist.h"
 
@@ -139,20 +140,21 @@ void SearchModel::searchSeriesDataReceived(QPair<QString, QJsonDocument> res)
         foreach (const QJsonValue &value, content) {
             QJsonObject jsob = value.toObject();
             SearchResult* sr = new SearchResult(this);
-            Series* s = new Series(this);
+//            Series* s = new Series(this);
+            Series* s = SeriesModel::parseSeries(value, sr);
             QString n = jsob["name"].toString();
             sr->setId(jsob["id"].toString());
             sr->setName(n);
             sr->setResultType(SearchResult::ResultType::SeriesType);
-            s->setId(jsob["id"].toString());
-            s->setName(n);
-            s->setBooksCount(jsob["booksCount"].toInt());
-            s->setLibraryId(jsob["libraryId"].toString());
-            QString u = jsob["url"].toString();
-            s->setUrl(u);
-            QJsonObject metadata = jsob["metadata"].toObject();
-            s->setMetadataTitle(metadata["title"].toString());
-            s->setMetadataStatus(metadata["status"].toString());
+//            s->setId(jsob["id"].toString());
+//            s->setName(n);
+//            s->setBooksCount(jsob["booksCount"].toInt());
+//            s->setLibraryId(jsob["libraryId"].toString());
+//            QString u = jsob["url"].toString();
+//            s->setUrl(u);
+//            QJsonObject metadata = jsob["metadata"].toObject();
+//            s->setMetadataTitle(metadata["title"].toString());
+//            s->setMetadataStatus(metadata["status"].toString());
             sr->setSeries(std::move(s));
             m_results.append(std::move(sr));
         }

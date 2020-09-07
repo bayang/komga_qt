@@ -41,10 +41,12 @@ public:
     QByteArray getThumbnail(int id);
     Series* find(int libraryId);
     void resetSeries();
-    Series *parseSeries(const QJsonValue &value);
+//    Series *parseSeries(const QJsonValue &value);
     void nextCollectionsSeriesPage(QString collectionId);
     bool setData(const QModelIndex& index, const QVariant& value,
                  int role);
+    static Series *parseSeries(const QJsonValue &value, QObject* parent);
+
 signals:
     void refresh();
 

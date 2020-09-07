@@ -89,8 +89,27 @@ void SeriesModel::resetSeries() {
     emit endRemoveRows();
 }
 
-Series* SeriesModel::parseSeries(const QJsonValue &value) {
-    Series* s = new Series(this);
+//Series* SeriesModel::parseSeries(const QJsonValue &value) {
+//    Series* s = new Series(this);
+//    QJsonObject jsob = value.toObject();
+//    s->setId(jsob["id"].toString());
+//    QString n = jsob["name"].toString();
+//    s->setName(n);
+//    s->setBooksCount(jsob["booksCount"].toInt());
+//    s->setBooksReadCount(jsob["booksReadCount"].toInt());
+//    s->setBooksUnreadCount(jsob["booksUnreadCount"].toInt());
+//    s->setBooksInProgressCount(jsob["booksInProgressCount"].toInt());
+//    s->setLibraryId(jsob["libraryId"].toString());
+//    QString u = jsob["url"].toString();
+//    s->setUrl(u);
+//    QJsonObject metadata = jsob["metadata"].toObject();
+//    s->setMetadataTitle(metadata["title"].toString());
+//    s->setMetadataStatus(metadata["status"].toString());
+//    return s;
+//}
+Series *SeriesModel::parseSeries(const QJsonValue &value, QObject *parent)
+{
+    Series* s = new Series(parent);
     QJsonObject jsob = value.toObject();
     s->setId(jsob["id"].toString());
     QString n = jsob["name"].toString();
@@ -117,7 +136,7 @@ void SeriesModel::apiDataReceived(QJsonObject page) {
             emit beginInsertRows(QModelIndex(), m_series.size(), m_series.size() + nbElems - 1);
             QJsonArray content = page["content"].toArray();
             foreach (const QJsonValue &value, content) {
-                m_series.append(std::move(parseSeries(value)));
+                m_series.append(std::move(parseSeries(value, this)));
             }
             emit endInsertRows();
         }
@@ -125,7 +144,7 @@ void SeriesModel::apiDataReceived(QJsonObject page) {
             QList<Series*> series{};
             QJsonArray content = page["content"].toArray();
             foreach (const QJsonValue &value, content) {
-                series.append(std::move(parseSeries(value)));
+                series.append(std::move(parseSeries(value, this)));
 
             }
 
@@ -168,6 +187,7 @@ bool SeriesModel::setData(const QModelIndex &index, const QVariant &value, int r
     Series* s = m_series.at(index.row());
 
 }
+
 Series* SeriesModel::find(int libraryId) {
     auto itr = std::find_if(m_series.begin(), m_series.end(), [libraryId](Series* series) { return series->libraryId() == libraryId; });
     if(itr != m_series.end()) {
