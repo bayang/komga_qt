@@ -151,14 +151,15 @@ Item {
                                        currentSeriesId: seriesId,
                                        currentSeriesName: seriesName,
                                        currentSeriesBookCount: seriesBookCount,
-                                       currentSeriesMetadataStatus: seriesMetadataStatus
+                                       currentSeriesMetadataStatus: seriesMetadataStatus,
+                                       currentSeriesMetadataSummary: seriesMetadataSummary,
+                                       currentSeriesMetadataTags: seriesMetadataTags,
+                                       currentSeriesMetadataGenres: seriesMetadataGenres
                                    }
                                )
                     }
                     onSelectClicked: {
                         ism.select(ism.model.index(index, 0), ItemSelectionModel.Toggle)
-//                        console.log(ism.selectedIndexes)
-//                        console.log(ism.hasSelection)
                     }
             }
         }

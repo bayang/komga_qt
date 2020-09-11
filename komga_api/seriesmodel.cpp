@@ -51,6 +51,28 @@ QVariant SeriesModel::data(const QModelIndex &index, int role) const {
         else if (role == BookInProgressCountRole) {
             return series->booksInProgressCount();
         }
+        else if (role == MetadataSummaryRole) {
+            return series->metadataSummary();
+        }
+        else if (role == MetadataReadingDirectionRole) {
+            return series->metadataReadingDirection();
+        }
+        else if (role == MetadataPublisherRole) {
+            return series->metadataPublisher();
+        }
+        else if (role == MetadataAgeRatingRole) {
+            return series->metadataAgeRating();
+        }
+        else if (role == MetadataLanguageRole) {
+            return series->metadataLanguage();
+        }
+        else if (role == MetadataGenresRole) {
+            series->metadataGenres().join(",");
+            return series->metadataGenres().join(",");
+        }
+        else if (role == MetadataTagsRole) {
+            return series->metadataTags().join(",");
+        }
     }
     return QVariant();
 }
@@ -65,6 +87,13 @@ QHash<int, QByteArray> SeriesModel::roleNames() const {
         roles[BookInProgressCountRole] = "seriesBookInProgressCount";
         roles[UrlRole] = "seriesUrl";
         roles[MetadataStatusRole] = "seriesMetadataStatus";
+        roles[MetadataSummaryRole] = "seriesMetadataSummary";
+        roles[MetadataReadingDirectionRole] = "seriesMetadataReadingDirection";
+        roles[MetadataPublisherRole] = "seriesMetadataPublisher";
+        roles[MetadataAgeRatingRole] = "seriesMetadataAgeRating";
+        roles[MetadataLanguageRole] = "seriesMetadataLanguage";
+        roles[MetadataGenresRole] = "seriesMetadataGenres";
+        roles[MetadataTagsRole] = "seriesMetadataTags";
         return roles;
 }
 void SeriesModel::loadSeries(QString library) {
@@ -124,6 +153,25 @@ Series *SeriesModel::parseSeries(const QJsonValue &value, QObject *parent)
     QJsonObject metadata = jsob["metadata"].toObject();
     s->setMetadataTitle(metadata["title"].toString());
     s->setMetadataStatus(metadata["status"].toString());
+    s->setMetadataSummary(metadata["summary"].toString());
+    s->setMetadataReadingDirection(metadata["readingDirection"].toString());
+    s->setMetadataPublisher(metadata["publisher"].toString());
+    s->setMetadataAgeRating(metadata["ageRating"].toString());
+    s->setMetadataLanguage(metadata["language"].toString());
+    s->setMetadataCreated(metadata["created"].toString());
+    s->setMetadataLastModified(metadata["lastModified"].toString());
+    QJsonArray genresArray = metadata["genres"].toArray();
+    QList<QString> genres{};
+    foreach (const QJsonValue &val, genresArray) {
+        genres.append(val.toString());
+    }
+    s->setMetadataGenres(genres);
+    QJsonArray tagsArray = metadata["tags"].toArray();
+    QList<QString> tags{};
+    foreach (const QJsonValue &val, tagsArray) {
+        tags.append(val.toString());
+    }
+    s->setMetadataTags(tags);
     return s;
 }
 
@@ -177,15 +225,6 @@ void SeriesModel::nextCollectionsSeriesPage(QString collectionId) {
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
         m_api->getCollectionSeries(collectionId, m_currentPageNumber + 1);
     }
-}
-
-bool SeriesModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-    if (! index.isValid()) {
-        return false;
-    }
-    Series* s = m_series.at(index.row());
-
 }
 
 Series* SeriesModel::find(int libraryId) {

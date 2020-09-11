@@ -98,3 +98,93 @@ void Series::setBooksInProgressCount(int booksInProgressCount)
         emit booksInProgressCountChanged(m_booksInProgressCount);
     }
 }
+
+QString Series::metadataSummary() const
+{
+    return m_metadataSummary;
+}
+
+void Series::setMetadataSummary(const QString &metadataSummary)
+{
+    m_metadataSummary = metadataSummary;
+}
+
+QString Series::metadataReadingDirection() const
+{
+    return m_metadataReadingDirection;
+}
+
+void Series::setMetadataReadingDirection(const QString &metadataReadingDirection)
+{
+    m_metadataReadingDirection = metadataReadingDirection;
+}
+
+QString Series::metadataPublisher() const
+{
+    return m_metadataPublisher;
+}
+
+void Series::setMetadataPublisher(const QString &metadataPublisher)
+{
+    m_metadataPublisher = metadataPublisher;
+}
+
+QString Series::metadataAgeRating() const
+{
+    return m_metadataAgeRating;
+}
+
+void Series::setMetadataAgeRating(const QString &metadataAgeRating)
+{
+    m_metadataAgeRating = metadataAgeRating;
+}
+
+QString Series::metadataLanguage() const
+{
+    return m_metadataLanguage;
+}
+
+void Series::setMetadataLanguage(const QString &metadataLanguage)
+{
+    m_metadataLanguage = metadataLanguage;
+}
+
+QList<QString> Series::metadataGenres() const
+{
+    return m_metadataGenres;
+}
+
+void Series::setMetadataGenres(const QList<QString> &metadataGenres)
+{
+    m_metadataGenres = metadataGenres;
+}
+
+QList<QString> Series::metadataTags() const
+{
+    return m_metadataTags;
+}
+
+void Series::setMetadataTags(const QList<QString> &metadataTags)
+{
+    m_metadataTags = metadataTags;
+}
+
+QString Series::metadataCreated() const
+{
+    return m_metadataCreated;
+}
+
+void Series::setMetadataCreated(const QString &metadataCreated)
+{
+    m_metadataCreated = metadataCreated;
+}
+
+QString Series::metadataLastModified() const
+{
+    return m_metadataLastModified;
+}
+
+void Series::setMetadataLastModified(const QString &metadataLastModified)
+{
+    m_metadataLastModified = metadataLastModified;
+}

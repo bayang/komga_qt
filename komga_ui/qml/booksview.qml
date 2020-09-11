@@ -11,6 +11,9 @@ Item {
     property string currentSeriesName
     property real currentSeriesBookCount
     property string currentSeriesMetadataStatus
+    property string currentSeriesMetadataSummary
+    property string currentSeriesMetadataTags
+    property string currentSeriesMetadataGenres
     property string parentType
 //    anchors.fill: parent
     anchors.leftMargin: 10
@@ -151,6 +154,27 @@ Item {
                         font.pointSize: Style.smallMediumTextSize
                         Layout.bottomMargin: 15
                         visible: currentSeriesMetadataStatus != ''
+                    }
+                    Label {
+                        id: seriesSummary
+                        text: qsTr(currentSeriesMetadataSummary)
+                        font.pointSize: Style.smallMediumTextSize
+                        Layout.bottomMargin: 15
+                        visible: currentSeriesMetadataSummary != ''
+                    }
+                    Label {
+                        id: seriesGenres
+                        text: qsTr("GENRES : " + currentSeriesMetadataGenres)
+                        font.pointSize: Style.smallMediumTextSize
+                        Layout.bottomMargin: 15
+                        visible: currentSeriesMetadataGenres != ''
+                    }
+                    Label {
+                        id: seriesTags
+                        text: qsTr("TAGS : " + currentSeriesMetadataTags)
+                        font.pointSize: Style.smallMediumTextSize
+                        Layout.bottomMargin: 15
+                        visible: currentSeriesMetadataTags != ''
                     }
                     Label {
                         id: collectionsLabel

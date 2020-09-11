@@ -92,9 +92,11 @@ void CollectionModel::apiDataReceived(QJsonObject page)
                 c->setOrdered(jsob["ordered"].toBool());
                 c->setFiltered(jsob["filtered"].toBool());
                 QJsonArray seriesArray = jsob["seriesIds"].toArray();
+                QList<QString> sIds{};
                 foreach (const QJsonValue &val, seriesArray) {
-                    c->seriesIds().append(val.toString());
+                    sIds.append(val.toString());
                 }
+                c->setSeriesIds(sIds);
                 m_collections.append(std::move(c));
             }
             emit endInsertRows();

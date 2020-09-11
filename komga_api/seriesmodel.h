@@ -22,6 +22,13 @@ public:
         BookReadCountRole = Qt::UserRole + 7,
         BookUnreadCountRole = Qt::UserRole + 8,
         BookInProgressCountRole = Qt::UserRole + 9,
+        MetadataSummaryRole = Qt::UserRole + 10,
+        MetadataReadingDirectionRole = Qt::UserRole + 11,
+        MetadataPublisherRole = Qt::UserRole + 12,
+        MetadataAgeRatingRole = Qt::UserRole + 13,
+        MetadataLanguageRole = Qt::UserRole + 14,
+        MetadataGenresRole = Qt::UserRole + 15,
+        MetadataTagsRole = Qt::UserRole + 16,
     };
 private slots:
     void apiDataReceived(QJsonObject series);
@@ -41,10 +48,7 @@ public:
     QByteArray getThumbnail(int id);
     Series* find(int libraryId);
     void resetSeries();
-//    Series *parseSeries(const QJsonValue &value);
     void nextCollectionsSeriesPage(QString collectionId);
-    bool setData(const QModelIndex& index, const QVariant& value,
-                 int role);
     static Series *parseSeries(const QJsonValue &value, QObject* parent);
 
 signals:
