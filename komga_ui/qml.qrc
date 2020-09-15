@@ -14,5 +14,6 @@
         <file>qml/BooksListView.qml</file>
         <file>qml/CollectionsView.qml</file>
         <file>qml/ReadListsView.qml</file>
+        <file>qml/BadgeLabel.qml</file>
     </qresource>
 </RCC>

@@ -12,9 +12,9 @@ Item {
     property real currentSeriesBookCount
     property string currentSeriesMetadataStatus
     property string currentSeriesMetadataSummary
-    property string currentSeriesMetadataTags
-    property string currentSeriesMetadataGenres
     property string parentType
+    property var currentSeriesMetadataTagsList: []
+    property var currentSeriesMetadataGenresList: []
 //    anchors.fill: parent
     anchors.leftMargin: 10
 
@@ -34,7 +34,6 @@ Item {
                 Button {
                     id : booksViewBackButton
                     onClicked: {
-                        console.log("depth : " + contentFrame.depth)
                         if (contentFrame.depth > 1) {
                             contentFrame.pop()
                         }
@@ -59,7 +58,6 @@ Item {
                     id: readButton
                     visible: ism.hasSelection
                     Layout.alignment: Qt.AlignBottom
-//                    anchors.verticalCenter: parent.verticalCenter
                     onClicked: {
                         controller.markRead(ism.selectedIndexes, "Book")
                         ism.clearSelection()
@@ -78,7 +76,6 @@ Item {
                 RoundButton {
                     id: unreadButton
                     visible: ism.hasSelection
-//                    anchors.verticalCenter: parent.verticalCenter
                     onClicked: {
                         controller.markRead(ism.selectedIndexes, "Book", false)
                         ism.clearSelection()
@@ -97,7 +94,6 @@ Item {
                 RoundButton {
                     id: deselectButton
                     visible: ism.hasSelection
-//                    anchors.verticalCenter: parent.verticalCenter
                     onClicked: {
                         ism.clearSelection()
                     }
@@ -136,21 +132,15 @@ Item {
                             text: qsTr(currentSeriesName)
                             font.pointSize: Style.mediumTextSize
                         }
-                        Label {
+                        BadgeLabel {
                             id: countBadge
-                            text: currentSeriesBookCount
                             font.pointSize: Style.smallMediumTextSize
-                            padding: 4
-                            font.bold: true
-                            background: Rectangle {
-                                color: Style.hoverBorderColor
-                                radius: 4
-                            }
+                            text: currentSeriesBookCount
                         }
                     }
                     Label {
                         id: seriesStatus
-                        text: qsTr("STATUS : " + currentSeriesMetadataStatus)
+                        text: qsTr("Status : " + currentSeriesMetadataStatus)
                         font.pointSize: Style.smallMediumTextSize
                         Layout.bottomMargin: 15
                         visible: currentSeriesMetadataStatus != ''
@@ -162,20 +152,36 @@ Item {
                         Layout.bottomMargin: 15
                         visible: currentSeriesMetadataSummary != ''
                     }
-                    Label {
-                        id: seriesGenres
-                        text: qsTr("GENRES : " + currentSeriesMetadataGenres)
-                        font.pointSize: Style.smallMediumTextSize
-                        Layout.bottomMargin: 15
-                        visible: currentSeriesMetadataGenres != ''
+                    RowLayout {
+                        visible: currentSeriesMetadataGenresList.length > 0
+                        Label {
+                            text: qsTr("Genres : ")
+                            font.pointSize: Style.smallMediumTextSize
+                        }
+
+                        Repeater {
+                            model: currentSeriesMetadataGenresList
+                            delegate: BadgeLabel {
+                                text: modelData
+                                font.pointSize: Style.smallMediumTextSize
+                            }
+                        }
                     }
-                    Label {
-                        id: seriesTags
-                        text: qsTr("TAGS : " + currentSeriesMetadataTags)
-                        font.pointSize: Style.smallMediumTextSize
-                        Layout.bottomMargin: 15
-                        visible: currentSeriesMetadataTags != ''
+                    RowLayout {
+                        visible: currentSeriesMetadataTagsList.length > 0
+                        Label {
+                            text: qsTr("Tags : ")
+                            font.pointSize: Style.smallMediumTextSize
+                        }
+                        Repeater {
+                            model: currentSeriesMetadataTagsList
+                            delegate: BadgeLabel {
+                                text: modelData
+                                font.pointSize: Style.smallMediumTextSize
+                            }
+                        }
                     }
+
                     Label {
                         id: collectionsLabel
                         text: qsTr("Collections :")
@@ -280,8 +286,6 @@ Item {
                     }
                     onSelectClicked: {
                         ism.select(ism.model.index(index, 0), ItemSelectionModel.Toggle)
-//                        console.log(ism.selectedIndexes)
-//                        console.log(ism.hasSelection)
                     }
                 }
             }

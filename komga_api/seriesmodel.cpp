@@ -1,6 +1,7 @@
 #include "seriesmodel.h"
 #include <QJsonArray>
 
+
 SeriesModel::SeriesModel(QObject *parent, Komga_api* api) :
     QAbstractListModel{parent}, m_api{api}
 {
@@ -73,6 +74,20 @@ QVariant SeriesModel::data(const QModelIndex &index, int role) const {
         else if (role == MetadataTagsRole) {
             return series->metadataTags().join(",");
         }
+        else if (role == MetadataTagsListRole) {
+            QVariantList l;
+            for (auto val : series->metadataTags()) {
+                l.append(val);
+            }
+            return l;
+        }
+        else if (role == MetadataGenresListRole) {
+            QVariantList l;
+            for (auto val : series->metadataGenres()) {
+                l.append(val);
+            }
+            return l;
+        }
     }
     return QVariant();
 }
@@ -94,6 +109,8 @@ QHash<int, QByteArray> SeriesModel::roleNames() const {
         roles[MetadataLanguageRole] = "seriesMetadataLanguage";
         roles[MetadataGenresRole] = "seriesMetadataGenres";
         roles[MetadataTagsRole] = "seriesMetadataTags";
+        roles[MetadataTagsListRole] = "seriesMetadataTagsList";
+        roles[MetadataGenresListRole] = "seriesMetadataGenresList";
         return roles;
 }
 void SeriesModel::loadSeries(QString library) {

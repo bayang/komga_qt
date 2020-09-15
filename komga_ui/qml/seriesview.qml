@@ -153,8 +153,8 @@ Item {
                                        currentSeriesBookCount: seriesBookCount,
                                        currentSeriesMetadataStatus: seriesMetadataStatus,
                                        currentSeriesMetadataSummary: seriesMetadataSummary,
-                                       currentSeriesMetadataTags: seriesMetadataTags,
-                                       currentSeriesMetadataGenres: seriesMetadataGenres
+                                       currentSeriesMetadataTagsList: seriesMetadataTagsList,
+                                       currentSeriesMetadataGenresList: seriesMetadataGenresList
                                    }
                                )
                     }

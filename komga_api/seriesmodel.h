@@ -29,6 +29,8 @@ public:
         MetadataLanguageRole = Qt::UserRole + 14,
         MetadataGenresRole = Qt::UserRole + 15,
         MetadataTagsRole = Qt::UserRole + 16,
+        MetadataTagsListRole = Qt::UserRole + 17,
+        MetadataGenresListRole = Qt::UserRole + 18,
     };
 private slots:
     void apiDataReceived(QJsonObject series);

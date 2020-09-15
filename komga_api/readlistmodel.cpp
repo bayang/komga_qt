@@ -10,7 +10,6 @@ ReadListModel::ReadListModel(QObject *parent, Komga_api* api) :
 
 void ReadListModel::loadReadLists()
 {
-    qDebug() << "load read lists";
     m_api->getReadLists();
 }
 
@@ -62,7 +61,6 @@ QHash<int, QByteArray> ReadListModel::roleNames() const
 
 void ReadListModel::apiDataReceived(QJsonObject page)
 {
-    qDebug() << "received readlists " << page;
     int pageNum = page["number"].toInt();
     int totPages = page["totalPages"].toInt();
     int nbElems = page["numberOfElements"].toInt();
