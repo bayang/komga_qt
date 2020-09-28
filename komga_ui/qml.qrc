@@ -15,5 +15,7 @@
         <file>qml/CollectionsView.qml</file>
         <file>qml/ReadListsView.qml</file>
         <file>qml/BadgeLabel.qml</file>
+        <file>qml/SeriesFilterComponent.qml</file>
+        <file>qml/CollapsibleItem.qml</file>
     </qresource>
 </RCC>

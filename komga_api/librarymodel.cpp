@@ -25,6 +25,7 @@ void LibraryModel::apiDataReceived(QJsonDocument libraries) {
     }
     emit layoutChanged();
 }
+
 int LibraryModel::rowCount(const QModelIndex &parent) const {
     if (parent.isValid()) {
         return 0;
@@ -62,4 +63,9 @@ QVariant LibraryModel::data(const QModelIndex &index, int role) const {
 }
 void LibraryModel::fetchData() {
     m_api -> getLibraries();
+}
+
+void LibraryModel::getTags()
+{
+    m_api->getTags(QHash<QString,QString>{});
 }

@@ -25,10 +25,18 @@ const QString Komga_api::URL_COLLECTIONS{"/collections"};
 const QString Komga_api::URL_READLISTS{"/readlists"};
 const QString Komga_api::URL_NEXT{"/next"};
 const QString Komga_api::URL_PREVIOUS{"/previous"};
+const QString Komga_api::URL_TAGS{"/tags"};
+const QString Komga_api::URL_GENRES{"/genres"};
+const QString Komga_api::URL_AGE_RATINGS{"/age-ratings"};
+const QString Komga_api::URL_LANGUAGES{"/languages"};
+const QString Komga_api::URL_PUBLISHERS{"/publishers"};
 const QString Komga_api::SETTINGS_SECTION_SERVER{"server"};
 const QString Komga_api::SETTINGS_KEY_SERVER_URL{"serverAdress"};
 const QString Komga_api::SETTINGS_KEY_SERVER_USER{"serverUsername"};
 const QString Komga_api::SETTINGS_KEY_SERVER_PASSWORD{"serverPassword"};
+const QString Komga_api::KEY_LIBRARY{"library_id"};
+const QString Komga_api::KEY_SERIES{"series_id"};
+const QString Komga_api::KEY_COLLECTION{"collection_id"};
 
 Komga_api::Komga_api(QObject *parent):
     QObject{parent}
@@ -166,6 +174,104 @@ void Komga_api::nextBook(QString bookId)
     manager->get(r);
 }
 
+void Komga_api::getTags(QHash<QString, QString> queryParams)
+{
+    qDebug() << "fetching tags ";
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Tags));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_TAGS);
+    QUrlQuery query;
+    if (queryParams.contains(KEY_LIBRARY)) {
+        query.addQueryItem(KEY_LIBRARY, queryParams[KEY_LIBRARY]);
+    }
+    else if (queryParams.contains(KEY_SERIES)) {
+        query.addQueryItem(KEY_SERIES, queryParams[KEY_SERIES]);
+    }
+    else if (queryParams.contains(KEY_COLLECTION)) {
+        query.addQueryItem(KEY_COLLECTION, queryParams[KEY_COLLECTION]);
+    }
+    url.setQuery(query);
+    r.setUrl(url);
+    manager->get(r);
+}
+
+void Komga_api::getGenres(QHash<QString, QString> queryParams)
+{
+    qDebug() << "fetching genres ";
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Genres));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_GENRES);
+    QUrlQuery query;
+    if (queryParams.contains(KEY_LIBRARY)) {
+        query.addQueryItem(KEY_LIBRARY, queryParams[KEY_LIBRARY]);
+    }
+    else if (queryParams.contains(KEY_COLLECTION)) {
+        query.addQueryItem(KEY_COLLECTION, queryParams[KEY_COLLECTION]);
+    }
+    url.setQuery(query);
+    r.setUrl(url);
+    manager->get(r);
+}
+
+void Komga_api::getAgeRatings(QHash<QString, QString> queryParams)
+{
+    qDebug() << "fetching age ratings ";
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::AgeRatings));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_AGE_RATINGS);
+    QUrlQuery query;
+    if (queryParams.contains(KEY_LIBRARY)) {
+        query.addQueryItem(KEY_LIBRARY, queryParams[KEY_LIBRARY]);
+    }
+    else if (queryParams.contains(KEY_COLLECTION)) {
+        query.addQueryItem(KEY_COLLECTION, queryParams[KEY_COLLECTION]);
+    }
+    url.setQuery(query);
+    r.setUrl(url);
+    manager->get(r);
+}
+
+void Komga_api::getLanguages(QHash<QString, QString> queryParams)
+{
+    qDebug() << "fetching languages ";
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Languages));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_LANGUAGES);
+    QUrlQuery query;
+    if (queryParams.contains(KEY_LIBRARY)) {
+        query.addQueryItem(KEY_LIBRARY, queryParams[KEY_LIBRARY]);
+    }
+    else if (queryParams.contains(KEY_COLLECTION)) {
+        query.addQueryItem(KEY_COLLECTION, queryParams[KEY_COLLECTION]);
+    }
+    url.setQuery(query);
+    r.setUrl(url);
+    manager->get(r);
+}
+
+void Komga_api::getPublishers(QHash<QString, QString> queryParams)
+{
+    qDebug() << "fetching publishers ";
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Publishers));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_PUBLISHERS);
+    QUrlQuery query;
+    if (queryParams.contains(KEY_LIBRARY)) {
+        query.addQueryItem(KEY_LIBRARY, queryParams[KEY_LIBRARY]);
+    }
+    else if (queryParams.contains(KEY_COLLECTION)) {
+        query.addQueryItem(KEY_COLLECTION, queryParams[KEY_COLLECTION]);
+    }
+    url.setQuery(query);
+    r.setUrl(url);
+    manager->get(r);
+}
+
 void Komga_api::getSeries(QString libraryId, int page) {
     qDebug() << "fetching series for library " << libraryId;
     QNetworkRequest r;
@@ -193,6 +299,73 @@ void Komga_api::getSeries(QString libraryId, int page) {
         query.addQueryItem("page", QString::number(page));
     }
     url.setQuery(query);
+    r.setUrl(url);
+    manager->get(r);
+}
+
+void Komga_api::filterSeries(QString libraryId, SeriesFilter* filters, int page) {
+    qDebug() << "filtering series for library " << libraryId;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesReason));
+    QUrl url;
+    if (libraryId == MasterController::SERIES_NEW_ID) {
+        url.setUrl(getServerUrl() + URL_SERIES + URL_SERIES_NEW);
+    }
+    else if (libraryId == MasterController::SERIES_LATEST_ID) {
+        url.setUrl(getServerUrl() + URL_SERIES + URL_LATEST);
+    }
+    else if (libraryId == MasterController::SERIES_UPDATED_ID) {
+        url.setUrl(getServerUrl() + URL_SERIES + URL_SERIES_UPDATED);
+    }
+    else {
+        url.setUrl(getServerUrl() + URL_SERIES);
+    }
+    QUrlQuery query;
+    query.addQueryItem("size", "40");
+    // only works if library id is always positive, should check this
+    if (libraryId > MasterController::DEFAULT_LIBRARY_ID) {
+        query.addQueryItem("library_id", libraryId);
+    }
+    if (page != 0) {
+        query.addQueryItem("page", QString::number(page));
+    }
+    if (! filters->filterStatuses().isEmpty()) {
+        for (QString status: filters->filterStatuses()) {
+            query.addQueryItem("status", status);
+        }
+    }
+    if (! filters->filterReadStatuses().isEmpty()) {
+        for (QString status: filters->filterReadStatuses()) {
+            query.addQueryItem("read_status", status);
+        }
+    }
+    if (! filters->appliedTags().isEmpty()) {
+        for (QString tag: filters->appliedTags()) {
+            query.addQueryItem("tag", tag);
+        }
+    }
+    if (! filters->appliedGenres().isEmpty()) {
+        for (QString genre: filters->appliedGenres()) {
+            query.addQueryItem("genre", genre);
+        }
+    }
+    if (! filters->appliedAgeRatings().isEmpty()) {
+        for (QString rating: filters->appliedAgeRatings()) {
+            query.addQueryItem("age_rating", rating);
+        }
+    }
+    if (! filters->appliedLanguages().isEmpty()) {
+        for (QString language: filters->appliedLanguages()) {
+            query.addQueryItem("language", language );
+        }
+    }
+    if (! filters->appliedPublishers().isEmpty()) {
+        for (QString publisher: filters->appliedPublishers()) {
+            query.addQueryItem("publisher", publisher);
+        }
+    }
+    url.setQuery(query);
+    qDebug() << "url " << url;
     r.setUrl(url);
     manager->get(r);
 }
@@ -456,6 +629,47 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
             QJsonObject page = doc.object();
             emit readListsDataReady(page);
         }
+        else if (reason == RequestReason::Tags) {
+            QJsonArray array = doc.array();
+            QList<QString> tags;
+            foreach(const QJsonValue &val, array) {
+                tags.append(val.toString());
+            }
+            emit tagsDataReady(tags);
+        }
+        else if (reason == RequestReason::Genres) {
+            QJsonArray array = doc.array();
+            QList<QString> genres;
+            foreach(const QJsonValue &val, array) {
+                genres.append(val.toString());
+            }
+            emit genresDataReady(genres);
+        }
+        else if (reason == RequestReason::AgeRatings) {
+            QJsonArray array = doc.array();
+            QList<QString> ratings;
+            foreach(const QJsonValue &val, array) {
+                ratings.append(val.toString());
+            }
+            emit ageRatingsDataReady(ratings);
+        }
+        else if (reason == RequestReason::Languages) {
+            QJsonArray array = doc.array();
+            QList<QString> languages;
+            foreach(const QJsonValue &val, array) {
+                languages.append(val.toString());
+            }
+            emit languagesDataReady(languages);
+        }
+        else if (reason == RequestReason::Publishers) {
+            QJsonArray array = doc.array();
+            QList<QString> publishers;
+            foreach(const QJsonValue &val, array) {
+                publishers.append(val.toString());
+            }
+            emit publishersDataReady(publishers);
+        }
+
     }
     // else emit an error event
     else {

@@ -16,6 +16,14 @@ Item {
     anchors.leftMargin: 10
     signal deselect(int idx);
 
+    Connections {
+        target: controller.ui_seriesModel
+        onFiltersApplied: {
+            console.log("filter applied ")
+            controller.ui_seriesModel.filterSeries(seriesRoot.currentSourceId)
+        }
+    }
+
     Column {
         anchors.fill: parent
         Row {
@@ -89,6 +97,11 @@ Item {
                     ToolTip.visible: hovered
                     hoverEnabled: true
                     ToolTip.text: qsTr("Deselect")
+                }
+                SeriesFilterComponent {
+                    width: readButton.width
+                    height: readButton.height
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
             }

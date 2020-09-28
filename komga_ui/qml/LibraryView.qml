@@ -6,6 +6,7 @@ import assets 1.0
 Pane {
     Component.onCompleted: {
         controller.refreshData()
+//        controller.ui_libraryModel.getTags()
         stack.push("qrc:/qml/seriesview.qml", {currentLibraryName: controller.ui_defaultLibraryName, currentSourceId: controller.ui_defaultLibraryId})
     }
 

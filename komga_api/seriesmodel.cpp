@@ -5,9 +5,23 @@
 SeriesModel::SeriesModel(QObject *parent, Komga_api* api) :
     QAbstractListModel{parent}, m_api{api}
 {
+    m_filters = new SeriesFilter(this);
     connect(m_api, &Komga_api::seriesDataReady,
             this, &SeriesModel::apiDataReceived);
+    connect(m_filters, &SeriesFilter::filtersChanged,
+            this, &SeriesModel::filtersApplied);
+    connect(m_api, &Komga_api::tagsDataReady,
+            this, &SeriesModel::tagsDataReceived);
+    connect(m_api, &Komga_api::genresDataReady,
+            this, &SeriesModel::genresDataReceived);
+    connect(m_api, &Komga_api::ageRatingsDataReady,
+            this, &SeriesModel::ageRatingsDataReceived);
+    connect(m_api, &Komga_api::languagesDataReady,
+            this, &SeriesModel::languagesDataReceived);
+    connect(m_api, &Komga_api::publishersDataReady,
+            this, &SeriesModel::publishersDataReceived);
 }
+
 int SeriesModel::rowCount(const QModelIndex &parent) const {
     Q_ASSERT(checkIndex(parent));
     if (parent.isValid()) {
@@ -115,6 +129,11 @@ QHash<int, QByteArray> SeriesModel::roleNames() const {
 }
 void SeriesModel::loadSeries(QString library) {
     m_api->getSeries(library);
+    m_api->getTags(QHash<QString,QString>{});
+    m_api->getGenres(QHash<QString,QString>{});
+    m_api->getAgeRatings(QHash<QString,QString>{});
+    m_api->getLanguages(QHash<QString,QString>{});
+    m_api->getPublishers(QHash<QString,QString>{});
     resetSeries();
 }
 
@@ -127,6 +146,13 @@ void SeriesModel::loadCollectionSeries(QString collectionId)
 void SeriesModel::loadSeriesCollections(QString seriesId)
 {
     m_api->getSeriesCollections(seriesId);
+}
+
+void SeriesModel::filterSeries(QString library)
+{
+    qDebug() << "get filtered data for library " << library << " " << m_filters;
+    m_api->filterSeries(library, m_filters);
+    resetSeries();
 }
 void SeriesModel::resetSeries() {
     emit beginRemoveRows(QModelIndex(), 0, m_series.size() - 1);
@@ -192,6 +218,85 @@ Series *SeriesModel::parseSeries(const QJsonValue &value, QObject *parent)
     return s;
 }
 
+void SeriesModel::addStatusFilter(QString status)
+{
+    qDebug() << "add status filter " << status;
+    m_filters->addStatus(status);
+}
+
+void SeriesModel::removeStatusFilter(QString status)
+{
+    qDebug() << "remove status filter " << status;
+    m_filters->removeStatus(status);
+}
+
+void SeriesModel::addReadStatusFilter(QString status)
+{
+    qDebug() << "add read status filter " << status;
+    m_filters->addReadStatus(status);
+}
+
+void SeriesModel::removeReadStatusFilter(QString status)
+{
+    qDebug() << "remove read status filter " << status;
+    m_filters->removeReadStatus(status);
+}
+
+void SeriesModel::addTagFilter(QString tag)
+{
+    m_filters->addTagFilter(tag);
+}
+
+void SeriesModel::removeTagFilter(QString tag)
+{
+    m_filters->removeTagFilter(tag);
+}
+
+void SeriesModel::addGenreFilter(QString genre)
+{
+    m_filters->addGenreFilter(genre);
+}
+
+void SeriesModel::removeGenreFilter(QString genre)
+{
+    m_filters->removeGenreFilter(genre);
+}
+
+void SeriesModel::addAgeRatingFilter(QString rating)
+{
+    m_filters->addAgeRatingFilter(rating);
+}
+
+void SeriesModel::removeAgeRatingFilter(QString rating)
+{
+    m_filters->removeAgeRatingFilter(rating);
+}
+
+void SeriesModel::addLanguageFilter(QString language)
+{
+    m_filters->addLanguageFilter(language);
+}
+
+void SeriesModel::removeLanguageFilter(QString language)
+{
+    m_filters->removeLanguageFilter(language);
+}
+
+void SeriesModel::addPublisherFilter(QString publisher)
+{
+    m_filters->addPublisherFilter(publisher);
+}
+
+void SeriesModel::removePublisherFilter(QString publisher)
+{
+    m_filters->removePublisherFilter(publisher);
+}
+
+SeriesFilter *SeriesModel::getFilters() const
+{
+    return m_filters;
+}
+
 void SeriesModel::apiDataReceived(QJsonObject page) {
     int pageNum = page["number"].toInt();
     int totPages = page["totalPages"].toInt();
@@ -242,6 +347,56 @@ void SeriesModel::nextCollectionsSeriesPage(QString collectionId) {
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
         m_api->getCollectionSeries(collectionId, m_currentPageNumber + 1);
     }
+}
+
+void SeriesModel::tagsDataReceived(QList<QString> tags)
+{
+    qDebug() << "received tags " << tags;
+    QVariantList l{};
+    for (auto t : tags){
+        l.append(t);
+    }
+    m_filters->setFilterTags(l);
+}
+
+void SeriesModel::genresDataReceived(QList<QString> genres)
+{
+    qDebug() << "received genres " << genres;
+    QVariantList l{};
+    for (auto t : genres){
+        l.append(t);
+    }
+    m_filters->setFilterGenres(l);
+}
+
+void SeriesModel::ageRatingsDataReceived(QList<QString> ratings)
+{
+    qDebug() << "received ratings " << ratings;
+    QVariantList l{};
+    for (auto t : ratings){
+        l.append(t);
+    }
+    m_filters->setFilterAgeRatings(l);
+}
+
+void SeriesModel::languagesDataReceived(QList<QString> languages)
+{
+    qDebug() << "received languages " << languages;
+    QVariantList l{};
+    for (auto t : languages){
+        l.append(t);
+    }
+    m_filters->setFilterLanguages(l);
+}
+
+void SeriesModel::publishersDataReceived(QList<QString> publishers)
+{
+    qDebug() << "received publishers " << publishers;
+    QVariantList l{};
+    for (auto t : publishers){
+        l.append(t);
+    }
+    m_filters->setFilterPublishers(l);
 }
 
 Series* SeriesModel::find(int libraryId) {
