@@ -114,7 +114,6 @@ Item {
                                                    currentBookWriters: resultBook.ui_bookMetadata.ui_metadataWriters,
                                                    currentBookPencillers: resultBook.ui_bookMetadata.ui_metadataPencillers,
                                                    currentBookColorists: resultBook.ui_bookMetadata.ui_metadataColorists,
-                                                   currentBookPublisher : resultBook.ui_bookMetadata.ui_metadataPublisher,
                                                    currentBookSummary: resultBook.ui_bookMetadata.ui_metadataSummary,
                                                    currentBookSize: resultBook.ui_bookSize,
                                                    currentBookShortMediaType: resultBook.ui_bookShortMediaType,

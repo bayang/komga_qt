@@ -16,7 +16,6 @@ Item {
     property string currentBookWriters
     property string currentBookPencillers
     property string currentBookColorists
-    property string currentBookPublisher
     property string currentBookSummary
     property string currentBookSize
     property string currentBookShortMediaType
@@ -78,7 +77,6 @@ Item {
                           currentBookWriters: previousBook.ui_bookMetadata.ui_metadataWriters,
                           currentBookPencillers: previousBook.ui_bookMetadata.ui_metadataPencillers,
                           currentBookColorists: previousBook.ui_bookMetadata.ui_metadataColorists,
-                          currentBookPublisher : previousBook.ui_bookMetadata.ui_metadataPublisher,
                           currentBookSummary: previousBook.ui_bookMetadata.ui_metadataSummary,
                           currentBookSize: previousBook.ui_bookSize,
                           currentBookShortMediaType: previousBook.ui_bookShortMediaType,
@@ -101,7 +99,6 @@ Item {
                 currentBookWriters = nextBook.ui_bookMetadata.ui_metadataWriters
                 currentBookPencillers = nextBook.ui_bookMetadata.ui_metadataPencillers
                 currentBookColorists = nextBook.ui_bookMetadata.ui_metadataColorists
-                currentBookPublisher = nextBook.ui_bookMetadata.ui_metadataPublisher
                 currentBookSummary = nextBook.ui_bookMetadata.ui_metadataSummary
                 currentBookSize = nextBook.ui_bookSize
                 currentBookShortMediaType = nextBook.ui_bookShortMediaType
@@ -119,7 +116,6 @@ Item {
                                currentBookWriters: nextBook.ui_bookMetadata.ui_metadataWriters,
                                currentBookPencillers: nextBook.ui_bookMetadata.ui_metadataPencillers,
                                currentBookColorists: nextBook.ui_bookMetadata.ui_metadataColorists,
-                               currentBookPublisher : nextBook.ui_bookMetadata.ui_metadataPublisher,
                                currentBookSummary: nextBook.ui_bookMetadata.ui_metadataSummary,
                                currentBookSize: nextBook.ui_bookSize,
                                currentBookShortMediaType: nextBook.ui_bookShortMediaType,
@@ -269,10 +265,6 @@ Item {
                         text: currentBookMetadataNumber ? "# " + qsTr(currentBookMetadataNumber) : ""
                         font.pointSize: Style.smallMediumTextSize
                         visible: currentBookMetadataNumber
-                    }
-                    Label {
-                        text: currentBookPublisher ? "Publisher : " + qsTr(currentBookPublisher) : ""
-                        font.pointSize: Style.smallMediumTextSize
                     }
                     Label {
                         text: qsTr(currentBookSummary)

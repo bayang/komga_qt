@@ -51,14 +51,10 @@ QVariant BookModel::data(const QModelIndex &index, int role) const {
         return book->pagesCount();
     else if (role == SummaryRole)
         return book->bookMetadata()->summary();
-    else if (role == PublisherRole)
-        return book->bookMetadata()->publisher();
     else if (role == ReleaseDateRole)
         return book->bookMetadata()->releaseDate();
     else if (role == AuthorsRole)
         return QVariant::fromValue(book->bookMetadata()->authors());
-    else if (role == AgeRatingRole)
-        return book->bookMetadata()->ageRating();
     else if (role == TitleRole)
         return book->bookMetadata()->title();
     else if (role == PageReachedRole)
@@ -86,10 +82,8 @@ QHash<int, QByteArray> BookModel::roleNames() const {
         roles[MediaTypeRole] = "bookMediaType";
         roles[PageCountRole] = "bookPageCount";
         roles[SummaryRole] = "bookSummary";
-        roles[PublisherRole] = "bookPublisher";
         roles[ReleaseDateRole] = "bookReleaseDate";
         roles[AuthorsRole] = "bookAuthors";
-        roles[AgeRatingRole] = "bookAgeRating";
         roles[TitleRole] = "bookTitle";
         roles[MediaTypeFullRole] = "bookMediaTypeFull";
         roles[PageReachedRole] = "bookPageReached";
@@ -133,8 +127,6 @@ Book* BookModel::parseBook(const QJsonObject &object, QObject* parent) {
     meta->setSummary(metadata["summary"].toString());
     meta->setNumber(metadata["number"].toString());
     meta->setNumberSort(metadata["numberSort"].toInt());
-    meta->setPublisher(metadata["publisher"].toString());
-    meta->setAgeRating(metadata["ageRating"].toString());
     meta->setReleaseDate(metadata["releaseDate"].toString());
     QJsonArray authors = metadata["authors"].toArray();
     QList<Author*> aut{};

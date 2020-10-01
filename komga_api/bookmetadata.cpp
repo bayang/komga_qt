@@ -101,46 +101,6 @@ void BookMetadata::setReadingDirectionLock(bool readingDirectionLock)
     m_readingDirectionLock = readingDirectionLock;
 }
 
-QString BookMetadata::publisher() const
-{
-    return m_publisher;
-}
-
-void BookMetadata::setPublisher(const QString &publisher)
-{
-    m_publisher = publisher;
-}
-
-bool BookMetadata::publisherLock() const
-{
-    return m_publisherLock;
-}
-
-void BookMetadata::setPublisherLock(bool publisherLock)
-{
-    m_publisherLock = publisherLock;
-}
-
-QString BookMetadata::ageRating() const
-{
-    return m_ageRating;
-}
-
-void BookMetadata::setAgeRating(const QString &ageRating)
-{
-    m_ageRating = ageRating;
-}
-
-bool BookMetadata::ageRatingLock() const
-{
-    return m_ageRatingLock;
-}
-
-void BookMetadata::setAgeRatingLock(bool ageRatingLock)
-{
-    m_ageRatingLock = ageRatingLock;
-}
-
 QString BookMetadata::releaseDate() const
 {
     return m_releaseDate;

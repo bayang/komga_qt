@@ -166,6 +166,7 @@ Item {
                                        currentSeriesBookCount: seriesBookCount,
                                        currentSeriesMetadataStatus: seriesMetadataStatus,
                                        currentSeriesMetadataSummary: seriesMetadataSummary,
+                                       currentSeriesMetadataPublisher: seriesMetadataPublisher,
                                        currentSeriesMetadataTagsList: seriesMetadataTagsList,
                                        currentSeriesMetadataGenresList: seriesMetadataGenresList
                                    }

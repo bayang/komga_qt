@@ -13,8 +13,6 @@ class KOMGA_API_EXPORT BookMetadata: public QObject
     Q_PROPERTY( QString ui_metadataTitle READ title CONSTANT )
     Q_PROPERTY( QString ui_metadataSummary READ summary CONSTANT )
     Q_PROPERTY( QString ui_metadataNumber READ number CONSTANT )
-    Q_PROPERTY( QString ui_metadataPublisher READ publisher CONSTANT )
-    Q_PROPERTY( QString ui_metadataAgeRating READ ageRating CONSTANT )
     Q_PROPERTY( QString ui_metadataWriters READ writersAsString NOTIFY writersChanged)
     Q_PROPERTY( QString ui_metadataPencillers READ pencillersAsString NOTIFY pencillersChanged)
     Q_PROPERTY( QString ui_metadataColorists READ coloristsAsString NOTIFY coloristsChanged)
@@ -53,18 +51,6 @@ public:
     bool readingDirectionLock() const;
     void setReadingDirectionLock(bool readingDirectionLock);
 
-    QString publisher() const;
-    void setPublisher(const QString &publisher);
-
-    bool publisherLock() const;
-    void setPublisherLock(bool publisherLock);
-
-    QString ageRating() const;
-    void setAgeRating(const QString &ageRating);
-
-    bool ageRatingLock() const;
-    void setAgeRatingLock(bool ageRatingLock);
-
     QString releaseDate() const;
     void setReleaseDate(const QString &releaseDate);
 
@@ -97,10 +83,6 @@ private:
     bool m_numberSortLock{};
     QString m_readingDirection{};
     bool m_readingDirectionLock{};
-    QString m_publisher{};
-    bool m_publisherLock{};
-    QString m_ageRating{};
-    bool m_ageRatingLock{};
     QString m_releaseDate{};
     bool m_releaseDateLock{};
     QList<Author*> m_authors{};

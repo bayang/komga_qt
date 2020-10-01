@@ -12,6 +12,7 @@ Item {
     property real currentSeriesBookCount
     property string currentSeriesMetadataStatus
     property string currentSeriesMetadataSummary
+    property string currentSeriesMetadataPublisher
     property string parentType
     property var currentSeriesMetadataTagsList: []
     property var currentSeriesMetadataGenresList: []
@@ -153,6 +154,18 @@ Item {
                         visible: currentSeriesMetadataSummary != ''
                     }
                     RowLayout {
+                        visible: currentSeriesMetadataPublisher != ''
+                        Label {
+                            text: qsTr("Publisher : ")
+                            font.pointSize: Style.smallMediumTextSize
+                        }
+                        Label {
+                            id: seriesPublisher
+                            text: qsTr(currentSeriesMetadataPublisher)
+                            font.pointSize: Style.smallMediumTextSize
+                        }
+                    }
+                    RowLayout {
                         visible: currentSeriesMetadataGenresList.length > 0
                         Label {
                             text: qsTr("Genres : ")
@@ -276,7 +289,6 @@ Item {
                                        currentBookWriters: bookWriters,
                                        currentBookPencillers: bookPencillers,
                                        currentBookColorists: bookColorists,
-                                       currentBookPublisher : bookPublisher,
                                        currentBookSummary: bookSummary,
                                        currentBookSize: bookSize,
                                        currentBookShortMediaType: bookMediaType,
