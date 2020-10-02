@@ -118,9 +118,6 @@ Item {
                     ToolTip.text: qsTr("Deselect")
                 }
                 BooksFilterComponent {
-//                    width: readButton.width
-//                    height: readButton.height
-//                    anchors.verticalCenter: parent.verticalCenter
                     Layout.preferredHeight: readButton.height
                     Layout.preferredWidth: readButton.width
                     Layout.alignment: Qt.AlignTop
@@ -155,12 +152,16 @@ Item {
                             text: currentSeriesBookCount
                         }
                     }
-                    Label {
-                        id: seriesStatus
-                        text: qsTr("Status : " + currentSeriesMetadataStatus)
-                        font.pointSize: Style.smallMediumTextSize
-                        Layout.bottomMargin: 15
-                        visible: currentSeriesMetadataStatus != ''
+                    RowLayout {
+                        Label {
+                            text: qsTr("Status : ")
+                            font.pointSize: Style.smallMediumTextSize
+                        }
+                        BadgeLabel {
+                            id: seriesStatus
+                            text: qsTr(currentSeriesMetadataStatus)
+                            font.pointSize: Style.smallMediumTextSize
+                        }
                     }
                     Label {
                         id: seriesSummary
