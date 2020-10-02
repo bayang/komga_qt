@@ -4,6 +4,7 @@
 BookModel::BookModel(QObject *parent, Komga_api* api) :
     QAbstractListModel{parent}, m_api{api}, m_books{}
 {
+    m_filters = new BooksFilter(this);
     connect(m_api, &Komga_api::booksDataReady,
             this, &BookModel::apiDataReceived);
     connect(m_api, &Komga_api::preloadImageDataReady,
@@ -12,6 +13,28 @@ BookModel::BookModel(QObject *parent, Komga_api* api) :
             this, &BookModel::nextBookReceived);
     connect(m_api, &Komga_api::previousBookReady,
             this, &BookModel::previousBookReceived);
+    connect(m_api, &Komga_api::seriesTagsDataReady,
+            this, &BookModel::tagsDataReceived);
+}
+
+void BookModel::addTagFilter(QString tag)
+{
+    m_filters->addTagFilter(tag);
+}
+
+void BookModel::removeTagFilter(QString tag)
+{
+    m_filters->removeTagFilter(tag);
+}
+
+void BookModel::addReadStatusFilter(QString status)
+{
+    m_filters->addReadStatus(status);
+}
+
+void BookModel::removeReadStatusFilter(QString status)
+{
+    m_filters->removeReadStatus(status);
 }
 int BookModel::rowCount(const QModelIndex &parent) const {
     if (parent.isValid()) {
@@ -67,6 +90,8 @@ QVariant BookModel::data(const QModelIndex &index, int role) const {
         return book->bookMetadata()->pencillersAsString();
     else if (role == ColoristsRole)
         return book->bookMetadata()->coloristsAsString();
+    else if (role == TagsRole)
+        return book->bookMetadata()->tags();
     return QVariant();
 }
 QHash<int, QByteArray> BookModel::roleNames() const {
@@ -91,12 +116,23 @@ QHash<int, QByteArray> BookModel::roleNames() const {
         roles[WritersRole] = "bookWriters";
         roles[PencillersRole] = "bookPencillers";
         roles[ColoristsRole] = "bookColorists";
+        roles[TagsRole] = "bookTags";
         return roles;
 }
 void BookModel::loadBooks(QString seriesId) {
-    m_api->getBooks(seriesId);
+    m_api->getBooks(seriesId, m_filters);
+    QHash<QString,QString>params{};
+    params.insert(Komga_api::KEY_SERIES,seriesId);
+    m_api->getTags(params);
     resetBooks();
 }
+
+//void BookModel::filterBooks(QString seriesId)
+//{
+//    qDebug() << "filter books " << seriesId;
+//    m_api->filterBooks(seriesId, m_filters);
+//    resetBooks();
+//}
 void BookModel::loadReadListBooks(QString readListId) {
     m_api->getReadListBooks(readListId);
     resetBooks();
@@ -138,6 +174,12 @@ Book* BookModel::parseBook(const QJsonObject &object, QObject* parent) {
         aut.append(std::move(au));
     }
     meta->setAuthors(aut);
+    QJsonArray jsonTags = metadata["tags"].toArray();
+    QVariantList tags{};
+    foreach (const QJsonValue &value, jsonTags) {
+        tags.append(value.toString());
+    }
+    meta->setTags(tags);
     if (object.contains("readProgress")) {
         QJsonObject progress = object["readProgress"].toObject();
         if (progress.contains("page")) {
@@ -179,6 +221,11 @@ void BookModel::nextBook(QString bookId)
 {
     m_api->nextBook(bookId);
 }
+
+BooksFilter *BookModel::getFilters() const
+{
+    return m_filters;
+}
 void BookModel::apiDataReceived(QJsonObject books) {
     int pageNum = books["number"].toInt();
     int totPages = books["totalPages"].toInt();
@@ -219,7 +266,7 @@ QByteArray BookModel::getPage(QString id, int pageNum) {
 void BookModel::nextBooksPage(QString seriesId) {
     qDebug() << "curr p :" << m_currentPageNumber << " total p : " << m_totalPageNumber;
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
-        m_api->getBooks(seriesId, m_currentPageNumber + 1);
+        m_api->getBooks(seriesId, m_filters, m_currentPageNumber + 1);
     }
 }
 void BookModel::resetBooks() {
@@ -250,6 +297,16 @@ void BookModel::nextBookReceived(QJsonObject book)
 void BookModel::previousBookReceived(QJsonObject book)
 {
     emit previousBookReady(std::move(parseBook(book, this)));
+}
+
+void BookModel::tagsDataReceived(QList<QString> tags)
+{
+    qDebug() << "received book tags" << tags;
+    QVariantList l{};
+    for (auto t : tags){
+        l.append(t);
+    }
+    m_filters->setFilterTags(l);
 }
 QByteArray* BookModel::getImageFromCache(const QString &key) {
     return m_picturesCache[key];

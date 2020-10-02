@@ -6,10 +6,12 @@
 #include <QCache>
 #include "komga_api_global.h"
 #include "komga_api.h"
+#include "booksfilter.h"
 
 class KOMGA_API_EXPORT BookModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY( BooksFilter* ui_booksFilter READ getFilters CONSTANT )
 
 public:
     BookModel(QObject *parent = nullptr, Komga_api *api = nullptr);
@@ -36,13 +38,21 @@ public:
         WritersRole = Qt::UserRole + 20,
         ColoristsRole = Qt::UserRole + 21,
         PencillersRole = Qt::UserRole + 22,
+        TagsRole = Qt::UserRole + 23,
     };
+    Q_INVOKABLE void addTagFilter(QString tag);
+    Q_INVOKABLE void removeTagFilter(QString tag);
+    Q_INVOKABLE void addReadStatusFilter(QString status);
+    Q_INVOKABLE void removeReadStatusFilter(QString status);
+
 public slots:
     void apiDataReceived(QJsonObject books);
     void preloadImageDataReceived(QPair<QString, QByteArray> res);
     void updateProgress(QString bookId, int page, bool completed = false);
     void nextBookReceived(QJsonObject book);
     void previousBookReceived(QJsonObject book);
+    void tagsDataReceived(QList<QString> tags);
+
 
     // QAbstractItemModel interface
 public:
@@ -50,6 +60,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
     Q_INVOKABLE void loadBooks(QString seriesId);
+//    Q_INVOKABLE void filterBooks(QString seriesId);
     Q_INVOKABLE void loadReadListBooks(QString readListId);
     QByteArray getThumbnail(int id);
     QByteArray getPage(QString id, int pageNum);
@@ -65,6 +76,8 @@ public:
     void previousBook(QString bookId);
     void nextBook(QString bookId);
 
+    BooksFilter *getFilters() const;
+
 signals:
     void refresh();
     void nextBookReady(Book *book);
@@ -76,6 +89,7 @@ private:
     int m_currentPageNumber{};
     int m_totalPageNumber{};
     QCache<QString, QByteArray> m_picturesCache{100};
+    BooksFilter* m_filters = nullptr;
 };
 
 #endif // BOOKMODEL_H

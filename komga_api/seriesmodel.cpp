@@ -8,8 +8,6 @@ SeriesModel::SeriesModel(QObject *parent, Komga_api* api) :
     m_filters = new SeriesFilter(this);
     connect(m_api, &Komga_api::seriesDataReady,
             this, &SeriesModel::apiDataReceived);
-    connect(m_filters, &SeriesFilter::filtersChanged,
-            this, &SeriesModel::filtersApplied);
     connect(m_api, &Komga_api::tagsDataReady,
             this, &SeriesModel::tagsDataReceived);
     connect(m_api, &Komga_api::genresDataReady,
@@ -128,7 +126,7 @@ QHash<int, QByteArray> SeriesModel::roleNames() const {
         return roles;
 }
 void SeriesModel::loadSeries(QString library) {
-    m_api->getSeries(library);
+    m_api->getSeries(library, m_filters);
     m_api->getTags(QHash<QString,QString>{});
     m_api->getGenres(QHash<QString,QString>{});
     m_api->getAgeRatings(QHash<QString,QString>{});
@@ -148,12 +146,6 @@ void SeriesModel::loadSeriesCollections(QString seriesId)
     m_api->getSeriesCollections(seriesId);
 }
 
-void SeriesModel::filterSeries(QString library)
-{
-    qDebug() << "get filtered data for library " << library << " " << m_filters;
-    m_api->filterSeries(library, m_filters);
-    resetSeries();
-}
 void SeriesModel::resetSeries() {
     emit beginRemoveRows(QModelIndex(), 0, m_series.size() - 1);
     qDeleteAll(m_series);
@@ -161,24 +153,6 @@ void SeriesModel::resetSeries() {
     emit endRemoveRows();
 }
 
-//Series* SeriesModel::parseSeries(const QJsonValue &value) {
-//    Series* s = new Series(this);
-//    QJsonObject jsob = value.toObject();
-//    s->setId(jsob["id"].toString());
-//    QString n = jsob["name"].toString();
-//    s->setName(n);
-//    s->setBooksCount(jsob["booksCount"].toInt());
-//    s->setBooksReadCount(jsob["booksReadCount"].toInt());
-//    s->setBooksUnreadCount(jsob["booksUnreadCount"].toInt());
-//    s->setBooksInProgressCount(jsob["booksInProgressCount"].toInt());
-//    s->setLibraryId(jsob["libraryId"].toString());
-//    QString u = jsob["url"].toString();
-//    s->setUrl(u);
-//    QJsonObject metadata = jsob["metadata"].toObject();
-//    s->setMetadataTitle(metadata["title"].toString());
-//    s->setMetadataStatus(metadata["status"].toString());
-//    return s;
-//}
 Series *SeriesModel::parseSeries(const QJsonValue &value, QObject *parent)
 {
     Series* s = new Series(parent);
@@ -339,7 +313,7 @@ QByteArray SeriesModel::getThumbnail(int id) {
 void SeriesModel::nextSeriesPage(QString libraryId) {
     qDebug() << "current p :" << m_currentPageNumber << " total p : " << m_totalPageNumber;
     if (m_currentPageNumber + 1 < m_totalPageNumber) {
-        m_api->getSeries(libraryId, m_currentPageNumber + 1);
+        m_api->getSeries(libraryId, m_filters, m_currentPageNumber + 1);
     }
 }
 void SeriesModel::nextCollectionsSeriesPage(QString collectionId) {

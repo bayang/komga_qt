@@ -58,6 +58,8 @@ add_library(komga-api
     status.h
     seriesfilter.h
     seriesfilter.cpp
+    booksfilter.h
+    booksfilter.cpp
 )
 target_compile_definitions(komga-api PUBLIC "$<$<CONFIG:Release>:QT_NO_DEBUG_OUTPUT>")
 target_link_libraries(komga-api Qt5::Core)

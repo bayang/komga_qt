@@ -17,6 +17,7 @@ class KOMGA_API_EXPORT BookMetadata: public QObject
     Q_PROPERTY( QString ui_metadataPencillers READ pencillersAsString NOTIFY pencillersChanged)
     Q_PROPERTY( QString ui_metadataColorists READ coloristsAsString NOTIFY coloristsChanged)
     Q_PROPERTY( QString ui_metadataReleaseDate READ releaseDate CONSTANT )
+    Q_PROPERTY( QVariantList ui_metadataTags READ tags WRITE setTags NOTIFY bookTagsChanged )
 
 public:
     BookMetadata(QObject *parent = nullptr);
@@ -67,10 +68,14 @@ public:
     QString pencillersAsString() const;
     QString coloristsAsString() const;
 
+    QVariantList tags() const;
+    void setTags(const QVariantList &tags);
+
 signals:
     void writersChanged();
     void pencillersChanged();
     void coloristsChanged();
+    void bookTagsChanged(QVariantList tags);
 
 private:
     QString m_title{};
@@ -87,7 +92,7 @@ private:
     bool m_releaseDateLock{};
     QList<Author*> m_authors{};
     bool m_authorsLock{};
-
+    QList<QString> m_tags{};
 };
 
 #endif // BOOKMETADATA_H

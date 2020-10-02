@@ -54,7 +54,6 @@ public:
     Q_INVOKABLE void loadSeries(QString library);
     Q_INVOKABLE void loadCollectionSeries(QString collectionId);
     Q_INVOKABLE void loadSeriesCollections(QString seriesId);
-    Q_INVOKABLE void filterSeries(QString library);
     void nextSeriesPage(QString libraryId);
     QByteArray getThumbnail(int id);
     Series* find(int libraryId);
@@ -80,14 +79,13 @@ public:
 
 signals:
     void refresh();
-    void filtersApplied();
 
 private:
     Komga_api* m_api = nullptr;
     QList<Series*> m_series{};
     int m_currentPageNumber{};
     int m_totalPageNumber{};
-    SeriesFilter* m_filters;
+    SeriesFilter* m_filters = nullptr;
 };
 
 

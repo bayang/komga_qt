@@ -17,10 +17,10 @@ Item {
     signal deselect(int idx);
 
     Connections {
-        target: controller.ui_seriesModel
-        onFiltersApplied: {
+        target: controller.ui_seriesModel.ui_seriesFilter
+        onFiltersChanged: {
             console.log("filter applied ")
-            controller.ui_seriesModel.filterSeries(seriesRoot.currentSourceId)
+            controller.ui_seriesModel.loadSeries(seriesRoot.currentSourceId)
         }
     }
 

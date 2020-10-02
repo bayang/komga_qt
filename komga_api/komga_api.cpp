@@ -177,19 +177,24 @@ void Komga_api::nextBook(QString bookId)
 void Komga_api::getTags(QHash<QString, QString> queryParams)
 {
     qDebug() << "fetching tags ";
-    QNetworkRequest r;
-    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Tags));
     QUrl url;
     url.setUrl(getServerUrl() + URL_TAGS);
     QUrlQuery query;
+    QNetworkRequest r;
     if (queryParams.contains(KEY_LIBRARY)) {
         query.addQueryItem(KEY_LIBRARY, queryParams[KEY_LIBRARY]);
+        r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::LibraryTags));
     }
     else if (queryParams.contains(KEY_SERIES)) {
         query.addQueryItem(KEY_SERIES, queryParams[KEY_SERIES]);
+        r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesTags));
     }
     else if (queryParams.contains(KEY_COLLECTION)) {
         query.addQueryItem(KEY_COLLECTION, queryParams[KEY_COLLECTION]);
+        r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::CollectionTags));
+    }
+    else {
+        r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Tags));
     }
     url.setQuery(query);
     r.setUrl(url);
@@ -272,38 +277,7 @@ void Komga_api::getPublishers(QHash<QString, QString> queryParams)
     manager->get(r);
 }
 
-void Komga_api::getSeries(QString libraryId, int page) {
-    qDebug() << "fetching series for library " << libraryId;
-    QNetworkRequest r;
-    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesReason));
-    QUrl url;
-    if (libraryId == MasterController::SERIES_NEW_ID) {
-        url.setUrl(getServerUrl() + URL_SERIES + URL_SERIES_NEW);
-    }
-    else if (libraryId == MasterController::SERIES_LATEST_ID) {
-        url.setUrl(getServerUrl() + URL_SERIES + URL_LATEST);
-    }
-    else if (libraryId == MasterController::SERIES_UPDATED_ID) {
-        url.setUrl(getServerUrl() + URL_SERIES + URL_SERIES_UPDATED);
-    }
-    else {
-        url.setUrl(getServerUrl() + URL_SERIES);
-    }
-    QUrlQuery query;
-    query.addQueryItem("size", "40");
-    // only works if library id is always positive, should check this
-    if (libraryId > MasterController::DEFAULT_LIBRARY_ID) {
-        query.addQueryItem("library_id", libraryId);
-    }
-    if (page != 0) {
-        query.addQueryItem("page", QString::number(page));
-    }
-    url.setQuery(query);
-    r.setUrl(url);
-    manager->get(r);
-}
-
-void Komga_api::filterSeries(QString libraryId, SeriesFilter* filters, int page) {
+void Komga_api::getSeries(QString libraryId, SeriesFilter* filters, int page) {
     qDebug() << "filtering series for library " << libraryId;
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::SeriesReason));
@@ -543,8 +517,9 @@ void Komga_api::searchBooks(const QString &searchTerm, qint64 timestamp) {
     m_searchMapper->setMapping(reply, key);
 }
 
-void Komga_api::getBooks(QString seriesId, int page) {
-    qDebug() << "fetch books for series " << seriesId;
+void Komga_api::getBooks(QString seriesId, BooksFilter *filters, int page)
+{
+    qDebug() << "filter books for series " << seriesId;
     QNetworkRequest r;
     r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Books));
     QUrl url;
@@ -566,6 +541,16 @@ void Komga_api::getBooks(QString seriesId, int page) {
     query.addQueryItem("size", "40");
     if (page != 0) {
         query.addQueryItem("page", QString::number(page, 10));
+    }
+    if (! filters->filterReadStatuses().isEmpty()) {
+        for (QString status: filters->filterReadStatuses()) {
+            query.addQueryItem("read_status", status);
+        }
+    }
+    if (! filters->appliedTags().isEmpty()) {
+        for (QString tag: filters->appliedTags()) {
+            query.addQueryItem("tag", tag);
+        }
     }
     url.setQuery(query);
     r.setUrl(url);
@@ -636,6 +621,30 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
                 tags.append(val.toString());
             }
             emit tagsDataReady(tags);
+        }
+        else if (reason == RequestReason::SeriesTags) {
+            QJsonArray array = doc.array();
+            QList<QString> tags;
+            foreach(const QJsonValue &val, array) {
+                tags.append(val.toString());
+            }
+            emit seriesTagsDataReady(tags);
+        }
+        else if (reason == RequestReason::CollectionTags) {
+            QJsonArray array = doc.array();
+            QList<QString> tags;
+            foreach(const QJsonValue &val, array) {
+                tags.append(val.toString());
+            }
+            emit collectionTagsDataReady(tags);
+        }
+        else if (reason == RequestReason::LibraryTags) {
+            QJsonArray array = doc.array();
+            QList<QString> tags;
+            foreach(const QJsonValue &val, array) {
+                tags.append(val.toString());
+            }
+            emit libraryTagsDataReady(tags);
         }
         else if (reason == RequestReason::Genres) {
             QJsonArray array = doc.array();

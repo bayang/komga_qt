@@ -6,6 +6,7 @@
 #include "book.h"
 #include "series.h"
 #include "seriesfilter.h"
+#include "booksfilter.h"
 #include <QList>
 #include <QCache>
 #include <QNetworkAccessManager>
@@ -24,11 +25,11 @@ class KOMGA_API_EXPORT Komga_api: public QObject
 public:
     Komga_api(QObject *parent = nullptr);
     void getLibraries();
-    void getSeries(QString libraryId, int page = 0);
-    void filterSeries(QString libraryId, SeriesFilter* filters, int page = 0);
+    void getSeries(QString libraryId, SeriesFilter* filters, int page = 0);
     void getCollectionSeries(QString collectionId, int page = 0);
     void getSeriesCollections(QString seriesId);
-    void getBooks(QString seriesId, int page = 0);
+    void getBooks(QString seriesId, BooksFilter* filters, int page = 0);
+//    void filterBooks(QString seriesId, BooksFilter* filters, int page = 0);
     void getReadListBooks(QString readListId, int page = 0);
     static const QString URL_LIBRARIES;
     static const QString URL_SERIES;
@@ -77,6 +78,9 @@ public:
         AgeRatings = QNetworkRequest::Attribute::User + 17,
         Languages = QNetworkRequest::Attribute::User + 18,
         Publishers = QNetworkRequest::Attribute::User + 19,
+        SeriesTags = QNetworkRequest::Attribute::User + 20,
+        CollectionTags = QNetworkRequest::Attribute::User + 21,
+        LibraryTags = QNetworkRequest::Attribute::User + 22,
     };
     enum ThumbnailType {
         SeriesThumbnail,
@@ -138,6 +142,9 @@ signals:
     void previousBookReady(QJsonObject book);
     void searchReadListsDataReady(QPair<QString, QJsonDocument> res);
     void tagsDataReady(QList<QString> tags);
+    void seriesTagsDataReady(QList<QString> tags);
+    void collectionTagsDataReady(QList<QString> tags);
+    void libraryTagsDataReady(QList<QString> tags);
     void genresDataReady(QList<QString> genres);
     void ageRatingsDataReady(QList<QString> ageRatings);
     void languagesDataReady(QList<QString> languages);

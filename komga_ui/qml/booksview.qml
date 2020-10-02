@@ -19,6 +19,14 @@ Item {
 //    anchors.fill: parent
     anchors.leftMargin: 10
 
+    Connections {
+        target: controller.ui_bookModel.ui_booksFilter
+        onFiltersChanged: {
+            console.log("filter changed")
+            controller.ui_bookModel.loadBooks(currentSeriesId)
+        }
+    }
+
     ScrollView {
         id: scroll
         clip: true
@@ -108,6 +116,14 @@ Item {
                     ToolTip.visible: hovered
                     hoverEnabled: true
                     ToolTip.text: qsTr("Deselect")
+                }
+                BooksFilterComponent {
+//                    width: readButton.width
+//                    height: readButton.height
+//                    anchors.verticalCenter: parent.verticalCenter
+                    Layout.preferredHeight: readButton.height
+                    Layout.preferredWidth: readButton.width
+                    Layout.alignment: Qt.AlignTop
                 }
             }
 

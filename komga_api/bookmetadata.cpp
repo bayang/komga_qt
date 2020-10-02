@@ -161,6 +161,25 @@ QString BookMetadata::coloristsAsString() const {
     }
     return auth;
 }
+
+QVariantList BookMetadata::tags() const
+{
+    QVariantList l;
+    for (auto val : m_tags) {
+        l.append(val);
+    }
+    return l;
+}
+
+void BookMetadata::setTags(const QVariantList &tags)
+{
+    QList<QString> tagsList{};
+    for (QVariant t : tags){
+        tagsList.append(t.toString());
+    }
+    m_tags = tagsList;
+    emit bookTagsChanged(tags);
+}
 QString BookMetadata::pencillersAsString() const {
     QString auth = "";
     for (Author* a: m_authors) {
