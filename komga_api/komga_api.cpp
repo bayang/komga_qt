@@ -753,6 +753,11 @@ QNetworkRequest Komga_api::getThumbnailAsync(QString id) {
     else if (type == "readlist") {
         url.setUrl(getServerUrl() + URL_READLISTS + "/" + thumbId + URL_THUMBNAILS);
     }
+    else if (type == "page") {
+        QString pageNumber = parts.at(2);
+        url.setUrl(getServerUrl() + URL_BOOKS + "/" + thumbId + URL_PAGE + "/" + pageNumber + URL_THUMBNAILS);
+        qDebug() << url;
+    }
     r.setUrl(url);
     return r;
 }

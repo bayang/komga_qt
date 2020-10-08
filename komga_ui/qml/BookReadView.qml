@@ -14,6 +14,7 @@ Item {
     property bool standaloneBook
     property bool bookEnd: false
     property bool hasNextBook
+    property bool pageThumbnailsListVisible: false
     signal pageChanged(real pageNum);
     signal nextBook();
     signal previousBook();
@@ -33,7 +34,7 @@ Item {
     Flickable {
         id: flickArea
         anchors.fill: parent
-        focus: true
+        focus: !pageThumbnailsListVisible
         contentWidth: Math.max(bookReadPage.paintedWidth * imgScale, readContainer.width)
         contentHeight: Math.max(bookReadPage.paintedHeight  * imgScale, readContainer.height)
         anchors.centerIn: parent
@@ -193,12 +194,19 @@ Item {
         }
     }
     Keys.onRightPressed: {
-        flickArea.contentX += 30
-        flickArea.returnToBounds()
+        if (!pageThumbnailsListVisible) {
+            flickArea.contentX += 30
+            flickArea.returnToBounds()
+            event.accepted = true
+        }
+
     }
     Keys.onLeftPressed: {
-        flickArea.contentX -= 30
-        flickArea.returnToBounds()
+        if (!pageThumbnailsListVisible) {
+            flickArea.contentX -= 30
+            flickArea.returnToBounds()
+        }
+
     }
     Keys.onDownPressed: {
         flickArea.contentY += 30
@@ -239,6 +247,10 @@ Item {
         }
         else if (event.key === Qt.Key_H) {
             fitHeight()
+            event.accepted = true
+        }
+        else if (event.key === Qt.Key_T) {
+            pageThumbnailsListVisible = !pageThumbnailsListVisible
             event.accepted = true
         }
     }
@@ -289,6 +301,81 @@ Item {
         onPositionChanged: {
             pageNumberWrapper.y  = readContainer.height - 50
             visibilityTimer.restart()
+        }
+    }
+
+    ListView {
+        id: pageThumbnailsList
+        orientation: ListView.Horizontal
+        model: pageCount
+        anchors.left: readContainer.left
+        anchors.right: readContainer.right
+        anchors.bottom: readContainer.bottom
+        height: Style.thumbnailRequestedHeight + 30
+        focus: visible
+        visible: pageThumbnailsListVisible
+        clip: true
+        spacing: 5
+        Keys.onReturnPressed: {
+            if (pageThumbnailsList.activeFocus) {
+                currentItem.mouseA.clicked(null)
+            }
+        }
+        delegate: Item {
+            id: thumbnailDelegate
+            width: Style.thumbnailRequestedWidth
+            property bool itemHovered
+            property bool isCurrent: ListView.isCurrentItem
+            property alias mouseA: pageThumbnailMouseArea
+
+            Column {
+                anchors.fill: parent
+                id: pageThumbnailDelegateColumn
+                spacing: 5
+                Image {
+                    id: pageThumbnailImage
+                    sourceSize.height: Style.thumbnailRequestedHeight
+                    sourceSize.width: thumbnailDelegate.width
+                    source: "image://async/page/" + bookId + "/" + (index+1)
+                    anchors.horizontalCenter: pageThumbnailDelegateColumn.horizontalCenter
+                    cache: true
+                    asynchronous: true
+                }
+                Label {
+                    id : pageNumber
+                    text: index
+                    font.pointSize: Style.smallMediumTextSize
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
+            Rectangle {
+                id: pageThumbnailDelegateRect
+                property bool display: itemHovered || isCurrent
+                border.color: Style.hoverBorderColor
+                width: thumbnailDelegate.width
+                height: pageThumbnailsList.height
+                border.width: display ? 3 : 0
+                color: "transparent"
+                anchors.horizontalCenter: thumbnailDelegate.horizontalCenter
+            }
+            MouseArea {
+                id : pageThumbnailMouseArea
+                width: thumbnailDelegate.width
+                height: pageThumbnailsList.height
+                hoverEnabled: true
+                onClicked: {
+                    setCurrentReachedPage(index)
+                    pageThumbnailsListVisible = !pageThumbnailsListVisible
+                }
+                onEntered: {
+                    cursorShape = Qt.PointingHandCursor
+                    itemHovered = true
+                }
+                onExited: {
+                    itemHovered = false
+                }
+            }
         }
     }
 }
