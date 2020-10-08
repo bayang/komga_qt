@@ -64,7 +64,6 @@ Item {
                                    currentBookWriters: bookWriters,
                                    currentBookPencillers: bookPencillers,
                                    currentBookColorists: bookColorists,
-                                   currentBookPublisher : bookPublisher,
                                    currentBookSummary: bookSummary,
                                    currentBookSize: bookSize,
                                    currentBookShortMediaType: bookMediaType,
