@@ -27,6 +27,8 @@ Binaries are available to download in the Actions section and are provided as is
 
 <kbd>h</kbd> : fit page to height
 
+<kbd>t</kbd> : shows all the book pages as thumbnails, to allow quick navigtion in the book (with mouse or keyboard)
+
 <kbd>esc</kbd> : close the read view
 
 A zoomed page can be moved with arrows or dragged with mouse
