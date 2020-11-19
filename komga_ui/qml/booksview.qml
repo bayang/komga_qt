@@ -16,7 +16,7 @@ Item {
     property string parentType
     property var currentSeriesMetadataTagsList: []
     property var currentSeriesMetadataGenresList: []
-//    anchors.fill: parent
+    anchors.fill: parent
     anchors.leftMargin: 10
 
     Connections {
@@ -33,12 +33,14 @@ Item {
         anchors.fill: parent
 
         ColumnLayout {
+            id: container
             anchors.fill: parent
 
             RowLayout {
                 id: searchAndButtonRow
                 Layout.bottomMargin: 15
                 Layout.fillWidth: true
+                Layout.fillHeight: true
                 Layout.alignment: Qt.AlignHCenter
                 Button {
                     id : booksViewBackButton
@@ -264,7 +266,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.minimumHeight: cellHeight
                 Layout.minimumWidth: 100
-                Layout.preferredHeight: cellHeight * 2
+                Layout.preferredHeight: scroll.height - searchAndButtonRow.height - firstRow.height
                 Layout.preferredWidth: parent.width
                 cacheBuffer: cellHeight
                 Layout.bottomMargin: 2
