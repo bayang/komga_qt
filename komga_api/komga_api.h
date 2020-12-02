@@ -50,6 +50,10 @@ public:
     static const QString URL_AGE_RATINGS;
     static const QString URL_LANGUAGES;
     static const QString URL_PUBLISHERS;
+    static const QString URL_SCAN;
+    static const QString URL_ANALYZE;
+    static const QString URL_METADATA;
+    static const QString URL_REFRESH;
     static const QString KEY_LIBRARY;
     static const QString KEY_COLLECTION;
     static const QString KEY_SERIES;
@@ -81,6 +85,9 @@ public:
         SeriesTags = QNetworkRequest::Attribute::User + 20,
         CollectionTags = QNetworkRequest::Attribute::User + 21,
         LibraryTags = QNetworkRequest::Attribute::User + 22,
+        LibraryScan = QNetworkRequest::Attribute::User + 23,
+        Analysis = QNetworkRequest::Attribute::User + 24,
+        MetadataRefresh = QNetworkRequest::Attribute::User + 25,
     };
     enum ThumbnailType {
         SeriesThumbnail,
@@ -88,8 +95,10 @@ public:
     };
     enum ApiType {
         Series,
-        Book
+        Book,
+        Library
     };
+
     Q_ENUM(ApiType);
     QByteArray getThumbnail(int id, ThumbnailType type);
     QNetworkRequest getThumbnailAsync(QString id);
@@ -110,6 +119,9 @@ public:
     void getAgeRatings(QHash<QString,QString> queryParams);
     void getLanguages(QHash<QString,QString> queryParams);
     void getPublishers(QHash<QString,QString> queryParams);
+    void scanLibrary(QString &libraryId);
+    void analyze(QString &targetId, ApiType targetType);
+    void refreshMetadata(QString &targetId, ApiType targetType);
 
 private:
     QNetworkAccessManager* manager = nullptr;

@@ -1,5 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 import QtQml.Models 2.14
 import QtGraphicalEffects 1.14
 
@@ -13,6 +14,7 @@ Item {
     property string currentSourceId
     property bool sourceIsLibrary: true;
     property bool backEnabled: false;
+    property bool showOverflowToolbar: false;
     anchors.leftMargin: 10
     signal deselect(int idx);
 
@@ -103,9 +105,46 @@ Item {
                     height: readButton.height
                     anchors.verticalCenter: parent.verticalCenter
                 }
-
+                OverflowComponent {
+                    id: overflowButton
+                    width: readButton.width
+                    height: readButton.height
+                    visible: showOverflowToolbar
+                    anchors.verticalCenter: parent.verticalCenter
+                    targetId: currentSourceId
+                    popupContent: ColumnLayout  {
+                        id:column
+                        anchors.fill: parent
+                        TextLink {
+                            id: scanLabel
+                            Layout.leftMargin: 10
+                            textLinkLabel: qsTr("Scan library files")
+                            onTextLinkClicked: {
+                                controller.ui_libraryModel.scan(overflowButton.targetId)
+                                overflowButton.popup.close()
+                            }
+                        }
+                        TextLink {
+                            id: analyzeLabel
+                            Layout.leftMargin: 10
+                            textLinkLabel: qsTr("Analyze library")
+                            onTextLinkClicked: {
+                                controller.ui_libraryModel.analyze(overflowButton.targetId)
+                                overflowButton.popup.close()
+                            }
+                        }
+                        TextLink {
+                            id: metadataRefreshLabel
+                            Layout.leftMargin: 10
+                            textLinkLabel: qsTr("Refresh metadata")
+                            onTextLinkClicked: {
+                                controller.ui_libraryModel.refreshMetadata(overflowButton.targetId)
+                                overflowButton.popup.close()
+                            }
+                        }
+                    }
+                }
             }
-
         }
 
         Label {

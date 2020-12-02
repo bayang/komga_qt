@@ -316,3 +316,11 @@ bool BookModel::hasImageInCache(QString bookId, int currentPage)
 {
     return m_picturesCache.contains(bookId + "/"+QString::number(currentPage));
 }
+void BookModel::analyze(QString bookId)
+{
+    m_api->analyze(bookId, Komga_api::ApiType::Book);
+}
+void BookModel::refreshMetadata(QString bookId)
+{
+    m_api->refreshMetadata(bookId, Komga_api::ApiType::Book);
+}

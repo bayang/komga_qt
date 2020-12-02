@@ -380,3 +380,11 @@ Series* SeriesModel::find(int libraryId) {
     }
     return nullptr;
 }
+void SeriesModel::analyze(QString seriesId)
+{
+    m_api->analyze(seriesId, Komga_api::ApiType::Series);
+}
+void SeriesModel::refreshMetadata(QString seriesId)
+{
+    m_api->refreshMetadata(seriesId, Komga_api::ApiType::Series);
+}

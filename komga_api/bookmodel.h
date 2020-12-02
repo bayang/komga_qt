@@ -77,6 +77,8 @@ public:
     void nextBook(QString bookId);
 
     BooksFilter *getFilters() const;
+    Q_INVOKABLE void analyze(QString bookId);
+    Q_INVOKABLE void refreshMetadata(QString bookId);
 
 signals:
     void refresh();

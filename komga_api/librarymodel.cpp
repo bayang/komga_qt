@@ -69,3 +69,16 @@ void LibraryModel::getTags()
 {
     m_api->getTags(QHash<QString,QString>{});
 }
+
+void LibraryModel::scan(QString libraryId)
+{
+    m_api->scanLibrary(libraryId);
+}
+void LibraryModel::analyze(QString libraryId)
+{
+    m_api->analyze(libraryId, Komga_api::ApiType::Library);
+}
+void LibraryModel::refreshMetadata(QString libraryId)
+{
+    m_api->refreshMetadata(libraryId, Komga_api::ApiType::Library);
+}

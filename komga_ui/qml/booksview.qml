@@ -16,7 +16,7 @@ Item {
     property string parentType
     property var currentSeriesMetadataTagsList: []
     property var currentSeriesMetadataGenresList: []
-//    anchors.fill: parent
+    anchors.fill: parent
     anchors.leftMargin: 10
 
     Connections {
@@ -33,12 +33,14 @@ Item {
         anchors.fill: parent
 
         ColumnLayout {
+            id: container
             anchors.fill: parent
 
             RowLayout {
                 id: searchAndButtonRow
                 Layout.bottomMargin: 15
                 Layout.fillWidth: true
+                Layout.fillHeight: true
                 Layout.alignment: Qt.AlignHCenter
                 Button {
                     id : booksViewBackButton
@@ -121,6 +123,34 @@ Item {
                     Layout.preferredHeight: readButton.height
                     Layout.preferredWidth: readButton.width
                     Layout.alignment: Qt.AlignTop
+                }
+                OverflowComponent {
+                    id: overflowButton
+                    Layout.preferredHeight: readButton.height
+                    Layout.preferredWidth: readButton.width
+                    Layout.alignment: Qt.AlignTop
+                    targetId: currentSeriesId
+                    popupContent: ColumnLayout  {
+                        id:column
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        TextLink {
+                            id: analyzeLabel
+                            textLinkLabel: qsTr("Analyze series")
+                            onTextLinkClicked: {
+                                controller.ui_seriesModel.analyze(overflowButton.targetId)
+                                overflowButton.popup.close()
+                            }
+                        }
+                        TextLink {
+                            id: metadataRefreshLabel
+                            textLinkLabel: qsTr("Refresh metadata")
+                            onTextLinkClicked: {
+                                controller.ui_seriesModel.refreshMetadata(overflowButton.targetId)
+                                overflowButton.popup.close()
+                            }
+                        }
+                    }
                 }
             }
 
@@ -264,7 +294,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.minimumHeight: cellHeight
                 Layout.minimumWidth: 100
-                Layout.preferredHeight: cellHeight * 2
+                Layout.preferredHeight: scroll.height - searchAndButtonRow.height - firstRow.height
                 Layout.preferredWidth: parent.width
                 cacheBuffer: cellHeight
                 Layout.bottomMargin: 2
