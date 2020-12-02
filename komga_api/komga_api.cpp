@@ -30,6 +30,10 @@ const QString Komga_api::URL_GENRES{"/genres"};
 const QString Komga_api::URL_AGE_RATINGS{"/age-ratings"};
 const QString Komga_api::URL_LANGUAGES{"/languages"};
 const QString Komga_api::URL_PUBLISHERS{"/publishers"};
+const QString Komga_api::URL_SCAN{"/scan"};
+const QString Komga_api::URL_ANALYZE{"/analyze"};
+const QString Komga_api::URL_METADATA{"/metadata"};
+const QString Komga_api::URL_REFRESH{"/refresh"};
 const QString Komga_api::SETTINGS_SECTION_SERVER{"server"};
 const QString Komga_api::SETTINGS_KEY_SERVER_URL{"serverAdress"};
 const QString Komga_api::SETTINGS_KEY_SERVER_USER{"serverUsername"};
@@ -275,6 +279,55 @@ void Komga_api::getPublishers(QHash<QString, QString> queryParams)
     url.setQuery(query);
     r.setUrl(url);
     manager->get(r);
+}
+
+void Komga_api::scanLibrary(QString &libraryId)
+{
+    qDebug() << "scan library " << libraryId;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::LibraryScan));
+    QUrl url;
+    url.setUrl(getServerUrl() + URL_LIBRARIES + "/" + libraryId + URL_SCAN);
+    r.setUrl(url);
+    manager->post(r, QByteArray{});
+}
+
+void Komga_api::analyze(QString &targetId, ApiType targetType)
+{
+    qDebug() << "analyzing " << targetId;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::Analysis));
+    QUrl url;
+    if (targetType == ApiType::Library) {
+        url.setUrl(getServerUrl() + URL_LIBRARIES + "/" + targetId + URL_ANALYZE);
+    }
+    else if (targetType == ApiType::Book) {
+        url.setUrl(getServerUrl() + URL_BOOKS + "/" + targetId + URL_ANALYZE);
+    }
+    else if (targetType == ApiType::Series) {
+        url.setUrl(getServerUrl() + URL_SERIES + "/" + targetId + URL_ANALYZE);
+    }
+    r.setUrl(url);
+    manager->post(r, QByteArray{});
+}
+
+void Komga_api::refreshMetadata(QString &targetId, ApiType targetType)
+{
+    qDebug() << "refresh metadata for " << targetId;
+    QNetworkRequest r;
+    r.setAttribute(QNetworkRequest::Attribute::User, QVariant(RequestReason::MetadataRefresh));
+    QUrl url;
+    if (targetType == ApiType::Library) {
+        url.setUrl(getServerUrl() + URL_LIBRARIES + "/" + targetId + URL_METADATA + URL_REFRESH);
+    }
+    else if (targetType == ApiType::Book) {
+        url.setUrl(getServerUrl() + URL_BOOKS + "/" + targetId + URL_METADATA + URL_REFRESH);
+    }
+    else if (targetType == ApiType::Series) {
+        url.setUrl(getServerUrl() + URL_SERIES + "/" + targetId + URL_METADATA + URL_REFRESH);
+    }
+    r.setUrl(url);
+    manager->post(r, QByteArray{});
 }
 
 void Komga_api::getSeries(QString libraryId, SeriesFilter* filters, int page) {
@@ -677,6 +730,15 @@ void Komga_api::apiReplyFinished(QNetworkReply *reply) {
                 publishers.append(val.toString());
             }
             emit publishersDataReady(publishers);
+        }
+        else if (reason == RequestReason::LibraryScan) {
+            qDebug() << "library scan response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        }
+        else if (reason == RequestReason::Analysis) {
+            qDebug() << "analysis response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        }
+        else if (reason == RequestReason::MetadataRefresh) {
+            qDebug() << "metadata refresh response " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         }
 
     }

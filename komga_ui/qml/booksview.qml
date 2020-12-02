@@ -124,6 +124,34 @@ Item {
                     Layout.preferredWidth: readButton.width
                     Layout.alignment: Qt.AlignTop
                 }
+                OverflowComponent {
+                    id: overflowButton
+                    Layout.preferredHeight: readButton.height
+                    Layout.preferredWidth: readButton.width
+                    Layout.alignment: Qt.AlignTop
+                    targetId: currentSeriesId
+                    popupContent: ColumnLayout  {
+                        id:column
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        TextLink {
+                            id: analyzeLabel
+                            textLinkLabel: qsTr("Analyze series")
+                            onTextLinkClicked: {
+                                controller.ui_seriesModel.analyze(overflowButton.targetId)
+                                overflowButton.popup.close()
+                            }
+                        }
+                        TextLink {
+                            id: metadataRefreshLabel
+                            textLinkLabel: qsTr("Refresh metadata")
+                            onTextLinkClicked: {
+                                controller.ui_seriesModel.refreshMetadata(overflowButton.targetId)
+                                overflowButton.popup.close()
+                            }
+                        }
+                    }
+                }
             }
 
             RowLayout {

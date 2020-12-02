@@ -18,5 +18,7 @@
         <file>qml/SeriesFilterComponent.qml</file>
         <file>qml/CollapsibleItem.qml</file>
         <file>qml/BooksFilterComponent.qml</file>
+        <file>qml/LibraryOverflowComponent.qml</file>
+        <file>qml/OverflowComponent.qml</file>
     </qresource>
 </RCC>

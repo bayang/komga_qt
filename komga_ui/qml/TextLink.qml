@@ -13,13 +13,14 @@ Item {
     property alias textLinkLabelSize: innerLabel.font.pointSize
 
     height: textLinkHeight
-    width: parent.width
+//    width: parent.width
+    width: innerLabel.implicitWidth
     property bool currentlyHovered: false
 
     Label {
         id: innerLabel
         wrapMode: Text.Wrap
-        width: parent.width
+//        width: parent.width
         color: currentlyHovered ? Style.accentColor : Style.foregroundColor
         MouseArea {
             id : libraryDelegateMouseArea

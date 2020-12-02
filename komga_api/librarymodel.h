@@ -32,6 +32,9 @@ public:
     QHash<int, QByteArray> roleNames() const override;
     Q_INVOKABLE void fetchData();
     Q_INVOKABLE void getTags();
+    Q_INVOKABLE void scan(QString libraryId);
+    Q_INVOKABLE void analyze(QString libraryId);
+    Q_INVOKABLE void refreshMetadata(QString libraryId);
 };
 
 #endif // LIBRARYMODEL_H

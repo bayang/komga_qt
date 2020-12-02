@@ -36,7 +36,7 @@ Pane {
                         onTextLinkClicked: {
                             librariesList.currentIndex = index
                             controller.loadSeriesView(libraryId)
-                            stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: libraryName, currentSourceId: libraryId})
+                            stack.replace("qrc:/qml/seriesview.qml", {currentLibraryName: libraryName, currentSourceId: libraryId, showOverflowToolbar: true})
                         }
                         textLinkLabel: libraryName
                 }

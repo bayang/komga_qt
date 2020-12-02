@@ -77,6 +77,9 @@ public:
 
     SeriesFilter *getFilters() const;
 
+    Q_INVOKABLE void analyze(QString seriesId);
+    Q_INVOKABLE void refreshMetadata(QString seriesId);
+
 signals:
     void refresh();
 
