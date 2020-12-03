@@ -46,10 +46,10 @@
             "name": "komga_ui",
             "buildsystem": "cmake",
             "config-opts": ["-DCMAKE_BUILD_TYPE=Release"],
-            "branch" : "flatpak-cmake",
             "sources": [
                 {
                     "type": "git",
+                    "branch" : "flatpak-cmake",
                     "url": "https://github.com/bayang/komga_qt.git"
                 }
             ]
