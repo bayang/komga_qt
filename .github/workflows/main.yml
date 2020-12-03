@@ -16,6 +16,9 @@ jobs:
   build_linux:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    container:
+      image: docker.io/bilelmoussaoui/flatpak-github-actions
+      options: --privileged
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -42,8 +45,8 @@ jobs:
         chmod +x cmake_build.sh
         ./cmake_build.sh
         ls build/komga_ui
-    - name: Pull flatpak Docker Image
-      run: docker pull bilelmoussaoui/flatpak-github-actions:latest
+    # - name: Pull flatpak Docker Image
+      # run: docker pull bilelmoussaoui/flatpak-github-actions:latest
     - name: build flatpak
       # runs-on: ubuntu-latest
       # container:
