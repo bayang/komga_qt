@@ -48,7 +48,7 @@ jobs:
       run: |
         sudo apt update -y
         sudo apt install -y flatpak flatpak-builder
-        sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+        flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
         flatpak --user install -y flathub org.freedesktop.Sdk//20.08 org.freedesktop.Platform//20.08
         flatpak --user install -y flathub org.kde.Platform//5.14 org.kde.Sdk//5.14
         flatpak-builder --repo=../flatpak-repo --force-clean . io.github.bayang.Komga_qt.json
