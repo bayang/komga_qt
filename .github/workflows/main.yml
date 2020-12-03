@@ -16,9 +16,6 @@ jobs:
   build_linux:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container:
-      image: docker.io/bilelmoussaoui/flatpak-github-actions
-      options: --privileged
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -48,16 +45,22 @@ jobs:
     # - name: Pull flatpak Docker Image
       # run: docker pull bilelmoussaoui/flatpak-github-actions:latest
     - name: build flatpak
+      run: |
+        sudo apt update -y
+        sudo apt install -y flatpak flatpak-builder
+        flatpak-builder --repo=../flatpak-repo --force-clean . io.github.bayang.Komga_qt.json
+        flatpak build-bundle ../flatpak-repo komga_qt.flatpak io.github.bayang.Komga_qt --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
+
       # runs-on: ubuntu-latest
       # container:
       #   image: docker.io/bilelmoussaoui/flatpak-github-actions
       #   options: --privileged
       # steps:
       # - uses: actions/checkout@v2
-      uses: bilelmoussaoui/flatpak-github-actions@v2
-      with:
-        bundle: "komga_qt.flatpak"
-        manifest-path: "io.github.bayang.Komga_qt.json"
+      # uses: bilelmoussaoui/flatpak-github-actions@v2
+      # with:
+      #   bundle: "komga_qt.flatpak"
+      #   manifest-path: "io.github.bayang.Komga_qt.json"
       # run: |
       #       docker run --cap-add SYS_ADMIN --cap-add NET_ADMIN --device /dev/fuse \
       #            --security-opt apparmor:unconfined --security-opt seccomp=unconfined \
