@@ -13,7 +13,7 @@
         ],
         "build-options" : {
             "env": {
-                "-DCMAKE_INSTALL_PREFIX": "/app/bin"
+                "CMAKE_INSTALL_PREFIX": "/app/bin"
             }
         },
     "modules": [
@@ -50,7 +50,7 @@
         {
             "name": "komga_ui",
             "buildsystem": "cmake",
-            "config-opts": ["-DCMAKE_BUILD_TYPE=Release"],
+            "config-opts": ["-DCMAKE_BUILD_TYPE=Release","-DCMAKE_INSTALL_PREFIX=/app/bin"],
             "sources": [
                 {
                     "type": "git",
