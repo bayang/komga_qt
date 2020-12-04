@@ -11,6 +11,11 @@
            "--share=ipc",
            "--share=network"
         ],
+        "build-options" : {
+            "env": {
+                "-DCMAKE_INSTALL_PREFIX": "/app/bin"
+            }
+        },
     "modules": [
         {
             "name": "komga_ui_data",
@@ -46,7 +51,6 @@
             "name": "komga_ui",
             "buildsystem": "cmake",
             "config-opts": ["-DCMAKE_BUILD_TYPE=Release"],
-            "make-install-args" : ["-DCMAKE_INSTALL_PREFIX=/app/bin"],
             "sources": [
                 {
                     "type": "git",
