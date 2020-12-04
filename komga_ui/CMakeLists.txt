@@ -71,7 +71,7 @@ add_executable(komga-ui
     assets.qrc
     qml.qrc
 )
-install(TARGETS komga-ui DESTINATION /usr/local/bin)
+install(TARGETS komga-ui)
 endif()
 
 target_include_directories(komga-ui PUBLIC
