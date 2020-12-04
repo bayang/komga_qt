@@ -45,7 +45,8 @@
         {
             "name": "komga_ui",
             "buildsystem": "cmake",
-            "config-opts": ["-DCMAKE_BUILD_TYPE=Release", "-DCMAKE_INSTALL_PREFIX=/app/bin"],
+            "config-opts": ["-DCMAKE_BUILD_TYPE=Release"],
+            "make-install-args" : ["-DCMAKE_INSTALL_PREFIX=/app/bin"],
             "sources": [
                 {
                     "type": "git",
