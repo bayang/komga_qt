@@ -349,8 +349,7 @@ void Komga_api::getSeries(QString libraryId, SeriesFilter* filters, int page) {
     }
     QUrlQuery query;
     query.addQueryItem("size", "40");
-    // only works if library id is always positive, should check this
-    if (libraryId > MasterController::DEFAULT_LIBRARY_ID) {
+    if (! libraryId.startsWith("-")) {
         query.addQueryItem("library_id", libraryId);
     }
     if (page != 0) {
